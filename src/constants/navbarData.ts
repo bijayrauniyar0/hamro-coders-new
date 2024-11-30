@@ -30,11 +30,11 @@ export const navbarData: INavbarLinkData[] = [
     name: 'Gaming Zone',
     link: '/gaming-zone',
   },
-  {
-    id: 4,
-    name: 'Data Bank',
-    link: '/data-bank/report',
-  },
+  // {
+  //   id: 4,
+  //   name: 'Data Bank',
+  //   link: '/data-bank/report',
+  // },
   // {
   //   id: 5,
   //   name: 'Tutorial',
