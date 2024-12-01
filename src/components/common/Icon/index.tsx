@@ -19,9 +19,7 @@ export default function Icon({
       onKeyUp={() => {}}
       onClick={onClick}
     >
-      <i
-        className={`${type} naxatw-text-icon-sm lg:naxatw-text-icon-md ${className}`}
-      >
+      <i className={`${type} text-icon-sm lg:text-icon-md ${className}`}>
         {name}
       </i>
     </span>
