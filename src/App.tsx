@@ -8,13 +8,17 @@ import Navbar from './components/common/Navbar';
 function App() {
   return (
     <>
-      <div className="naxatw-fixed naxatw-top-0 naxatw-z-[49] naxatw-bg-white">
+      <div className="fixed top-0 z-[49] w-full bg-slate-100">
         <Navbar />
       </div>
       <div className="absolute right-0 top-4 w-1/4">
         <ToastContainer />
       </div>
-      {generateRoutes({ routes: appRoutes })}
+      <div className="mb-[2rem] mt-[6rem] h-full w-full px-4">
+        <div className="mx-auto w-11/12">
+          {generateRoutes({ routes: appRoutes })}
+        </div>
+      </div>
     </>
   );
 }
