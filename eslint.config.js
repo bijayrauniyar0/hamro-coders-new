@@ -12,7 +12,6 @@ export default [
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
-    // extends: ['plugin:react/recommended', 'plugin:prettier/recommended'],
     plugins: {
       prettier: pluginPrettier.rules,
     },
