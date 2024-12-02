@@ -1,15 +1,28 @@
 .poppins-regular {
-    font-family: "Poppins", sans-serif;
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 html,
 body {
-    font-family: 'Poppins' !important;
+  font-family: 'Poppins' !important;
+}
+
+.has-dropshadow {
+  filter: drop-shadow(0 0 2px rgba(140, 0, 255, 0.65))
+    drop-shadow(0 0 2px rgba(140, 0, 255, 0.75))
+    drop-shadow(0 0 2px rgba(140, 0, 255, 0.85));
+}
+
+.orbitron-regular {
+  font-family: 'Orbitron', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
