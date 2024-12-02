@@ -18,6 +18,7 @@ export default [
     rules: {
       semi: ['error', 'always'],
       'no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-vars': 'off',
       'no-console': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
       'react/react-in-jsx-scope': 'off',
