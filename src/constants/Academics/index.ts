@@ -341,3 +341,16 @@ export const bcaSubjects = [
     ],
   },
 ];
+
+export const switchTabData = [
+  {
+    id: 1,
+    label: 'BCA',
+    value: 'BCA',
+  },
+  {
+    id: 2,
+    label: 'CSIT',
+    value: 'CSIT',
+  },
+];
