@@ -47,6 +47,6 @@
       "@Validations/*": ["validations/*"]
     }
   },
-  "include": [".eslint.config.js", "src", "src/**/*.ts"],
+  "include": [".eslint.config.js", "src", "src/**/*.ts", "src/types"],
   "exclude": ["node_modules", "dist"],
 }
