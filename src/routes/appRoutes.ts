@@ -11,12 +11,12 @@ const appRoutes: IRoute[] = [
   },
   {
     name: 'Academics',
-    path: '/academics',
+    path: '/academics/:courseName',
     component: AcademicsPage,
   },
   {
     name: 'Academics',
-    path: '/academics/*',
+    path: '/:courseName/:subjectCode',
     component: ModesPage,
   },
 ];
