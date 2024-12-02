@@ -4,8 +4,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import appRoutes from './routes/appRoutes';
 import generateRoutes from './routes/generateRoutes';
 import Navbar from './components/common/Navbar';
+import Modes from '@Components/Modes';
+import { useTypedSelector } from '@Store/hooks';
 
 function App() {
+  const isModesOpen = useTypedSelector(state => state.commonSlice.isModesOpen);
   return (
     <>
       <div className="fixed top-0 z-[49] w-full bg-slate-100">
@@ -19,6 +22,7 @@ function App() {
           {generateRoutes({ routes: appRoutes })}
         </div>
       </div>
+      {isModesOpen && <Modes />}
     </>
   );
 }
