@@ -1,47 +1,28 @@
-import React, { useState } from 'react';
-import timeImg from '@Assets/images/time.jpg';
-import Icon from '@Components/common/Icon';
 import { FlexColumn } from '@Components/common/Layouts';
-import Modal from '@Components/common/Modal';
-import Portal from '@Components/common/Layouts/Portal';
-const ModeBox = () => {
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+type ModeBoxProps = {
+  modeTitle: string;
+  modeDescription: string;
+  imageUrl: string;
+};
+const ModeBox = ({ modeTitle, modeDescription, imageUrl }: ModeBoxProps) => {
   return (
     <>
-      <FlexColumn className="gap-2">
-        <div className="relative h-[12rem] w-full rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:grayscale-[0.5] hover:backdrop-blur-[1px]">
-          <div className="h-full w-full">
-            <img
-              src={timeImg}
-              alt=""
-              className="h-full w-full object-contain"
-            />
-          </div>
-          <Icon
-            name="info"
-            className="absolute right-2 top-2 z-50"
-            onClick={() => {
-              setIsPopoverOpen(true);
-            }}
-          />
+      <div className="relative mx-auto h-[35rem] w-full max-w-[25rem] cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm outline outline-gray-200 hover:shadow-lg hover:outline-4 hover:outline-primary-600">
+        <div className="h-full w-full">
+          <img src={imageUrl} alt="" className="h-full w-full object-cover" />
         </div>
-        <p className="text-base font-semibold">Rapid Mode</p>
-      </FlexColumn>
-      {isPopoverOpen && (
-        <Portal className="w-full">
-          <Modal
-            onClose={() => setIsPopoverOpen(false)}
-            show
-            title="Rapid Mode"
-            titleClassName="text-[1.5rem]"
-            className="border shadow-lg"
-          >
-            <div>
-              <p>Some content</p>
-            </div>
-          </Modal>
-        </Portal>
-      )}
+        <div className="absolute top-0 h-full w-full bg-gradient-to-b from-transparent to-primary-800/90" />
+
+        <FlexColumn className="drop-shadow- absolute bottom-0 h-[8rem] w-full items-center justify-center rounded-lg">
+          <p className="has-dropshadow orbitron-regular select-none text-[1.75rem] font-semibold text-white md:text-[2.25rem]">
+            {modeTitle}
+          </p>
+          <p className="orbitron-regular select-none px-4 text-center text-sm text-white">
+            {modeDescription}
+          </p>
+        </FlexColumn>
+      </div>
     </>
   );
 };
