@@ -1,6 +1,6 @@
 import React from 'react';
 import ModesBox from './ModesBox';
-import { modesData } from '@Constants/Types/modes';
+import { modesData } from '@Constants/modes';
 import Portal from '@Components/common/Layouts/Portal';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { motion } from 'framer-motion';
