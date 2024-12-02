@@ -37,7 +37,7 @@ const Navbar = () => {
   return (
     <>
       <div className="mx-auto w-11/12">
-        <div className="} flex h-[4.25rem] w-full items-center justify-between px-6">
+        <div className="} flex h-[4.25rem] w-full items-center justify-between px-3">
           {dropdownOpen && (
             <div className="absolute left-0 top-0 z-50 h-screen w-screen bg-[#417EC9] opacity-10" />
           )}
