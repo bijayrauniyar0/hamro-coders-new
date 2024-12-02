@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
+import commonSlice from './slices/common';
 
 const store = configureStore({
-  reducer: {},
+  reducer: {
+    commonSlice,
+  },
 });
-
 
 export default store;
 export type AppDispatch = typeof store.dispatch;
