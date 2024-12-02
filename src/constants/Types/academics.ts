@@ -6,4 +6,5 @@ export interface ISubjects {
 }
 export interface ISubjectBoxProps {
   courseDetails: ISubjects;
+  handlePlay: () => void;
 }
