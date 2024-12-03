@@ -19,12 +19,7 @@ interface ICourseBoxProps {
   courseName?: string;
 }
 
-const CourseBox = ({
-  courseDetails,
-  selectedStyle,
-  // eslint-disable-next-line no-unused-vars
-  courseName,
-}: ICourseBoxProps) => {
+const CourseBox = ({ courseDetails, selectedStyle }: ICourseBoxProps) => {
   const dispatch = useTypedDispatch();
   function getStyle() {
     switch (selectedStyle) {
