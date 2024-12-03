@@ -43,7 +43,7 @@ const CourseBox = ({
           <SubjectRow
             key={key}
             courseDetails={semester}
-            handlePlay={() => dispatch(setIsModesOpen())}
+            handlePlay={() => dispatch(setIsModesOpen(true))}
           />
         );
       default:
@@ -51,7 +51,7 @@ const CourseBox = ({
           <SubjectBox
             key={key}
             courseDetails={semester}
-            handlePlay={() => dispatch(setIsModesOpen())}
+            handlePlay={() => dispatch(setIsModesOpen(true))}
           />
         );
     }
