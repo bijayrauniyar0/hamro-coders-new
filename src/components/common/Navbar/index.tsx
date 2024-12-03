@@ -1,11 +1,9 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useState } from 'react';
 import { navbarData } from '@Constants/navbarData';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import NestedNavLink from '@Components/common/Navbar/NestedNavLink';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import AccountMenu from '@Components/common/Navbar/AccountMenu';
-import useScrollPosition from '@Hooks/useScrollPosition';
 import Icon from '../Icon';
 import Portal from '../Layouts/Portal';
 
@@ -15,7 +13,6 @@ const Navbar = () => {
   const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);
   const navigate = useNavigate();
   const splittedPathname = pathname?.split('/');
-  const scrollPosition = useScrollPosition();
   const [width, setWidth] = useState(window.innerWidth);
   // const token = localStorage.getItem('token');
 
@@ -39,85 +36,73 @@ const Navbar = () => {
 
   return (
     <>
-      <div
-        className={`flex fixed w-full ${
-          scrollPosition > 0 ? 'h-[4.25rem]' : 'py-3'
-        } items-center justify-between px-6 ${
-          pathname === '/' ? 'bg-[#EFF6FE]' : 'border-b-[1px]'
-        }`}
-      >
-        {dropdownOpen && (
-          <div className="absolute left-0 top-0 z-50 h-screen w-screen bg-[#417EC9] opacity-10" />
-        )}
-        <div
-          tabIndex={0}
-          role="button"
-          className="logo-container min-w-[9rem] cursor-pointer"
-          onClick={() => navigate('/')}
-        >
-          {scrollPosition > 0 ? (
-            <p className="text-primary-600 text-base font-medium">
+      <div className="mx-auto w-11/12">
+        <div className="} flex h-[4.25rem] w-full items-center justify-between px-3">
+          {dropdownOpen && (
+            <div className="absolute left-0 top-0 z-50 h-screen w-screen bg-[#417EC9] opacity-10" />
+          )}
+          <div
+            tabIndex={0}
+            role="button"
+            className="logo-container min-w-[9rem] cursor-pointer"
+            onClick={() => navigate('/')}
+          >
+            <p className="text-xl font-semibold text-primary-700">
               Hamro Coders
             </p>
-          ) : (
-            // <img src={dvsLogoSmall} alt="logo" />
-            <p className="text-primary-600 text-base font-medium">
-              Hamro Coders
-            </p>
-            // <img src={dvsLogoNew} alt="logo" />
+          </div>
+          {width > 1120 && (
+            <div className="flex items-center gap-x-9">
+              {navbarData.map((navbarItem): React.ReactNode | null => {
+                if (
+                  (pathname.includes('admin') &&
+                    navbarItem.name !== 'Admin Panel') ||
+                  !pathname.includes('admin')
+                ) {
+                  return (
+                    <div key={navbarItem.id} className="navbar-items h-full">
+                      {!navbarItem.children && navbarItem.link ? (
+                        <NavLink
+                          className={() =>
+                            splittedPathname?.length > 0 &&
+                            navbarItem?.link?.split('/')?.[1] ===
+                              splittedPathname[1]
+                              ? 'border-b-2 border-transparent border-b-[#417EC9] p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200'
+                              : 'border-b-2 border-transparent p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200 hover:text-[#417EC9]'
+                          }
+                          to={navbarItem.link}
+                        >
+                          {navbarItem.name}
+                        </NavLink>
+                      ) : (
+                        <NestedNavLink
+                          navbarItem={navbarItem}
+                          setDropdownOpen={setDropdownOpen}
+                        />
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </div>
+          )}
+          {pathname !== '/fsadfhsadh' && (
+            <FlexRow className="items-center gap-6">
+              <FlexRow className="items-center gap-4">
+                {/* <Notification /> */}
+                <AccountMenu />
+              </FlexRow>
+              {width <= 1120 && (
+                <Icon
+                  name="menu"
+                  className="cursor-pointer"
+                  onClick={() => setBurgerMenuOpen(true)}
+                />
+              )}
+            </FlexRow>
           )}
         </div>
-        {width > 1120 && (
-          <div className="flex items-center gap-x-9">
-            {navbarData.map((navbarItem): React.ReactNode | null => {
-              if (
-                (pathname.includes('admin') &&
-                  navbarItem.name !== 'Admin Panel') ||
-                !pathname.includes('admin')
-              ) {
-                return (
-                  <div key={navbarItem.id} className="navbar-items h-full">
-                    {!navbarItem.children && navbarItem.link ? (
-                      <NavLink
-                        className={() =>
-                          splittedPathname?.length > 0 &&
-                          navbarItem?.link?.split('/')?.[1] ===
-                            splittedPathname[1]
-                            ? 'border-b-2 border-transparent border-b-[#417EC9] p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200'
-                            : 'border-b-2 border-transparent p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200 hover:text-[#417EC9]'
-                        }
-                        to={navbarItem.link}
-                      >
-                        {navbarItem.name}
-                      </NavLink>
-                    ) : (
-                      <NestedNavLink
-                        navbarItem={navbarItem}
-                        setDropdownOpen={setDropdownOpen}
-                      />
-                    )}
-                  </div>
-                );
-              }
-              return null;
-            })}
-          </div>
-        )}
-        {pathname !== '/fsadfhsadh' && (
-          <FlexRow className="items-center gap-6">
-            <FlexRow className="items-center gap-4">
-              {/* <Notification /> */}
-              <AccountMenu />
-            </FlexRow>
-            {width <= 1120 && (
-              <Icon
-                name="menu"
-                className="cursor-pointer"
-                onClick={() => setBurgerMenuOpen(true)}
-              />
-            )}
-          </FlexRow>
-        )}
       </div>
       {burgerMenuOpen && (
         <Portal>
@@ -127,7 +112,7 @@ const Navbar = () => {
                 {/* <img src={dvsLogoNew} alt="logo" /> */}
                 <Icon name="close" onClick={() => setBurgerMenuOpen(false)} />
               </FlexRow>
-              <div className="bg-primary-200 h-[1px] w-full" />
+              <div className="h-[1px] w-full bg-primary-200" />
               <FlexColumn className="p-3">
                 {navbarData.map((navbarItem): React.ReactNode | null => {
                   if (
@@ -143,7 +128,7 @@ const Navbar = () => {
                           navbarItem?.link?.split('/')?.[1] ===
                             splittedPathname[1]
                             ? 'bg-secondary-100'
-                            : 'hover:bg-secondary-100 bg-transparent'
+                            : 'bg-transparent hover:bg-secondary-100'
                         }`}
                       >
                         {!navbarItem.children && navbarItem.link ? (
@@ -153,7 +138,7 @@ const Navbar = () => {
                               splittedPathname?.length > 0 &&
                               navbarItem?.link?.split('/')?.[1] ===
                                 splittedPathname[1]
-                                ? 'text-primary-600 p-3 text-base font-medium tracking-[-0.5px] duration-200'
+                                ? 'p-3 text-base font-medium tracking-[-0.5px] text-primary-600 duration-200'
                                 : 'w-full p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200'
                             }
                             to={navbarItem.link}

@@ -1,11 +1,23 @@
-import Home from '@Views/Home';
+import AcademicsPage from '@Views/Academics';
 import { IRoute } from './type';
+import DashboardPage from '@Views/Dashbaord';
+import ModesPage from '@Views/Modes';
 
 const appRoutes: IRoute[] = [
   {
-    name: 'Home',
+    name: 'Dashboard',
     path: '/',
-    component: Home,
+    component: DashboardPage,
+  },
+  {
+    name: 'Academics',
+    path: '/academics/:courseName',
+    component: AcademicsPage,
+  },
+  {
+    name: 'Academics',
+    path: '/:courseName/:subjectCode',
+    component: ModesPage,
   },
 ];
 

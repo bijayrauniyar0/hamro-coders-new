@@ -7,14 +7,17 @@ export default defineConfig({
   plugins: [react()],
   server: {
     open: true,
+    host: '0.0.0.0',
     port: 3030,
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@Animations': path.resolve(__dirname, './src/animations'),
       '@Assets': path.resolve(__dirname, './src/assets'),
       '@Components': path.resolve(__dirname, './src/components'),
       '@Hooks': path.resolve(__dirname, './src/hooks'),
+      '@Store': path.resolve(__dirname, './src/store'),
       '@Views': path.resolve(__dirname, './src/views'),
       '@Services': path.resolve(__dirname, './src/services'),
       '@Utils': path.resolve(__dirname, './src/utils'),

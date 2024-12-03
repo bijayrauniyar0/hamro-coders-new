@@ -1,48 +1,38 @@
-import js from "@eslint/js";
-import globals from "globals";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginReact from 'eslint-plugin-react';
+import pluginPrettier from 'eslint-plugin-prettier';
 
-export default tseslint.config(
-  { ignores: ["dist"] },
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
+  { languageOptions: { globals: globals.browser } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  pluginReact.configs.flat.recommended,
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ["**/*.{ts,tsx}"],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
     plugins: {
-      "react-hooks": reactHooks,
-      "react-refresh": reactRefresh,
+      prettier: pluginPrettier.rules,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
-      "no-unused-vars": "off",
-      "no-console": "error",
-      "@typescript-eslint/no-explicit-any": "off",
-      'prettier/prettier': 'error',
+      semi: ['error', 'always'],
+      'no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-vars': 'off',
       'no-console': 'error',
-      'react/react-in-jsx-scope': 0,
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react/react-in-jsx-scope': 'off',
       'react/jsx-props-no-spreading': 'off',
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
       'react/forbid-prop-types': 'off',
       'react/prop-types': 'off',
       'no-unsafe-optional-chaining': 'warn',
       'import/no-import-module-exports': 'off',
       'react/function-component-definition': 'off',
       'react/jsx-filename-extension': 'off',
-      'import/prefer-default-export': 'warn',
       'react/require-default-props': 'off',
       'object-curly-newline': 'off',
-      'no-undef': 0,
-      'import/no-unresolved': 0,
+      'no-undef': 'off',
+      'import/no-unresolved': 'off',
     },
   },
-);
+];

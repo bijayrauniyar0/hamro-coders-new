@@ -8,7 +8,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@Animations/*": ["animations/*"],
       "@Assets/*": ["./src/assets/*"],
+      "@Store/*": ["store/*"],
       "@Components/*": ["./src/components/*"],
       "@Hooks/*": ["./src/hooks/*"],
       "@Views/*": ["./src/views/*"],
