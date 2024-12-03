@@ -4,21 +4,36 @@ type ModeBoxProps = {
   modeTitle: string;
   modeDescription: string;
   imageUrl: string;
+  // eslint-disable-next-line no-unused-vars
+  onClick: (id: number) => void;
+  id: number;
+  className?: string;
 };
-const ModeBox = ({ modeTitle, modeDescription, imageUrl }: ModeBoxProps) => {
+const ModeBox = ({
+  modeTitle,
+  modeDescription,
+  imageUrl,
+  onClick,
+  className,
+  id,
+}: ModeBoxProps) => {
   return (
     <>
-      <div className="relative mx-auto h-[35rem] w-full max-w-[25rem] cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm outline outline-gray-200 hover:shadow-lg hover:outline-4 hover:outline-primary-600">
+      <div
+        role="button"
+        onClick={() => onClick(id)}
+        className={`${className} relative mx-auto w-full max-w-[80%] cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm outline outline-4 outline-gray-200 transition-all duration-[0.4s] ease-in-out hover:shadow-lg hover:outline-primary-600 sm:max-w-[18rem] md:max-w-[25rem]`}
+      >
         <div className="h-full w-full">
           <img src={imageUrl} alt="" className="h-full w-full object-cover" />
         </div>
         <div className="absolute top-0 h-full w-full bg-gradient-to-b from-transparent to-primary-800/90" />
 
-        <FlexColumn className="drop-shadow- absolute bottom-0 h-[8rem] w-full items-center justify-center rounded-lg">
-          <p className="has-dropshadow orbitron-regular select-none text-[1.75rem] font-semibold text-white md:text-[2.25rem]">
+        <FlexColumn className="drop-shadow- absolute bottom-0 w-full items-center justify-center rounded-lg py-8">
+          <p className="has-dropshadow orbitron-regular select-none text-base font-semibold text-white md:text-[2rem]">
             {modeTitle}
           </p>
-          <p className="orbitron-regular select-none px-4 text-center text-sm text-white">
+          <p className="orbitron-regular select-none px-4 text-center text-xs text-white lg:text-sm">
             {modeDescription}
           </p>
         </FlexColumn>
