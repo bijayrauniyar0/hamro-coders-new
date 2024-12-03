@@ -13,8 +13,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky && husky install"
+    "prepare": "husky && husky install",
+     "predeploy": "yarn build",
+    "deploy": "gh-pages -d build -b develop"
   },
+  "homepage": "https://bijayrauniyar0.github.io/hamro-coders-new",
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-checkbox": "^1.1.2",
@@ -65,6 +68,7 @@
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "gh-pages": "^6.2.0",
     "globals": "^15.12.0",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.9",
