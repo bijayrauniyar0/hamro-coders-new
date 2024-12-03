@@ -26,3 +26,21 @@ body {
   font-weight: 500;
   font-style: normal;
 }
+
+.slider-container {
+  margin: 0 !important;
+  background-color: red;
+  width: 100%;
+  height: auto; /* Allow the height to be determined by content */
+  overflow: visible; /* Prevent cropping */
+}
+.slick-list {
+  overflow: visible !important; /* Ensure no cropping */
+}
+
+.slick-slide {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
