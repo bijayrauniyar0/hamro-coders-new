@@ -1,0 +1,25 @@
+# Ignore all node_modules
+node_modules
+
+# Ignore build artifacts
+dist
+build
+
+# Ignore specific files
+*.min.js
+*.lock
+*.json
+
+# Ignore specific directories
+coverage
+public
+.cache
+
+# Ignore specific file types
+*.svg
+*.png
+*.jpg
+
+# Ignore specific files in the root
+LICENSE
+README.md
