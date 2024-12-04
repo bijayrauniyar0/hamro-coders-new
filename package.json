@@ -15,7 +15,7 @@
     "preview": "vite preview",
     "prepare": "husky && husky install",
      "predeploy": "yarn build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist -b deploy"
   },
   "homepage": "https://bijayrauniyar0.github.io/hamro-coders-new",
   "dependencies": {
