@@ -8,7 +8,7 @@
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
   },
-  "engiene": "21.*",
+  "engiene": "22.*",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
