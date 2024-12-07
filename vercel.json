@@ -1,0 +1,13 @@
+{
+  "build": {
+    "env": {
+      "NODE_VERSION": "21"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
