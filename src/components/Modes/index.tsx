@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ModesBox from './ModesBox';
-import { modesData, reactSlickSettings } from '@Constants/modes';
+import { LeftCustomArrow, modesData, RightCustomArrow } from '@Constants/modes';
 import Portal from '@Components/common/Layouts/Portal';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { motion } from 'framer-motion';
 import { cardVariants, containerVariants } from '@Animations/index';
-import Slider from 'react-slick';
+import Slider, { Settings } from 'react-slick';
 import useScreenWidth from '@Hooks/useScreenWidth';
 import { useTypedDispatch } from '@Store/hooks';
 import { setIsModesOpen } from '@Store/actions/common';
@@ -33,6 +33,23 @@ const Modes = () => {
 
   const handleModeClick = (id: number) => {
     setClickedMode(id);
+  };
+
+  const reactSlickSettings: Settings = {
+    dots: true,
+    infinite: true,
+    speed: 200,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    centerPadding: '60px',
+    className: 'center',
+    adaptiveHeight: true,
+    prevArrow: <LeftCustomArrow />,
+    nextArrow: <RightCustomArrow />,
+    afterChange: (currentSlide: number) => {
+      setClickedMode(modesData[currentSlide].id);
+    },
   };
 
   function getComponentAccordingToWidth() {
