@@ -44,3 +44,8 @@ body {
   align-items: center;
   overflow: visible;
 }
+
+.slick-prev,
+.slick-next {
+  z-index: 2;
+}
