@@ -11,45 +11,27 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ToolTip from '@Components/radix/ToolTip';
 import { Select } from '@Components/common/FormUI';
 import { ISubjects } from '@Constants/Types/academics';
+import Modes from '@Components/Modes';
+import { useTypedSelector } from '@Store/hooks';
 
 const Academics = () => {
   const { courseName } = useParams();
+  const isModesOpen = useTypedSelector(state => state.commonSlice.isModesOpen);
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<string | number>(1);
   const [selectedStyle, setSelectedStyle] = useState<string>('grid');
   const [filteredList, setFilteredlist] = useState<ISubjects[]>(
     bcaSubjects[0].subjects,
   );
-
-  function getAcademicsContent() {
-    switch (courseName) {
-      case 'BCA':
-        return (
-          <CourseBox
-            courseDetails={filteredList}
-            selectedStyle={selectedStyle}
-            courseName="BCA"
-          />
-        );
-      case 'CSIT':
-        return (
-          <CourseBox
-            courseDetails={filteredList}
-            selectedStyle={selectedStyle}
-            courseName="CSIT"
-          />
-        );
-      default:
-        return (
-          <CourseBox
-            courseDetails={filteredList}
-            selectedStyle={selectedStyle}
-            courseName="BCA"
-          />
-        );
-    }
+  const [selectedSubjectCode, setSelectedSubjectCode] = useState<string>('');
+  const selectedMode = useTypedSelector(
+    state => state.commonSlice.selectedMode,
+  );
+  function handleNextClick() {
+    navigate(
+      `/mcq?course=${courseName}&subjectCode=${selectedSubjectCode}&semester=${selectedOption}&selectedMode=${selectedMode}`,
+    );
   }
-
   return (
     <>
       <FlexColumn className="gap-4">
@@ -92,8 +74,17 @@ const Academics = () => {
             />
           </FlexRow>
         </FlexRow>
-        <div key={courseName}>{getAcademicsContent()}</div>
+        <div key={courseName}>
+          <CourseBox
+            courseDetails={filteredList}
+            selectedStyle={selectedStyle}
+            handlePlay={(subjectCode: string) =>
+              setSelectedSubjectCode(subjectCode)
+            }
+          />
+        </div>
       </FlexColumn>
+      {isModesOpen && <Modes handleNextClick={handleNextClick} />}
     </>
   );
 };

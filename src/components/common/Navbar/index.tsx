@@ -67,8 +67,8 @@ const Navbar = () => {
                             splittedPathname?.length > 0 &&
                             navbarItem?.link?.split('/')?.[1] ===
                               splittedPathname[1]
-                              ? 'border-b-2 border-transparent border-b-[#417EC9] p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200'
-                              : 'border-b-2 border-transparent p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200 hover:text-[#417EC9]'
+                              ? 'border-b-2 border-transparent border-b-primary-600 p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200'
+                              : 'border-b-2 border-transparent p-3 text-base font-medium tracking-[-0.5px] text-matt-100 duration-200 hover:text-primary-300'
                           }
                           to={navbarItem.link}
                         >
