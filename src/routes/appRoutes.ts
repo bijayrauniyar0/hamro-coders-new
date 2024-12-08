@@ -2,6 +2,7 @@ import AcademicsPage from '@Views/Academics';
 import { IRoute } from './type';
 import DashboardPage from '@Views/Dashbaord';
 import ModesPage from '@Views/Modes';
+import MCQBox from '@Components/Academics/MCQBox';
 
 const appRoutes: IRoute[] = [
   {
@@ -18,6 +19,16 @@ const appRoutes: IRoute[] = [
     name: 'Academics',
     path: '/:courseName/:subjectCode',
     component: ModesPage,
+  },
+  {
+    name: 'Coding',
+    path: '/coding',
+    component: MCQBox,
+  },
+  {
+    name: 'MCQ',
+    path: '/mcq',
+    component: MCQBox,
   },
 ];
 
