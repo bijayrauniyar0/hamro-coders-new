@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ModesBox from './ModesBox';
 import { LeftCustomArrow, modesData, RightCustomArrow } from '@Constants/modes';
 import Portal from '@Components/common/Layouts/Portal';
@@ -7,14 +7,19 @@ import { motion } from 'framer-motion';
 import { cardVariants, containerVariants } from '@Animations/index';
 import Slider, { Settings } from 'react-slick';
 import useScreenWidth from '@Hooks/useScreenWidth';
-import { useTypedDispatch } from '@Store/hooks';
-import { setIsModesOpen } from '@Store/actions/common';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import { setIsModesOpen, setSelectedMode } from '@Store/actions/common';
 import Icon from '@Components/common/Icon';
 import { Button } from '@Components/radix/Button';
 
-const Modes = () => {
+type ModesProps = {
+  handleNextClick: () => void;
+};
+const Modes = ({ handleNextClick }: ModesProps) => {
   const dispatch = useTypedDispatch();
-  const [clickedMode, setClickedMode] = useState<number>(1);
+  const selectedMode = useTypedSelector(
+    state => state.commonSlice.selectedMode,
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -31,8 +36,8 @@ const Modes = () => {
   }, []);
   const screenWidth = useScreenWidth();
 
-  const handleModeClick = (id: number) => {
-    setClickedMode(id);
+  const handleModeClick = (value: string) => {
+    dispatch(setSelectedMode(value));
   };
 
   const reactSlickSettings: Settings = {
@@ -48,7 +53,7 @@ const Modes = () => {
     prevArrow: <LeftCustomArrow />,
     nextArrow: <RightCustomArrow />,
     afterChange: (currentSlide: number) => {
-      setClickedMode(modesData[currentSlide].id);
+      dispatch(setSelectedMode(modesData[currentSlide].value));
     },
   };
 
@@ -67,7 +72,7 @@ const Modes = () => {
                 <ModesBox
                   {...mode}
                   onClick={handleModeClick}
-                  className={`${clickedMode === mode.id ? 'hover:ouline !outline-primary-600' : ''}`}
+                  className={`${selectedMode === mode.value ? 'hover:ouline !outline-primary-600' : ''}`}
                 />
               </motion.div>
             ))}
@@ -82,7 +87,7 @@ const Modes = () => {
                   key={mode.id}
                   {...mode}
                   onClick={handleModeClick}
-                  className={`${clickedMode === mode.id ? 'outline-primary-600' : 'outline-none'}`}
+                  className={`${selectedMode === mode.value ? 'outline-primary-600' : 'outline-none'}`}
                 />
               </div>
             ))}
@@ -138,7 +143,12 @@ const Modes = () => {
           </FlexRow>
           <FlexColumn className="gap-6">
             {getComponentAccordingToWidth()}
-            <Button className="mx-auto w-[4rem] bg-[#8e1bedb5]">Next</Button>
+            <Button
+              className="mx-auto w-[4rem] bg-[#8e1bedb5]"
+              onClick={handleNextClick}
+            >
+              Next
+            </Button>
           </FlexColumn>
         </FlexColumn>
       </div>
