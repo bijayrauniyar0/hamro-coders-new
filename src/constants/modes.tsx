@@ -9,6 +9,7 @@ export const modesData = [
     modeDescription:
       'Compete with students from all over the world and climb the leaderboard',
     imageUrl: climbingLadderImg,
+    value: 'ranked',
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const modesData = [
     modeDescription:
       'Solve questions in a limited time and improve your speed and accuracy',
     imageUrl: rapidModeImg,
+    value: 'rapid',
   },
   {
     id: 3,
@@ -23,6 +25,7 @@ export const modesData = [
     modeDescription:
       'Test your knowledge and improve your skills with our practice mode',
     imageUrl: practiceModeImg,
+    value: 'practice',
   },
 ];
 
