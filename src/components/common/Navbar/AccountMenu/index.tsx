@@ -9,7 +9,7 @@ import {
 import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import Flex from '@Components/common/Layouts/Flex';
-import { Button } from 'react-day-picker'
+import { Button } from 'react-day-picker';
 // import { NavLink, useNavigate } from 'react-router-dom';
 // import { useTypedSelector } from '@Store/hooks';
 // import { useDispatch } from 'react-redux';
@@ -34,7 +34,7 @@ const AccountMenu = () => {
       >
         <DropdownMenuTrigger className="outline-none">
           <div className="relative">
-            <div className="h-8 w-8 rounded-full bg-[#417EC9] pt-1.5">
+            <div className="h-8 w-8 rounded-full bg-secondary-500 pt-1.5">
               <p className="text-base font-medium uppercase leading-5 text-white">
                 {/* {getInitialsFromString(userProfile?.username || '')} */}
                 LV

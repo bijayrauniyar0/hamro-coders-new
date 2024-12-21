@@ -9,6 +9,7 @@ export const modesData = [
     modeDescription:
       'Compete with students from all over the world and climb the leaderboard',
     imageUrl: climbingLadderImg,
+    value: 'ranked',
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const modesData = [
     modeDescription:
       'Solve questions in a limited time and improve your speed and accuracy',
     imageUrl: rapidModeImg,
+    value: 'rapid',
   },
   {
     id: 3,
@@ -23,10 +25,11 @@ export const modesData = [
     modeDescription:
       'Test your knowledge and improve your skills with our practice mode',
     imageUrl: practiceModeImg,
+    value: 'practice',
   },
 ];
 
-const CustomArrow = ({ className, style, onClick, direction }: any) => {
+export const RightCustomArrow = ({ className, style, onClick }: any) => {
   return (
     <div
       className={className}
@@ -34,24 +37,24 @@ const CustomArrow = ({ className, style, onClick, direction }: any) => {
         ...style,
         top: '50%', // Center vertically
         transform: 'translateY(-50%)',
-        left: direction === 'left' ? '2px' : 'unset', // Adjust position
-        right: direction === 'right' ? '2px' : 'unset',
+        right: '2px',
+        zIndex: 1,
       }}
       onClick={onClick}
     />
   );
 };
-
-export const reactSlickSettings = {
-  dots: true,
-  infinite: true,
-  speed: 200,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  swipeToSlide: true,
-  centerPadding: '60px',
-  className: 'center',
-  adaptiveHeight: true,
-  prevArrow: <CustomArrow direction="left" />,
-  nextArrow: <CustomArrow direction="right" />,
+export const LeftCustomArrow = ({ className, style, onClick }: any) => {
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        top: '50%', // Center vertically
+        transform: 'translateY(-50%)',
+        left: '2px',
+      }}
+      onClick={onClick}
+    />
+  );
 };

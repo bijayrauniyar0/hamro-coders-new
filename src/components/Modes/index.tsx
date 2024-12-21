@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ModesBox from './ModesBox';
-import { modesData, reactSlickSettings } from '@Constants/modes';
+import { LeftCustomArrow, modesData, RightCustomArrow } from '@Constants/modes';
 import Portal from '@Components/common/Layouts/Portal';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { motion } from 'framer-motion';
 import { cardVariants, containerVariants } from '@Animations/index';
-import Slider from 'react-slick';
+import Slider, { Settings } from 'react-slick';
 import useScreenWidth from '@Hooks/useScreenWidth';
-import { useTypedDispatch } from '@Store/hooks';
-import { setIsModesOpen } from '@Store/actions/common';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import { setIsModesOpen, setSelectedMode } from '@Store/actions/common';
 import Icon from '@Components/common/Icon';
 import { Button } from '@Components/radix/Button';
 
-const Modes = () => {
+type ModesProps = {
+  handleNextClick: () => void;
+};
+const Modes = ({ handleNextClick }: ModesProps) => {
   const dispatch = useTypedDispatch();
-  const [clickedMode, setClickedMode] = useState<number>(1);
+  const selectedMode = useTypedSelector(
+    state => state.commonSlice.selectedMode,
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -31,8 +36,25 @@ const Modes = () => {
   }, []);
   const screenWidth = useScreenWidth();
 
-  const handleModeClick = (id: number) => {
-    setClickedMode(id);
+  const handleModeClick = (value: string) => {
+    dispatch(setSelectedMode(value));
+  };
+
+  const reactSlickSettings: Settings = {
+    dots: true,
+    infinite: true,
+    speed: 200,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    centerPadding: '60px',
+    className: 'center',
+    adaptiveHeight: true,
+    prevArrow: <LeftCustomArrow />,
+    nextArrow: <RightCustomArrow />,
+    afterChange: (currentSlide: number) => {
+      dispatch(setSelectedMode(modesData[currentSlide].value));
+    },
   };
 
   function getComponentAccordingToWidth() {
@@ -43,14 +65,14 @@ const Modes = () => {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="mx-auto flex flex-row items-center justify-center gap-8"
+            className="mx-auto grid h-[80%] grid-cols-3 gap-8"
           >
             {modesData.map(mode => (
               <motion.div variants={cardVariants} key={mode.id}>
                 <ModesBox
                   {...mode}
                   onClick={handleModeClick}
-                  className={`${clickedMode === mode.id ? 'hover:ouline !outline-primary-600' : ''}`}
+                  className={`${selectedMode === mode.value ? 'hover:ouline !outline-primary-600' : ''}`}
                 />
               </motion.div>
             ))}
@@ -65,7 +87,7 @@ const Modes = () => {
                   key={mode.id}
                   {...mode}
                   onClick={handleModeClick}
-                  className={`${clickedMode === mode.id ? 'outline-primary-600' : 'outline-none'}`}
+                  className={`${selectedMode === mode.value ? 'outline-primary-600' : 'outline-none'}`}
                 />
               </div>
             ))}
@@ -121,7 +143,20 @@ const Modes = () => {
           </FlexRow>
           <FlexColumn className="gap-6">
             {getComponentAccordingToWidth()}
-            <Button className="mx-auto w-[4rem] bg-[#8e1bedb5]">Next</Button>
+            <div
+              className={`${!selectedMode ? 'cursor-not-allowed' : 'cursor-pointer'} mx-auto`}
+            >
+              <Button
+                className="mx-auto w-[4rem] bg-[#8e1bedb5]"
+                onClick={() => {
+                  handleNextClick();
+                  dispatch(setIsModesOpen(false));
+                }}
+                disabled={!selectedMode}
+              >
+                Next
+              </Button>
+            </div>
           </FlexColumn>
         </FlexColumn>
       </div>
