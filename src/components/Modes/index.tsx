@@ -148,7 +148,10 @@ const Modes = ({ handleNextClick }: ModesProps) => {
             >
               <Button
                 className="mx-auto w-[4rem] bg-[#8e1bedb5]"
-                onClick={handleNextClick}
+                onClick={() => {
+                  handleNextClick();
+                  dispatch(setIsModesOpen(false));
+                }}
                 disabled={!selectedMode}
               >
                 Next
