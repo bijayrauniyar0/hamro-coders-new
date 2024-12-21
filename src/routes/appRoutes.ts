@@ -2,7 +2,7 @@ import AcademicsPage from '@Views/Academics';
 import { IRoute } from './type';
 import DashboardPage from '@Views/Dashbaord';
 import ModesPage from '@Views/Modes';
-import MCQBox from '@Components/Academics/MCQBox';
+import MCQBox from '@Components/Academics/MCQSection';
 
 const appRoutes: IRoute[] = [
   {

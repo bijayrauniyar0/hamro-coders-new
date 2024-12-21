@@ -7,7 +7,7 @@ type CommonState = {
 };
 const initialState: CommonState = {
   isModesOpen: false,
-  selectedMode: 'ranked',
+  selectedMode: '',
 };
 
 const setIsModesOpen = (state: CommonState, action: PayloadAction<boolean>) => {
