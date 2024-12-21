@@ -5,8 +5,9 @@ import React, { useEffect } from 'react';
 
 type TimeBoxProps = {
   startTimer: boolean;
+  stopTimer: boolean;
 };
-const TimeBox = ({ startTimer }: TimeBoxProps) => {
+const TimeBox = ({ startTimer, stopTimer }: TimeBoxProps) => {
   const stopWatch = useStopwatch();
   useEffect(() => {
     if (!startTimer) return;
@@ -28,6 +29,10 @@ const TimeBox = ({ startTimer }: TimeBoxProps) => {
     // }, 3000);
     // return () => clearInterval(timeoutId);
   }, [startTimer]);
+  useEffect(() => {
+    if (!stopTimer) return;
+    stopWatch.stop();
+  }, [stopTimer]);
   return (
     <FlexRow className="items-center gap-1">
       <Icon name="access_alarm" className="flex items-center justify-center" />
