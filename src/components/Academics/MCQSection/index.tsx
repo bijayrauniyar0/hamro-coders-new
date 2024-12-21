@@ -1,80 +1,36 @@
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { optionsLabel } from '@Constants/QuestionsBox';
-import React, { useEffect, useState } from 'react';
+import {
+  modesDescription,
+  optionsLabel,
+  questions,
+} from '@Constants/QuestionsBox';
+import React, { useCallback, useEffect, useState } from 'react';
 import FromStepper from './FormStepper';
-import Icon from '@Components/common/Icon';
-import useStopwatch from '@Components/common/StopWatch';
 import buttonPng from '@Assets/images/button.png';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import TimeBox from './TimeBox';
+import { useTypedSelector } from '@Store/hooks';
+import { toast } from 'react-toastify';
+import Modal from '@Components/common/Modal';
 
 const MCQBox = () => {
   const [currentQuestion, setCurrentQuestion] = useState<boolean[]>([]);
   const [questionCount, setQuestionCount] = useState(0);
-  const data = [
-    {
-      id: 1,
-      question: 'What is the capital of France?',
-      options: [
-        'Berlin',
-        'Madrid',
-        'Paris',
-        'Lorem ipsum dolor sit amet consectetur adipisicing',
-      ],
-    },
-    {
-      id: 2,
-      question: 'Which programming language is used for web development?',
-      options: ['Python', 'JavaScript', 'C++', 'Ruby'],
-    },
-    {
-      id: 3,
-      question: 'What is the largest planet in the Solar System?',
-      options: ['Earth', 'Mars', 'Jupiter', 'Venus'],
-    },
-    {
-      id: 4,
-      question: 'Which country won the FIFA World Cup in 2018?',
-      options: ['Germany', 'Brazil', 'France', 'Argentina'],
-    },
-    {
-      id: 5,
-      question: 'What is the boiling point of water at sea level?',
-      options: ['90°C', '100°C', '110°C', '120°C'],
-    },
-    {
-      id: 6,
-      question: "Who wrote the play 'Romeo and Juliet'?",
-      options: [
-        'William Shakespeare',
-        'Charles Dickens',
-        'Mark Twain',
-        'Jane Austen',
-      ],
-    },
-    {
-      id: 7,
-      question: 'Which is the smallest continent by land area?',
-      options: ['Australia', 'Europe', 'Antarctica', 'South America'],
-    },
-    {
-      id: 8,
-      question: 'What is the chemical symbol for gold?',
-      options: ['Au', 'Ag', 'Go', 'Gd'],
-    },
-    {
-      id: 9,
-      question: 'Which animal is known as the King of the Jungle?',
-      options: ['Lion', 'Tiger', 'Elephant', 'Cheetah'],
-    },
-    {
-      id: 10,
-      question: 'What is the square root of 64?',
-      options: ['6', '7', '8', '9'],
-    },
-  ];
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
+  const [showModal, setShowModal] = useState(true);
+  const [timeOut, setTimeOut] = useState(5);
+  const selectedMode = useTypedSelector(
+    state => state.commonSlice.selectedMode,
+  );
+
+  const [searchParams] = useSearchParams();
+  const selectedModeParams = searchParams.get('selectedMode');
+  const navigate = useNavigate();
 
   function handleNextSkipClick(clickType: string) {
+    // if (questionCount === 9) {
+    // }
     if (clickType === 'skip') {
       setCurrentQuestion((prevData: boolean[]) => [...prevData, false]);
     } else {
@@ -82,39 +38,70 @@ const MCQBox = () => {
     }
     setQuestionCount(prevCount => prevCount + 1);
   }
-
-  const stopWatch = useStopwatch();
-
+  const startCountdown = useCallback((time: number) => {
+    const interval = setInterval(() => {
+      setTimeOut(time);
+      time -= 1;
+      if (time < 0) {
+        clearInterval(interval);
+        setShowModal(false);
+      }
+    }, 1000);
+  }, []);
   useEffect(() => {
-    stopWatch.start();
-    return () => stopWatch.stop(); // Clean up on unmount
-  }, [stopWatch]);
+    if (!selectedMode) {
+      toast.error('Please select a mode to continue');
+      setTimeout(() => {
+        navigate('/academics/BCA');
+      }, 500);
+      return () => {};
+    }
+    startCountdown(5);
+    if (selectedModeParams === 'practice') return () => {};
+    if (selectedModeParams === 'rapid') {
+      const intervalId = setInterval(() => {
+        // handleNextSkipClick('skip');
+      }, 10000);
+
+      return () => clearInterval(intervalId);
+    }
+    const timeoutId = setTimeout(() => {
+      // console.log("object");
+    }, 3000);
+    return () => clearInterval(timeoutId);
+  }, [selectedModeParams]);
 
   return (
     <>
+      <Modal
+        onClose={() => setShowModal(false)}
+        isOpen={showModal && !!selectedMode}
+        title={`${selectedMode?.toUpperCase()} MODE`}
+      >
+        <FlexColumn className="gap-4">
+          <p>
+            {
+              modesDescription[
+                (selectedMode as keyof typeof modesDescription) || 'practice'
+              ]
+            }
+          </p>
+          <p className="text-center text-base font-medium">
+            Game starting in <span className="text-primary-500">{timeOut}</span>
+          </p>
+        </FlexColumn>
+      </Modal>
       <FlexColumn className="w-full gap-8">
         <FromStepper
           currentQuestion={currentQuestion}
           questionCount={questionCount}
-          questionData={data}
+          questionData={questions}
         />
         <div className="w-full">
           <div className="mx-auto w-full rounded-lg border bg-white p-4 shadow-lg md:w-4/5">
             <FlexColumn className="items-end gap-6 px-3 py-2 md:px-6 md:py-4">
               <FlexRow className="w-full justify-between">
-                <FlexRow className="items-center gap-1">
-                  <Icon
-                    name="access_alarm"
-                    className="flex items-center justify-center"
-                  />
-                  <FlexRow className="items-center gap-1">
-                    <span>{stopWatch.time.minutes}:</span>
-                    <span>{stopWatch.time.seconds}:</span>
-                    <span className="text-primary-500">
-                      {stopWatch.time.milliseconds}
-                    </span>
-                  </FlexRow>
-                </FlexRow>
+                <TimeBox startTimer={!showModal || timeOut < 1} />
                 <FlexRow className="gap-4">
                   <p className="text-base">
                     <span className="font-medium">Solved: </span>
@@ -131,7 +118,7 @@ const MCQBox = () => {
                 </FlexRow>
               </FlexRow>
               <div className="w-full">
-                {data.map((questionData, index) => {
+                {questions.map((questionData, index) => {
                   if (index !== questionCount) return null;
                   return (
                     <FlexColumn className="gap-5" key={questionData.id}>
