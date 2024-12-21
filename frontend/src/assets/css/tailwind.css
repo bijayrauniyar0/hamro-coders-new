@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.text {
+  @apply font-primary tracking-normal;
+}
+
+@layer base {
+  html {
+    @apply text-[#475467];
+  }
+  h1 {
+    @apply text text-[6rem] font-light leading-[5.928rem] tracking-[-0.094rem];
+  }
+  h2 {
+    @apply text text-[3.75rem] font-normal leading-[3.731rem] tracking-[-0.075rem];
+  }
+  h3 {
+    @apply text text-[3rem] font-normal leading-[2.985rem] tracking-[-0.09rem];
+  }
+  h4 {
+    @apply text text-[2.125rem] font-normal leading-[2.5rem] tracking-[-0.0425rem];
+  }
+  h5 {
+    @apply text text-[1.5rem] font-medium leading-[1.75rem] tracking-[-0.045rem];
+  }
+  h6 {
+    @apply text text-[1.25rem] font-medium leading-[1.235rem];
+  }
+  p {
+    @apply text;
+  }
+  /* span {
+    @apply text-body-sm;
+  } */
+  a {
+    @apply cursor-pointer select-none text-[13px];
+  }
+}
+
+@layer components {
+  .input {
+    @apply block h-[40px] w-full gap-2 rounded-lg border border-solid border-grey-600 bg-white bg-clip-padding p-3 font-normal text-matt-200 transition ease-in-out placeholder:font-normal placeholder:text-grey-500 hover:border hover:border-secondary-500 focus:border focus:border-secondary-500 focus:outline-none;
+  }
+  .label {
+    @apply flex text-[14px] font-medium leading-4 text-matt-100;
+  }
+  .input.input-disabled {
+    @apply cursor-not-allowed select-none bg-neutral-100 text-neutral-500;
+  }
+  .label.label-disabled {
+    @apply cursor-not-allowed select-none text-grey-500;
+  }
+
+  .body-btn {
+    @apply text-[0.875rem] font-bold leading-[0.871rem];
+  }
+
+  .body-lg {
+    @apply text-[1rem] font-[400] leading-[1.25rem] tracking-[0px];
+  }
+  .body-sm {
+    @apply text-[0.875rem] font-[400] leading-[1.25rem] tracking-[0px];
+  }
+  .body-caption {
+    @apply text-[0.75rem] font-[500] leading-[0.741rem] tracking-[-0.24px];
+  }
+
+  .subtitle-lg {
+    @apply text-[1.125rem] font-[600] leading-[1.374rem] tracking-[-0.18px];
+  }
+  .subtitle-md {
+    @apply text-[1rem] font-[700] leading-[1.21rem];
+  }
+  .subtitle-sm {
+    @apply text-[1rem] font-[500] leading-[0.988rem] tracking-[0.1px];
+  }
+  .subtitle-sm-bold {
+    @apply text-[0.875rem] font-[700] leading-[1.125rem] tracking-[0.1px];
+  }
+  .icon-md {
+    @apply text-[1.5rem] font-[500] leading-[24px];
+  }
+  .icon-sm {
+    @apply text-[1.125rem] font-[400] leading-[1.125rem];
+  }
+  .table-head {
+    @apply text-[0.75rem] font-[500] uppercase tracking-[0.6px];
+  }
+  .table-body {
+    @apply text-[0.875rem] font-[500] leading-[0.864rem];
+  }
+  .tooltip {
+    @apply text-[0.75rem] font-[700] leading-[1rem];
+  }
+  .overline {
+    @apply text-[0.625rem] font-[500] uppercase leading-[0.75rem] tracking-[0.5px];
+  }
+  .chart-text {
+    @apply text-[0.875rem] font-bold leading-normal tracking-[-0.0175rem] text-grey-800;
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+  @layer responsive {
+    /* /_ Chrome,
+    Safari and Opera _/  */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .scrollbar::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .scrollbar::-webkit-scrollbar-track {
+      border-radius: 100vh;
+      background: transparent;
+      padding: 2px;
+    }
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: #eaecf0;
+      border-radius: 100vh;
+      border: 1px solid #d0d3da;
+      background-clip: padding-box;
+    }
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #d0d3da;
+    }
+  }
+}
+
+.color-input {
+  -webkit-appearance: none;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+}
+.color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+}
+.color-input::-webkit-color-swatch-wrapper {
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.icon-lg {
+  @apply text-[27px];
+}
+
+.icon-md {
+  @apply text-[24px];
+}
+
+tr:nth-child(even) {
+  background-color: #e6e6e6;
+}
+
+.searchbar-dropdown {
+  border: none;
+  border-bottom: 1px solid #d0d5dd !important;
+  border-radius: 0;
+  border-radius: 0.375rem 0.375rem 0 0;
+  overflow: hidden;
+}
+
+.custom-y-label {
+  writing-mode: vertical-rl !important;
+  transform: rotate(-180deg) !important;
+}

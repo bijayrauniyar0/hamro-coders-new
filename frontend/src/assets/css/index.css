@@ -1,0 +1,66 @@
+.poppins-regular {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: 'Poppins' !important;
+}
+
+.has-dropshadow {
+  filter: drop-shadow(0 0 2px rgba(140, 0, 255, 0.65))
+    drop-shadow(0 0 2px rgba(140, 0, 255, 0.75))
+    drop-shadow(0 0 2px rgba(140, 0, 255, 0.85));
+}
+
+.orbitron-regular {
+  font-family: 'Orbitron', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.slider-container {
+  margin: 0 !important;
+  background-color: red;
+  width: 100%;
+  height: auto; /* Allow the height to be determined by content */
+  overflow: visible; /* Prevent cropping */
+}
+.slick-list {
+  overflow: visible !important; /* Ensure no cropping */
+}
+
+.slick-slide {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+.slick-prev,
+.slick-next {
+  z-index: 2;
+}
+
+.animate-glow {
+  animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+  0% {
+    filter: drop-shadow(0 0 2px rgba(140, 0, 255, 0.192)) /* light purple */
+      drop-shadow(0 0 4px rgba(140, 0, 255, 0.192));
+  }
+  100% {
+    filter: drop-shadow(0 0 2px rgb(140, 0, 255)) /* strong purple */
+      drop-shadow(0 0 4px rgb(140, 0, 255));
+  }
+}
