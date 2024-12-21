@@ -65,7 +65,7 @@ const Modes = ({ handleNextClick }: ModesProps) => {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="mx-auto flex flex-row items-center justify-center gap-8"
+            className="mx-auto grid h-[80%] grid-cols-3 gap-8"
           >
             {modesData.map(mode => (
               <motion.div variants={cardVariants} key={mode.id}>
@@ -143,12 +143,17 @@ const Modes = ({ handleNextClick }: ModesProps) => {
           </FlexRow>
           <FlexColumn className="gap-6">
             {getComponentAccordingToWidth()}
-            <Button
-              className="mx-auto w-[4rem] bg-[#8e1bedb5]"
-              onClick={handleNextClick}
+            <div
+              className={`${!selectedMode ? 'cursor-not-allowed' : 'cursor-pointer'} mx-auto`}
             >
-              Next
-            </Button>
+              <Button
+                className="mx-auto w-[4rem] bg-[#8e1bedb5]"
+                onClick={handleNextClick}
+                disabled={!selectedMode}
+              >
+                Next
+              </Button>
+            </div>
           </FlexColumn>
         </FlexColumn>
       </div>

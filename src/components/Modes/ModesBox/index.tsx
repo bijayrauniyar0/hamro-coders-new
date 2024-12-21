@@ -23,7 +23,7 @@ const ModeBox = ({
       <div
         role="button"
         onClick={() => onClick(value || '')}
-        className={`${className} relative mx-auto w-full max-w-[80%] cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm outline outline-4 outline-gray-200 transition-all duration-[0.4s] ease-in-out hover:shadow-lg hover:outline-primary-600 sm:max-w-[18rem] md:max-w-[25rem]`}
+        className={`${className} relative mx-auto w-full max-w-[80%] cursor-pointer self-stretch overflow-hidden rounded-lg bg-white shadow-sm outline outline-4 outline-gray-200 transition-all duration-[0.4s] ease-in-out hover:shadow-lg hover:outline-primary-600 sm:max-w-[16rem] md:max-w-[22rem]`}
       >
         <div className="h-full w-full">
           <img src={imageUrl} alt="" className="h-full w-full object-cover" />
