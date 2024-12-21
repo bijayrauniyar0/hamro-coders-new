@@ -9,7 +9,7 @@ const useStopwatch = () => {
   const start = () => {
     if (!isRunning) {
       setIsRunning(true);
-      startTimeRef.current = Date.now() - time; // Account for the current elapsed time
+      startTimeRef.current = Date.now() - time; // Account for elapsed time
       intervalRef.current = window.setInterval(() => {
         setTime(Date.now() - (startTimeRef.current ?? 0));
       }, 10);
@@ -19,8 +19,10 @@ const useStopwatch = () => {
   const stop = () => {
     if (isRunning) {
       setIsRunning(false);
-      clearInterval(intervalRef.current as number);
-      intervalRef.current = null;
+      if (intervalRef.current !== null) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
   };
 
