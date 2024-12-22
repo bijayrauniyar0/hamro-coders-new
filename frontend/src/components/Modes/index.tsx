@@ -15,6 +15,7 @@ import { Button } from '@Components/radix/Button';
 type ModesProps = {
   handleNextClick: () => void;
 };
+
 const Modes = ({ handleNextClick }: ModesProps) => {
   const dispatch = useTypedDispatch();
   const selectedMode = useTypedSelector(

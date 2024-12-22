@@ -18,21 +18,25 @@ class ErrorBoundary extends ReactComponent<
     this.state = { hasError: false };
   }
 
+  // eslint-disable-next-line no-unused-vars
   static getDerivedStateFromError(_: Error): ErrorBoundaryState {
     return { hasError: true };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    // eslint-disable-next-line no-console
     console.error('Uncaught error:', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-        console.log(this.state)
       return (
         <div className="flex items-center justify-center bg-red-200 p-4">
           <p className="text-base text-red-600">Something went wrong</p>
-          <Icon name='error_outline' className='flex items-center text-red-600'/>
+          <Icon
+            name="error_outline"
+            className="flex items-center text-red-600"
+          />
         </div>
       );
     }

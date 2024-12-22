@@ -1,4 +1,4 @@
-/* eslint-disable no-nested-ternary */
+ 
 import React, { useEffect, useRef } from 'react';
 import { cn } from '@Utils/index';
 import { IComboBoxProps, IDropDownData } from '@Constants/interface';

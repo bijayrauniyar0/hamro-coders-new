@@ -33,6 +33,7 @@ export default [
       'object-curly-newline': 'off',
       'no-undef': 'off',
       'import/no-unresolved': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
 ];

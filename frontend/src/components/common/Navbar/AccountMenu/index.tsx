@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+ 
 import { useState } from 'react';
 import avatarLogo from '@Assets/images/avatar-images.svg';
 import {

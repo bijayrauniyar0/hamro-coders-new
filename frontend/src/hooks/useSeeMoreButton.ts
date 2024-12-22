@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, RefObject, useRef } from 'react';
 
 const useSeeMoreButton = (elementRef: RefObject<HTMLElement>) => {
