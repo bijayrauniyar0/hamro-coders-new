@@ -18,9 +18,6 @@ Thumbs.db
 # Yarn integrity file
 .yarn-integrity
 
-# Optional: ignore the Dockerfile if it's used in a different place
-Dockerfile*
-
 # IDE/editor-specific files
 .vscode/
 .idea/
