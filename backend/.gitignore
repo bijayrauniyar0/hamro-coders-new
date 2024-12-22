@@ -1,0 +1,30 @@
+# Node.js dependencies
+node_modules/
+
+# TypeScript build output
+dist/
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Yarn integrity file
+.yarn-integrity
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+
+# Optional: Ignore the build artifacts if you use a build tool like Webpack or Babel
+build/
+coverage/
+
+# Optional: Ignore test reports or other artifact folders
+test-coverage/
