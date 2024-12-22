@@ -10,7 +10,7 @@ services:
       - /app/node_modules  # Avoids overriding node_modules with volume
     environment:
       - NODE_ENV=development
-      - DB_HOST=db  # Use 'db' as the hostname, which matches the db service name
+      - DB_HOST=hamrocoders-sql-db  # Use 'db' as the hostname, which matches the db service name
       - DB_PORT=5432
       - DB_USER=bijay
       - DB_PASSWORD=986184@@
