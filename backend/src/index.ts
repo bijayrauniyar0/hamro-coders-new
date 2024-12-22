@@ -1,35 +1,23 @@
+// src/server.ts
 import express from 'express';
-import { Pool } from 'pg';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import userRoutes from './routes/userRoutes';
+import sequelize from './config/database';
 
 const app = express();
+app.use(express.json()); // Middleware to parse JSON requests
 const port = 9000;
+// Use the routes
+app.use('/api', userRoutes);
 
-// PostgreSQL connection setup using environment variables
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || '8080'),
-});
+// Test database connection
+sequelize
+  .authenticate()
+  .then(() => console.log('Database connected'))
+  .catch(err => console.log('Error connecting to the database:', err));
 
-app.use(bodyParser.json());
-
-// Sample route to test DB connection
-app.get('/', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT NOW()');
-    res.send(result.rows[0]);
-  } catch (err) {
-    console.error('Database query error', err);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+// Sync models and start server
+sequelize.sync().then(() => {
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
 });
