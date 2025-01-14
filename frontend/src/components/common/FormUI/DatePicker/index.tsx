@@ -35,17 +35,17 @@ export function DatePicker({
           variant="dropDown"
           size="drop-lg"
           className={cn(
-            'group flex w-full items-center justify-between gap-2 font-normal duration-200 hover:border-secondary-500',
+            'group flex w-full items-center justify-between gap-2 font-normal duration-200 hover:border-primary-500',
             !date && 'text-muted-foreground',
           )}
         >
           <div className="flex items-center justify-start">
-            <CalendarIcon className="mr-2 h-4 w-4 duration-200 group-hover:text-secondary-500" />
+            <CalendarIcon className="mr-2 h-4 w-4 duration-200 group-hover:text-primary-500" />
             {date || <span className="text-[#667085]">{placeHolder}</span>}
           </div>
           <Icon
             name="expand_more"
-            className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 group-hover:text-secondary-500"
+            className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 group-hover:text-primary-500"
           />
           {/* {date ? format(date, 'PPP') : <span>Pick a date</span>} */}
         </Button>
