@@ -1,15 +1,12 @@
 import { defineConfig } from 'vite';
+import dotenv from 'dotenv';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
+dotenv.config();
 export default defineConfig({
   plugins: [react()],
-  server: {
-    open: true,
-    host: '0.0.0.0',
-    port: 3030,
-  },
+ 
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -24,5 +21,18 @@ export default defineConfig({
       '@Types': path.resolve(__dirname, './src/types'),
       '@Constants': path.resolve(__dirname, './src/constants'),
     },
+  },
+  define: {
+    'process.env': {
+      BASE_URL: process.env.BASE_URL,
+      API_URL_V1: process.env.API_URL_V1,
+      SITE_NAME: process.env.SITE_NAME,
+      FAST_API: process.env.FAST_API,
+    },
+  },
+  server: {
+    open: false,
+    host: '0.0.0.0',
+    port: 3030,
   },
 });
