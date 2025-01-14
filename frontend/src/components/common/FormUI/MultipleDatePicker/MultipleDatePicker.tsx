@@ -31,7 +31,7 @@ const DateRangeIcon = ({ icon, styles }: { icon: string; styles: string }) => {
   return (
     <Icon
       name={icon}
-      className={`flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 group-hover:text-secondary-500 ${styles}`}
+      className={`flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 group-hover:text-primary-500 ${styles}`}
     />
   );
 };
@@ -76,7 +76,7 @@ const MultipleDatePicker: FC<MultipleDatePickerProps> = ({
             variant="dropDown"
             size="drop-lg"
             className={cn(
-              'group flex w-full items-center justify-between gap-2 font-normal hover:border-secondary-500',
+              'group flex w-full items-center justify-between gap-2 font-normal hover:border-primary-500',
             )}
           >
             <div className="flex items-center gap-2">
@@ -143,7 +143,7 @@ const MultipleDatePicker: FC<MultipleDatePickerProps> = ({
             role="button"
             tabIndex={0}
             onKeyDown={() => {}}
-            className="cursor-pointer text-[0.875rem] font-semibold text-secondary-500"
+            className="cursor-pointer text-[0.875rem] font-semibold text-primary-500"
             onClick={() => {
               clearDateRange();
               setSelectedEndDate('');
@@ -153,7 +153,7 @@ const MultipleDatePicker: FC<MultipleDatePickerProps> = ({
             Clear
           </span>
           <Button
-            className="!h-8 !bg-secondary-500 !px-4 !py-2"
+            className="!h-8 !bg-primary-500 !px-4 !py-2"
             onClick={() => {
               if (selectedStartDate) {
                 handleDateChange(selectedStartDate, setStartDate);

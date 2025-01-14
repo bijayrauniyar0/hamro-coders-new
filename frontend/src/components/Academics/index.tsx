@@ -50,13 +50,13 @@ const Academics = () => {
               name="grid_view"
               message="Show Grid View"
               iconClick={() => setSelectedStyle('grid')}
-              className={`${selectedStyle === 'grid' ? 'rounded-sm !bg-secondary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
+              className={`${selectedStyle === 'grid' ? 'rounded-sm !bg-primary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
             />
             <ToolTip
               name="view_list"
               message="Show List View"
               iconClick={() => setSelectedStyle('list')}
-              className={`${selectedStyle === 'list' ? 'rounded-sm !bg-secondary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
+              className={`${selectedStyle === 'list' ? 'rounded-sm !bg-primary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
             />
             <Select
               options={semestersData || []}

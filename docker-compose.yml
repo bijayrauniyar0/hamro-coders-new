@@ -43,7 +43,7 @@ services:
       POSTGRES_PASSWORD: bijay@123
       POSTGRES_DB: hamrocoders
     ports:
-      - "5432:5432"  # Exposes the database on port 5432
+      - "5433:5432"  # Exposes the database on port 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
