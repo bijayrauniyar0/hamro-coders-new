@@ -13,7 +13,7 @@ services:
       - DB_HOST=hamrocoders-sql-db  # Use 'db' as the hostname, which matches the db service name
       - DB_PORT=5432
       - DB_USER=bijay
-      - DB_PASSWORD=986184@@
+      - DB_PASSWORD=bijay@123
       - DB_NAME=hamrocoders
     image: hamrocoders-backend  # Builds and uses the backend-ts image locally
     command: ["yarn", "dev"]

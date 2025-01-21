@@ -13,6 +13,8 @@ import { Select } from '@Components/common/FormUI';
 import { ISubjects } from '@Constants/Types/academics';
 import Modes from '@Components/Modes';
 import { useTypedSelector } from '@Store/hooks';
+import { useQuery } from '@tanstack/react-query';
+import { getAllUsers } from '@Services/common';
 
 const Academics = () => {
   const { courseName } = useParams();
@@ -32,6 +34,11 @@ const Academics = () => {
       `/mcq?course=${courseName}&subjectCode=${selectedSubjectCode}&semester=${selectedOption}&selectedMode=${selectedMode}`,
     );
   }
+  const { data } = useQuery({
+    queryKey: ['bcaSubjects'],
+    queryFn: getAllUsers,
+  });
+  console.log(data);
   return (
     <>
       <FlexColumn className="gap-4">
