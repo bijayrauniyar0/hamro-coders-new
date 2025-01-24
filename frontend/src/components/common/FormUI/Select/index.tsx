@@ -65,7 +65,7 @@ export default function Select({
     <div className="relative">
       <div
         ref={dropdownRef}
-        className={`${className} group flex h-11 w-full cursor-pointer items-center justify-between border-b-2 border-grey-300 bg-white hover:border-secondary-500`}
+        className={`${className} group flex h-11 w-full cursor-pointer items-center justify-between border-b-2 border-grey-300 bg-white hover:border-primary-500`}
         onClick={toggleDropdown}
       >
         <span
@@ -78,7 +78,7 @@ export default function Select({
         <span className="group pr-2 text-grey-800">
           <Icon
             name={isOpen ? 'expand_less' : 'expand_more'}
-            className="flex items-center group-hover:text-secondary-500"
+            className="flex items-center group-hover:text-primary-500"
           />
         </span>
       </div>

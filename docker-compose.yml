@@ -1,0 +1,70 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"  # Exposes the backend API
+    volumes:
+      - ./backend:/app  # Syncs local backend directory with the container
+      - /app/node_modules  # Avoids overriding node_modules with volume
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=hamrocoders-sql-db  # Use 'db' as the hostname, which matches the db service name
+      - DB_PORT=5432
+      - DB_USER=bijay
+      - DB_PASSWORD=bijay@123
+      - DB_NAME=hamrocoders
+    image: hamrocoders-backend  # Builds and uses the backend-ts image locally
+    command: ["yarn", "dev"]
+    networks:
+      - app-network  # Ensure the backend is on the app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3030:3030"  # Exposes the frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    image: hamrocoders-frontend  # Builds and uses the frontend image locally
+    networks:
+      - app-network  # Ensure the frontend is on the app-network
+
+  db:
+    image: postgres:15
+    container_name: hamrocoders-sql-db
+    environment:
+      POSTGRES_USER: bijay
+      POSTGRES_PASSWORD: bijay@123
+      POSTGRES_DB: hamrocoders
+    ports:
+      - "5433:5432"  # Exposes the database on port 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network  # Ensure the database is on the app-network
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com  # Set pgAdmin email (you can change this)
+      PGADMIN_DEFAULT_PASSWORD: admin  # Set pgAdmin password (you can change this)
+    ports:
+      - "5050:80"  # Access pgAdmin at localhost:5050
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge  # Uses the bridge driver to create the network
+
+volumes:
+  postgres_data:
+  pgadmin_data:

@@ -1,9 +1,5 @@
 const Fallback = () => {
-  return (
-    <div>
-      Something went wrong
-    </div>
-  )
-}
+  return <div>Something went wrong</div>;
+};
 
-export default Fallback
+export default Fallback;

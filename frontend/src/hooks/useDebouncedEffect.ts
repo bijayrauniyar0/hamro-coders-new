@@ -20,7 +20,6 @@ function useDebouncedEffect(effect: () => void, deps: any[], delay: number) {
         clearTimeout(handlerRef.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps, delay]);
 }
 

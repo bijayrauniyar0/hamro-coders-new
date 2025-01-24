@@ -1,4 +1,4 @@
-/* eslint-disable no-nested-ternary */
+ 
 import React, { useEffect, useRef } from 'react';
 import { cn } from '@Utils/index';
 import { IComboBoxProps, IDropDownData } from '@Constants/interface';
@@ -111,7 +111,7 @@ function Dropdown({
           disabled={disabled}
           aria-expanded={open}
           className={cn(
-            'group flex items-center justify-between gap-2 bg-white hover:border-secondary-500 disabled:!cursor-not-allowed',
+            'group flex items-center justify-between gap-2 bg-white hover:border-primary-500 disabled:!cursor-not-allowed',
             className,
           )}
           onClick={() => setOpen(true)}
@@ -121,7 +121,7 @@ function Dropdown({
               {hasLeftIcon && (
                 <Icon
                   name={leftIconName ?? ''}
-                  className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-secondary-500"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-primary-500"
                 />
               )}
               {multiple ? (
@@ -174,7 +174,7 @@ function Dropdown({
             </div>
             <Icon
               name="expand_more"
-              className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-secondary-500"
+              className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-primary-500"
             />
           </>
         </Button>

@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+ 
 import { IDivProps } from '@Constants/interface';
 import { createPortal } from 'react-dom';
 import { useEffect, useLayoutEffect } from 'react';

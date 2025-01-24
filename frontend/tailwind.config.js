@@ -19,22 +19,6 @@ export const theme = {
       primary: ['Poppins', 'sans-serif'],
     },
     colors: {
-      // primary: {
-      //   100: '#F4F7FE',
-      //   200: '#EAECF0',
-      //   300: '#41588F',
-      //   400: '#C0C7DA',
-      //   500: '#8091B4',
-      //   600: '#41588F',
-      //   700: '#012069',
-      // },
-      // secondary: {
-      //   100: '#E2ECF7',
-      //   200: '#CFE0F1',
-      //   300: '#9FBEE4',
-      //   400: '#709ED6',
-      //   500: '#417EC9',
-      // },
       primary: {
         100: '#efe1fc',
         200: '#dfc3f9',
@@ -45,17 +29,6 @@ export const theme = {
         700: '#693f8f',
         800: '#462a60',
         900: '#231530',
-      },
-      secondary: {
-        100: '#ebdcef',
-        200: '#d7b8df',
-        300: '#c295ce',
-        400: '#ae71be',
-        500: '#9a4eae',
-        600: '#7b3e8b',
-        700: '#5c2f68',
-        800: '#3e1f46',
-        900: '#1f1023',
       },
       // grey and neutral represent same color
       grey: {

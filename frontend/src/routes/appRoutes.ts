@@ -3,6 +3,7 @@ import { IRoute } from './type';
 import DashboardPage from '@Views/Dashbaord';
 import ModesPage from '@Views/Modes';
 import MCQBox from '@Components/Academics/MCQSection';
+import AuthenticationComponent from '@Components/UserAuthentication';
 
 const appRoutes: IRoute[] = [
   {
@@ -29,6 +30,11 @@ const appRoutes: IRoute[] = [
     name: 'MCQ',
     path: '/mcq',
     component: MCQBox,
+  },
+  {
+    name: 'Login',
+    path: '/login',
+    component: AuthenticationComponent,
   },
 ];
 

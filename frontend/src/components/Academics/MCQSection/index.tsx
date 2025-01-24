@@ -185,7 +185,7 @@ const MCQBox = () => {
                               selectedOption[questionCount] === option;
                             return (
                               <div
-                                className={`flex cursor-pointer items-center ${isCorrectAnswer ? 'bg-[#e2ffe4]' : ''} ${isSelectedWrongAnswer ? 'bg-[#ffdbdb]' : ''} ${isSelected ? 'border-2 border-primary-400' : 'border-secondary-100'} justify-start gap-4 rounded-lg border bg-white p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4`}
+                                className={`flex cursor-pointer items-center ${isCorrectAnswer ? 'bg-[#e2ffe4]' : ''} ${isSelectedWrongAnswer ? 'bg-[#ffdbdb]' : ''} ${isSelected ? 'border-2 border-primary-400' : 'border-primary-100'} justify-start gap-4 rounded-lg border bg-white p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4`}
                                 onClick={() => {
                                   setSelectedOption((prevData: string[]) => {
                                     // Check if the option is already selected

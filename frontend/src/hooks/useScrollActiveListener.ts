@@ -1,7 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useCallback, useEffect } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function debounce(func: Function, timeout = 300) {
   let timer: any;
   return (arg: any) => {
@@ -31,7 +31,7 @@ export default function useScrollActiveListener({
         }
       });
     }, 50),
-    [], // eslint-disable-line
+    [],  
   );
 
   useEffect(() => {

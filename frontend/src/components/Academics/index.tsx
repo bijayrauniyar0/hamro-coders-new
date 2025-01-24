@@ -13,6 +13,8 @@ import { Select } from '@Components/common/FormUI';
 import { ISubjects } from '@Constants/Types/academics';
 import Modes from '@Components/Modes';
 import { useTypedSelector } from '@Store/hooks';
+import { useQuery } from '@tanstack/react-query';
+import { getAllUsers } from '@Services/common';
 
 const Academics = () => {
   const { courseName } = useParams();
@@ -32,6 +34,11 @@ const Academics = () => {
       `/mcq?course=${courseName}&subjectCode=${selectedSubjectCode}&semester=${selectedOption}&selectedMode=${selectedMode}`,
     );
   }
+  const { data } = useQuery({
+    queryKey: ['bcaSubjects'],
+    queryFn: getAllUsers,
+  });
+  console.log(data);
   return (
     <>
       <FlexColumn className="gap-4">
@@ -50,13 +57,13 @@ const Academics = () => {
               name="grid_view"
               message="Show Grid View"
               iconClick={() => setSelectedStyle('grid')}
-              className={`${selectedStyle === 'grid' ? 'rounded-sm !bg-secondary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
+              className={`${selectedStyle === 'grid' ? 'rounded-sm !bg-primary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
             />
             <ToolTip
               name="view_list"
               message="Show List View"
               iconClick={() => setSelectedStyle('list')}
-              className={`${selectedStyle === 'list' ? 'rounded-sm !bg-secondary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
+              className={`${selectedStyle === 'list' ? 'rounded-sm !bg-primary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
             />
             <Select
               options={semestersData || []}

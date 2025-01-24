@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+ 
 import { useState } from 'react';
 import avatarLogo from '@Assets/images/avatar-images.svg';
 import {
@@ -34,7 +34,7 @@ const AccountMenu = () => {
       >
         <DropdownMenuTrigger className="outline-none">
           <div className="relative">
-            <div className="h-8 w-8 rounded-full bg-secondary-500 pt-1.5">
+            <div className="h-8 w-8 rounded-full bg-primary-500 pt-1.5">
               <p className="text-base font-medium uppercase leading-5 text-white">
                 {/* {getInitialsFromString(userProfile?.username || '')} */}
                 LV

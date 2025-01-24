@@ -63,7 +63,7 @@ export default function FileUpload({
   // register form element to useForm
   useEffect(() => {
     register(name);
-    // eslint-disable-next-line no-unused-expressions
+     
     // setValue(name, []);
   }, [register, name, setValue]);
 
@@ -115,7 +115,7 @@ export default function FileUpload({
   return (
     <FlexColumn gap={5}>
       <FlexColumn
-        className="cursor-pointer items-center justify-center rounded-lg border border-dashed border-[#E6E6E6] bg-[#FAFAFA] px-5 py-3 duration-200 hover:border-secondary-500"
+        className="cursor-pointer items-center justify-center rounded-lg border border-dashed border-[#E6E6E6] bg-[#FAFAFA] px-5 py-3 duration-200 hover:border-primary-500"
         //   @ts-ignore
         onClick={onFileUpload}
       >
@@ -134,7 +134,7 @@ export default function FileUpload({
       </FlexColumn>
       {multiple && (
         <FlexRow
-          className="group w-full items-center justify-center rounded-md border border-dashed p-3 duration-200 hover:border-secondary-500 hover:bg-[#FAFAFA]"
+          className="group w-full items-center justify-center rounded-md border border-dashed p-3 duration-200 hover:border-primary-500 hover:bg-[#FAFAFA]"
           role="button"
           tabIndex={0}
           //   @ts-ignore
@@ -188,7 +188,7 @@ export default function FileUpload({
             <FlexRow gap={2} className="!w-[20%] justify-end">
               <Icon
                 name="download"
-                className="text-grey-400 duration-200 hover:text-secondary-500"
+                className="text-grey-400 duration-200 hover:text-primary-500"
                 onClick={() => downloadBlob(previewURL, file?.name)}
               />
               <Icon
