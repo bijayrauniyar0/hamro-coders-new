@@ -7,7 +7,14 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@Utils/*": ["src/utils/*"],
+      "@Models/*": ["src/models/*"],
+      "@Controllers/*": ["src/controllers/*"],
+      "@Routes/*": ["src/routes/*"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

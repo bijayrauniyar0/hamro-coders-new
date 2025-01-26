@@ -1,6 +1,6 @@
 import AcademicsPage from '@Views/Academics';
 import { IRoute } from './type';
-import DashboardPage from '@Views/Dashbaord';
+import DashboardPage from '@Views/Dashboard';
 import ModesPage from '@Views/Modes';
 import MCQBox from '@Components/Academics/MCQSection';
 import AuthenticationComponent from '@Components/UserAuthentication';
@@ -10,6 +10,16 @@ const appRoutes: IRoute[] = [
     name: 'Dashboard',
     path: '/',
     component: DashboardPage,
+  },
+  {
+    name: 'Login',
+    path: '/login',
+  component: AuthenticationComponent,
+  },
+  {
+    name: 'Login',
+    path: '/signup',
+    component: AuthenticationComponent,
   },
   {
     name: 'Academics',
@@ -31,11 +41,7 @@ const appRoutes: IRoute[] = [
     path: '/mcq',
     component: MCQBox,
   },
-  {
-    name: 'Login',
-    path: '/login',
-    component: AuthenticationComponent,
-  },
+
 ];
 
 export default appRoutes;

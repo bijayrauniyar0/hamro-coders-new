@@ -41,7 +41,7 @@
 
 @layer components {
   .input {
-    @apply block h-[40px] w-full gap-2 rounded-lg border border-solid border-grey-600 bg-white bg-clip-padding p-3 font-normal text-matt-200 transition ease-in-out placeholder:font-normal placeholder:text-grey-500 hover:border hover:border-primary-500 focus:border focus:border-primary-500 focus:outline-none;
+    @apply block h-[40px] w-full gap-2 rounded-lg border border-solid border-grey-600 bg-white bg-clip-padding p-3 font-normal text-matt-200 transition ease-in-out placeholder:font-normal placeholder:text-grey-500 hover:border hover:border-primary-600 focus:border focus:border-primary-600 focus:outline-none;
   }
   .label {
     @apply flex text-[14px] font-medium leading-4 text-matt-100;
