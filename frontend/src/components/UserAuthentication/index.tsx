@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Login from './Login';
 import { FlexRow } from '@Components/common/Layouts';
 import singInImg from '@Assets/images/sign-in.jpg';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Signup from './Signup';
+import useAuth from '@Hooks/useAuth';
 
 const AuthenticationComponent = () => {
   const { pathname } = useLocation();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const getContent = () => {
     switch (pathname) {
       case '/login':
@@ -17,6 +20,13 @@ const AuthenticationComponent = () => {
         return <Login />;
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate('/');
+    }
+  }, []);
+
   return (
     <div className="grid h-screen grid-cols-12">
       <div className="col-span-12 md:col-span-6 lg:col-span-5 xl:col-span-4">
