@@ -2,6 +2,8 @@ import { Route, Routes } from 'react-router-dom';
 import { ReactNode, Suspense } from 'react';
 import Fallback from '@Components/common/Fallback';
 import { IRoute } from './type';
+import useAuth from '@Hooks/useAuth';
+import ProtectedRoute from './protectedRoute';
 
 interface IGenerateRouteProps {
   routes: IRoute[];
@@ -12,24 +14,53 @@ const generateRoutes = ({
   routes,
   fallback = <Fallback />,
 }: IGenerateRouteProps) => {
+  const { isAuthenticated } = useAuth();
   return (
     <Suspense fallback={fallback}>
       <Routes>
         {routes.map(route => {
-          return (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={<route.component />}
-            >
-              {route.children?.map(child => (
+          if (route.authenticated) {
+            return (
+              <Route
+                key={route.path}
+                element={<ProtectedRoute isAuthenticated={isAuthenticated()} />}
+              >
+                {route?.children ? (
+                  <Route key={route.name} path={route.path}>
+                    {route?.children?.map(child => (
+                      <Route
+                        key={child.name}
+                        path={child.path}
+                        element={<child.component />}
+                      />
+                    ))}
+                  </Route>
+                ) : (
+                  <Route
+                    key={route.name}
+                    path={route.path}
+                    element={<route.component />}
+                  />
+                )}
+              </Route>
+            );
+          }
+          return route?.children ? (
+            <Route key={route.name} path={route.path}>
+              {route?.children?.map(child => (
                 <Route
-                  key={child.path}
+                  key={child.name}
                   path={child.path}
                   element={<child.component />}
                 />
               ))}
             </Route>
+          ) : (
+            <Route
+              key={route.name}
+              path={route.path}
+              element={<route.component />}
+            />
           );
         })}
       </Routes>
