@@ -187,9 +187,7 @@ export default function Signup() {
                     name="chevron_left"
                     onClick={() => {
                       const values = watch();
-                      reset(values);
-                      reset({ password: '' });
-                      reset({ confirmPassword: '' });
+                      reset({ ...values, password: '', confirmPassword: '' });
                       setFormStep(1);
                     }}
                   />
