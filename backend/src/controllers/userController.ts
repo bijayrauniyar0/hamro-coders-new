@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
+import { generateToken } from '@Utils/jwtUtils';
 
 // Get all users
 export const getAllUsers = async (_: Request, res: Response) => {
@@ -75,5 +76,41 @@ export const deleteUser = async (req: Request, res: Response): Promise<any> => {
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ message: 'Error deleting user', error });
+  }
+};
+
+export const loginController = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.status(400).json({ message: 'Email and password are required.' });
+      return;
+    }
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(404).json({ message: 'User not found.' });
+      return;
+    }
+
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({ message: 'Invalid credentials.' });
+      return;
+    }
+    const token = generateToken({ id: user.id, ...req.body });
+
+    // Respond with token
+    res.status(200).json({
+      message: 'Login successful.',
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error.', error });
   }
 };
