@@ -14,7 +14,7 @@ const appRoutes: IRoute[] = [
   {
     name: 'Login',
     path: '/login',
-  component: AuthenticationComponent,
+    component: AuthenticationComponent,
   },
   {
     name: 'Login',
@@ -25,6 +25,7 @@ const appRoutes: IRoute[] = [
     name: 'Academics',
     path: '/academics/:courseName',
     component: AcademicsPage,
+    authenticated: true,
   },
   {
     name: 'Academics',
@@ -41,7 +42,6 @@ const appRoutes: IRoute[] = [
     path: '/mcq',
     component: MCQBox,
   },
-
 ];
 
 export default appRoutes;
