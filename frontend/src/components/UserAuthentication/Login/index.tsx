@@ -8,10 +8,10 @@ import { Input } from '@Components/common/FormUI';
 import Checkbox from '@Components/common/FormUI/CheckBox';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { Button } from '@Components/radix/Button';
-// import NSOIcon from '@Assets/images/login/NSO.svg';
 
 import FormControl from '../../common/FormUI/FormControl';
 import Icon from '../../common/Icon';
+
 import { FlexColumn } from '@Components/common/Layouts';
 import { login } from '@Services/common';
 import { toast } from 'react-toastify';
@@ -140,7 +140,7 @@ export default function Login() {
                   className="font-semibold text-primary-700 hover:underline"
                 >
                   Register Here
-                </NavLink>{' '}
+                </NavLink>
               </p>
             </FlexColumn>
           </form>
