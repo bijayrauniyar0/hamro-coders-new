@@ -13,6 +13,8 @@ import { Button } from '@Components/radix/Button';
 import FormControl from '../../common/FormUI/FormControl';
 import Icon from '../../common/Icon';
 import { FlexColumn } from '@Components/common/Layouts';
+import { login } from '@Services/common';
+import { toast } from 'react-toastify';
 
 const initialState = {
   email: '',
@@ -24,14 +26,14 @@ export default function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  // const { mutateAsync } = useMutation<any, any, any, unknown>({
-  //   mutationFn: signInUser,
-  //   onSuccess: (res: any) => {
-  //     localStorage.setItem('token', res?.data?.access);
-  //     showToast('success', 'Login Successful');
-  //     navigate('/dashboard');
-  //   },
-  // });
+  const { mutate } = useMutation<any, any, any, unknown>({
+    mutationFn: (payload: Record<string, any>) => login(payload),
+    onSuccess: (res: any) => {
+      localStorage.setItem('token', res?.data?.token);
+      toast.success('Login Successful');
+      navigate('/dashboard');
+    },
+  });
 
   const {
     register,
@@ -41,9 +43,9 @@ export default function Login() {
     defaultValues: initialState,
   });
 
-  const onSubmit = async () => {
+  const onSubmit = (data: Record<string, any>) => {
     // try {
-    //   await mutateAsync(data);
+    mutate(data);
     // } catch (error: any) {
     //   const caughtError =
     //     error?.response?.data?.detail || 'Something went wrong.';
@@ -133,7 +135,12 @@ export default function Login() {
               </Button>
               <p className="text-center text-sm">
                 Don&apos;t have an account ?{' '}
-                <NavLink to="/signup" className="text-primary-700 font-semibold hover:underline">Register Here</NavLink>{' '}
+                <NavLink
+                  to="/signup"
+                  className="font-semibold text-primary-700 hover:underline"
+                >
+                  Register Here
+                </NavLink>{' '}
               </p>
             </FlexColumn>
           </form>
