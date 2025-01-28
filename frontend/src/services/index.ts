@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 
-const { API_URL_V1, FAST_API } = process.env;
+const { API_URL_V1 } = process.env;
 
-export const fastApiURL = FAST_API;
 export const apiURL = API_URL_V1;
 
 export const api = axios.create({
@@ -10,16 +9,7 @@ export const api = axios.create({
   timeout: 5 * 60 * 1000,
   headers: {
     accept: 'application/json',
-    'Content-Type': 'multipart/form-data',
-  },
-});
-
-export const fastApi = axios.create({
-  baseURL: FAST_API,
-  timeout: 5 * 60 * 1000,
-  headers: {
-    accept: 'application/json',
-    'Content-Type': 'multipart/form-data',
+    'Content-Type': 'application/json',
   },
 });
 
@@ -28,9 +18,9 @@ export const authenticated = (apiInstance: AxiosInstance) => {
   const token = localStorage.getItem('token');
   if (!token) return apiInstance;
   if (process.env.NODE_ENV === 'development') {
-    apiInstance.defaults.headers.common.Authorization = `Token ${token}`;
+    apiInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
   } else {
-    apiInstance.defaults.headers.common.Authorization = `Token ${token}`;
+    apiInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
     apiInstance.defaults.withCredentials = false;
   }
   return apiInstance;

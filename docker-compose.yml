@@ -4,36 +4,32 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "9000:9000"  # Exposes the backend API
+      - "9000:9000" # Exposes the backend API
     volumes:
-      - ./backend:/app  # Syncs local backend directory with the container
-      - /app/node_modules  # Avoids overriding node_modules with volume
+      - ./backend:/app # Syncs local backend directory with the container
     environment:
       - NODE_ENV=development
-      - DB_HOST=hamrocoders-sql-db  # Use 'db' as the hostname, which matches the db service name
+      - DB_HOST=hamrocoders-sql-db # Use 'db' as the hostname, which matches the db service name
       - DB_PORT=5432
       - DB_USER=bijay
       - DB_PASSWORD=bijay@123
       - DB_NAME=hamrocoders
-    image: hamrocoders-backend  # Builds and uses the backend-ts image locally
     command: ["yarn", "dev"]
     networks:
-      - app-network  # Ensure the backend is on the app-network
+      - app-network # Ensure the backend is on the app-network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3030:3030"  # Exposes the frontend
+      - "3030:3030" # Exposes the frontend
     volumes:
       - ./frontend:/app
-      - /app/node_modules
     environment:
       - NODE_ENV=development
-    image: hamrocoders-frontend  # Builds and uses the frontend image locally
     networks:
-      - app-network  # Ensure the frontend is on the app-network
+      - app-network # Ensure the frontend is on the app-network
 
   db:
     image: postgres:15
@@ -43,19 +39,29 @@ services:
       POSTGRES_PASSWORD: bijay@123
       POSTGRES_DB: hamrocoders
     ports:
-      - "5433:5432"  # Exposes the database on port 5432
+      - "5433:5432" # Exposes the database on port 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - app-network  # Ensure the database is on the app-network
+      - app-network # Ensure the database is on the app-network
+  # mongodb:
+  #   image: mongo:latest
+  #   container_name: mongodb
+  #   ports:
+  #     - "27017:27017" # Maps the host port 27017 to the container port 27017
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: admin # Sets the MongoDB admin username
+  #     MONGO_INITDB_ROOT_PASSWORD: admin123 # Sets the MongoDB admin password
+  #   volumes:
+  #     - mongodb_data:/data/db
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com  # Set pgAdmin email (you can change this)
-      PGADMIN_DEFAULT_PASSWORD: admin  # Set pgAdmin password (you can change this)
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com # Set pgAdmin email (you can change this)
+      PGADMIN_DEFAULT_PASSWORD: admin # Set pgAdmin password (you can change this)
     ports:
-      - "5050:80"  # Access pgAdmin at localhost:5050
+      - "5050:80" # Access pgAdmin at localhost:5050
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks:
@@ -63,8 +69,10 @@ services:
 
 networks:
   app-network:
-    driver: bridge  # Uses the bridge driver to create the network
+    driver: bridge # Uses the bridge driver to create the network
 
 volumes:
   postgres_data:
   pgadmin_data:
+  # mongodb_data:
+  #   driver: local

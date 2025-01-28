@@ -1,42 +1,16 @@
-# Node.js modules
-node_modules/
-npm-debug.log
-yarn-error.log
+# Virtual envs
+ENV/
+DockerData/
 
-# Build output
-dist/
-build/
-out/
+# Postgresql
+postgres_data
+./postgres_data
+postgres_data/
 
-# Environment files
-.env
-.env.* 
-
-# Test and coverage reports
-coverage/
-*.test.js
-*.test.ts
-*.test.tsx
-
-# IDE and editor files
-.vscode/
-.idea/
-*.sublime-workspace
-*.sublime-project
-
-# OS-generated files
-.DS_Store
-Thumbs.db
-
-# Docker-related files
-docker-compose.override.yml
-Dockerfile.dev
-Dockerfile.local
-
-# Log files
-*.log
-
-# Temporary files
-*.swp
-*.bak
-*.tmp
+#Container
+nginx
+sock
+logs
+static
+media
+logs

@@ -1,4 +1,3 @@
- 
 import { useState } from 'react';
 import avatarLogo from '@Assets/images/avatar-images.svg';
 import {
@@ -10,12 +9,13 @@ import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import Flex from '@Components/common/Layouts/Flex';
 import { Button } from 'react-day-picker';
-// import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 // import { useTypedSelector } from '@Store/hooks';
 // import { useDispatch } from 'react-redux';
 
 const AccountMenu = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // const dispatch = useDispatch();
   // const [accountSettingsOpen, setAccountSettingsOpen] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
@@ -23,6 +23,11 @@ const AccountMenu = () => {
   const userProfile = {
     username: 'Loop Verse',
     group_name: 'Admin',
+  };
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+    toast.success('Logout');
   };
   // const userProfile = useTypedSelector(state => state?.common?.userProfile);
 
@@ -87,7 +92,7 @@ const AccountMenu = () => {
           </FlexColumn>
           <FlexRow
             className="cursor-pointer items-center gap-2 p-3 hover:bg-[#F5FAFF]"
-            // onClick={handleLogout}
+            onClick={handleLogout}
           >
             <Icon name="logout" className="text-[#475467]" />
             <p className="pb-1 text-[0.938rem] text-[#475467]">Logout</p>

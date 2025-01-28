@@ -4,14 +4,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import appRoutes from './routes/appRoutes';
 import generateRoutes from './routes/generateRoutes';
 import Navbar from './components/common/Navbar';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 function App() {
-  const routesWithoutNavbar = ['/login'];
+  const routesWithoutNavbar = ['/login', '/signup'];
   const { pathname } = useLocation();
-  const showNavbar = routesWithoutNavbar.some(
-    route => !pathname.includes(route),
-  );
+  const showNavbar = !routesWithoutNavbar.some(route => pathname.includes(route));
+  
   return (
     <>
       <div className="fixed top-0 z-[49] w-full bg-white">
