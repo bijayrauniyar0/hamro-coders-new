@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 
-const { API_URL_V1, FAST_API } = process.env;
+const { API_URL_V1 } = process.env;
 
-export const fastApiURL = FAST_API;
 export const apiURL = API_URL_V1;
 
 export const api = axios.create({
@@ -10,16 +9,7 @@ export const api = axios.create({
   timeout: 5 * 60 * 1000,
   headers: {
     accept: 'application/json',
-    'Content-Type': 'multipart/form-data',
-  },
-});
-
-export const fastApi = axios.create({
-  baseURL: FAST_API,
-  timeout: 5 * 60 * 1000,
-  headers: {
-    accept: 'application/json',
-    'Content-Type': 'multipart/form-data',
+    'Content-Type': 'application/json',
   },
 });
 

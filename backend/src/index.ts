@@ -7,6 +7,7 @@ import cors from 'cors';
 const app = express();
 app.use(cors()); // Middleware to enable CORS
 app.use(express.json()); // Middleware to parse JSON requests
+// app.use(express.urlencoded({ extended: true }));
 const port = 9000;
 // Use the routes
 app.use('/api/users', userRoutes);

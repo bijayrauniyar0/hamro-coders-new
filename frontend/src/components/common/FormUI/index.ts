@@ -1,4 +1,4 @@
-import Label from './Label';
+import Label from './InputLabel';
 import Input from './Input';
 import Select from './Select';
 import FormGroup from './FormGroup';
