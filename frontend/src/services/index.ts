@@ -18,9 +18,9 @@ export const authenticated = (apiInstance: AxiosInstance) => {
   const token = localStorage.getItem('token');
   if (!token) return apiInstance;
   if (process.env.NODE_ENV === 'development') {
-    apiInstance.defaults.headers.common.Authorization = `Token ${token}`;
+    apiInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
   } else {
-    apiInstance.defaults.headers.common.Authorization = `Token ${token}`;
+    apiInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
     apiInstance.defaults.withCredentials = false;
   }
   return apiInstance;
