@@ -39,3 +39,14 @@ export function removeObjectAtIndex<T>(array: T[], index: number): T[] {
 
   return newArray;
 }
+
+export function getStyle(selectedStyle: string) {
+  switch (selectedStyle) {
+    case 'grid':
+      return 'grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5';
+    case 'list':
+      return 'flex flex-col gap-4 w-full';
+    default:
+      return '';
+  }
+}
