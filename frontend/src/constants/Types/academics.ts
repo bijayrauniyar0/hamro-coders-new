@@ -1,5 +1,5 @@
 export interface ISubjects {
-  name: string;
+  title: string;
   id: number;
   subjectCode: string;
   details: string;
