@@ -16,7 +16,7 @@ const SubjectBox = ({ courseDetails, handlePlay }: ISubjectBoxProps) => {
         </div>
         <FlexRow className="items-center justify-between gap-1">
           <p className="w-[75%] text-base font-medium leading-5">
-            {courseDetails.name}
+            {courseDetails.title}
           </p>
           <Button onClick={handlePlay}>Play</Button>
         </FlexRow>

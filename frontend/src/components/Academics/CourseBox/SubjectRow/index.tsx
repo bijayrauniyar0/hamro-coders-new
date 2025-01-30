@@ -17,7 +17,7 @@ const SubjectRow = ({ courseDetails, handlePlay }: ISubjectBoxProps) => {
       <FlexColumn className="w-full flex-1 items-end justify-between gap-4">
         <FlexColumn className="items-start gap-2">
           <p className="text-sm font-semibold md:text-base lg:text-lg">
-            {courseDetails.name} ({courseDetails.subjectCode})
+            {courseDetails.title} ({courseDetails.subjectCode})
           </p>
           <p className="text-justify text-xs font-normal leading-5 md:text-sm lg:text-base">
             {courseDetails.details}
