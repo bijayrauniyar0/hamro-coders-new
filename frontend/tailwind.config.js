@@ -16,7 +16,7 @@ export const theme = {
   },
   extend: {
     fontFamily: {
-      primary: ['Poppins', 'sans-serif'],
+      primary: ['Poppins'],
     },
     colors: {
       primary: {
