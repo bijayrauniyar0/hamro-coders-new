@@ -7,6 +7,7 @@ import { cardVariants, containerVariants } from '@Animations/index';
 import { useTypedDispatch } from '@Store/hooks';
 import { setIsModesOpen } from '@Store/actions/common';
 import { useParams } from 'react-router-dom';
+import { getStyle } from '@Utils/index';
 export interface ICourse {
   semester: string;
   semesterNumber: number;
@@ -28,16 +29,7 @@ const CourseBox = ({
 }: ICourseBoxProps) => {
   const dispatch = useTypedDispatch();
   const { courseName } = useParams();
-  function getStyle() {
-    switch (selectedStyle) {
-      case 'grid':
-        return 'grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5';
-      case 'list':
-        return 'flex flex-col gap-4 w-full';
-      default:
-        return 'grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5';
-    }
-  }
+
   function getComponentAccordingToStyle(key: number, subject: ISubjects) {
     switch (selectedStyle) {
       case 'list':
@@ -47,28 +39,30 @@ const CourseBox = ({
             courseDetails={subject}
             handlePlay={() => {
               dispatch(setIsModesOpen(true));
-              handlePlay(subject.subjectCode);
+              handlePlay(subject.subject_code);
             }}
           />
         );
-      default:
+      case 'grid':
         return (
           <SubjectBox
             key={key}
             courseDetails={subject}
             handlePlay={() => {
               dispatch(setIsModesOpen(true));
-              handlePlay(subject.subjectCode);
+              handlePlay(subject.subject_code);
             }}
           />
         );
+      default:
+        return null;
     }
   }
 
   return (
     <FlexColumn className="gap-4">
       <motion.div
-        className={getStyle()}
+        className={getStyle(selectedStyle)}
         variants={containerVariants}
         initial="hidden"
         animate="show"
@@ -77,7 +71,7 @@ const CourseBox = ({
           return (
             <motion.div
               variants={cardVariants}
-              key={`${semester.subjectCode}-${courseName}`}
+              key={`${semester.subject_code}-${courseName}`}
             >
               {getComponentAccordingToStyle(index, semester)}
             </motion.div>
