@@ -1,7 +1,7 @@
 export interface ISubjects {
   title: string;
   id: number;
-  subjectCode: string;
+  subject_code: string;
   details: string;
 }
 export interface ISubjectBoxProps {
