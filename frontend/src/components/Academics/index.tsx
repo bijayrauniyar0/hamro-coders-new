@@ -1,44 +1,45 @@
 import React, { useState } from 'react';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import CourseBox from './CourseBox';
-import {
-  bcaSubjects,
-  semestersData,
-  switchTabData,
-} from '@Constants/Academics';
+import { semestersData, switchTabData } from '@Constants/Academics';
 import HeaderSwitchTab from '@Components/common/HeaderSwitchTab';
 import { useNavigate, useParams } from 'react-router-dom';
 import ToolTip from '@Components/radix/ToolTip';
 import { Select } from '@Components/common/FormUI';
-import { ISubjects } from '@Constants/Types/academics';
 import Modes from '@Components/Modes';
 import { useTypedSelector } from '@Store/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { getAllUsers } from '@Services/common';
+import { getSubjectsBySemester } from '@Services/academics';
+import isEmpty from '@Utils/isEmpty';
+import NoDataAvailable from '@Components/common/NoDataAvailable';
+import Skeleton from '@Components/radix/Skeleton';
+import { getStyle } from '@Utils/index';
 
 const Academics = () => {
   const { courseName } = useParams();
   const isModesOpen = useTypedSelector(state => state.commonSlice.isModesOpen);
   const navigate = useNavigate();
-  const [selectedOption, setSelectedOption] = useState<string | number>(1);
+  const [selectedSemester, setSelectedSemester] = useState<string | number>(1);
   const [selectedStyle, setSelectedStyle] = useState<string>('grid');
-  const [filteredList, setFilteredlist] = useState<ISubjects[]>(
-    bcaSubjects[0].subjects,
-  );
   const [selectedSubjectCode, setSelectedSubjectCode] = useState<string>('');
   const selectedMode = useTypedSelector(
     state => state.commonSlice.selectedMode,
   );
   function handleNextClick() {
     navigate(
-      `/mcq?course=${courseName}&subjectCode=${selectedSubjectCode}&semester=${selectedOption}&selectedMode=${selectedMode}`,
+      `/mcq?course=${courseName}&subject_code=${selectedSubjectCode}&semester=${selectedSemester}&selectedMode=${selectedMode}`,
     );
   }
-  const { data } = useQuery({
-    queryKey: ['bcaSubjects'],
-    queryFn: getAllUsers,
+  const { data: subjectsData, isLoading: subjectsDataIsLoading } = useQuery({
+    queryKey: ['subjects', courseName, selectedSemester],
+    queryFn: () =>
+      getSubjectsBySemester({
+        semester: selectedSemester,
+        course_name: courseName,
+      }),
+    select: ({ data }) => data,
   });
-  console.log(data);
+
   return (
     <>
       <FlexColumn className="gap-4">
@@ -70,26 +71,35 @@ const Academics = () => {
               placeholder="Select"
               className="!z-0 h-8 !w-[7.25rem] rounded !border border-[#D0D5DD] bg-white md:!w-[11.75rem]"
               valueKey="value"
-              selectedOption={+selectedOption}
+              selectedOption={+selectedSemester}
               onChange={value => {
-                setSelectedOption(value);
-                const filteredSemesterData = bcaSubjects.filter(
-                  semesterX => semesterX.semesterNumber === +value,
-                );
-                setFilteredlist(filteredSemesterData[0].subjects);
+                setSelectedSemester(value);
               }}
             />
           </FlexRow>
         </FlexRow>
-        <div key={courseName}>
-          <CourseBox
-            courseDetails={filteredList}
-            selectedStyle={selectedStyle}
-            handlePlay={(subjectCode: string) =>
-              setSelectedSubjectCode(subjectCode)
-            }
-          />
-        </div>
+        {subjectsDataIsLoading ? (
+          <div className={getStyle(selectedStyle)}>
+            {[...Array(5).keys()].map(key => (
+              <Skeleton
+                className={`h-[12rem] ${selectedStyle === 'list' ? 'w-full' : 'w-[18rem]'}`}
+                key={key}
+              />
+            ))}
+          </div>
+        ) : isEmpty(subjectsData) ? (
+          <NoDataAvailable />
+        ) : (
+          <div key={courseName}>
+            <CourseBox
+              courseDetails={subjectsData}
+              selectedStyle={selectedStyle}
+              handlePlay={(subjectCode: string) =>
+                setSelectedSubjectCode(subjectCode)
+              }
+            />
+          </div>
+        )}
       </FlexColumn>
       {isModesOpen && <Modes handleNextClick={handleNextClick} />}
     </>
