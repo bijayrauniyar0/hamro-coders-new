@@ -73,6 +73,127 @@ export const questions = [
   },
 ];
 
+// <div
+//                                 className={`flex cursor-pointer items-center ${isCorrectAnswer ? 'bg-[#e2ffe4]' : ''} ${isSelectedWrongAnswer ? 'bg-[#ffdbdb]' : ''} ${isSelected ? 'border-2 border-primary-400' : 'border-primary-100'} justify-start gap-4 rounded-lg border bg-white p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4`}
+//                                 onClick={() => {
+//                                   setSelectedOption((prevData: string[]) => {
+//                                     // Check if the option is already selected
+//                                     if (prevData[questionCount] === option) {
+//                                       // If selected, deselect it (remove it from the array)
+//                                       return prevData.filter(
+//                                         (_, index) => index !== questionCount,
+//                                       );
+//                                     } else {
+//                                       // If not selected, add it to the array at the specific index
+//                                       const updatedData = [...prevData];
+//                                       updatedData[questionCount] = option;
+//                                       return updatedData;
+//                                     }
+//                                   });
+//                                 }}
+//                                 key={subIndex}
+//                               >
+//                                 <div className="relative">
+//                                   <img
+//                                     src={buttonPng}
+//                                     className="max-h-[3rem] max-w-[3rem]"
+//                                   />
+//                                   <p className="left absolute left-1/2 top-1/2 z-50 translate-x-[-50%] translate-y-[-50%] text-lg font-bold text-white">
+//                                     {optionsLabel[subIndex]}
+//                                   </p>
+//                                 </div>
+//                                 <p className="text-sm leading-4 lg:text-base">
+//                                   {option}
+//                                 </p>
+//                               </div>
+
+export const responseQuestions = [
+  {
+    question: 'Which of the following is a software development methodology?',
+    options: [
+      {
+        id: 1,
+        value: 'Waterfall',
+      },
+      {
+        id: 2,
+        value: 'Spiral',
+      },
+      {
+        id: 3,
+        value: 'Agile',
+      },
+      {
+        id: 4,
+        value: 'All of the above',
+      },
+    ],
+    id: 26,
+    answer: 4,
+  },
+  {
+    question: 'Which is a phase in the software development life cycle?',
+    options: [
+      {
+        id: 1,
+        value: 'Design',
+      },
+      {
+        id: 2,
+        value: 'Testing',
+      },
+      {
+        id: 3,
+        value: 'Implementation',
+      },
+      {
+        id: 4,
+        value: 'All of the above',
+      },
+    ],
+    id: 27,
+    answer: 4,
+  },
+  {
+    question:
+      'Which of these is part of the software project management process?',
+    options: [
+      {
+        id: 1,
+        value: 'Risk management',
+      },
+      {
+        id: 2,
+        value: 'Code refactoring',
+      },
+      {
+        id: 3,
+        value: 'Deployment',
+      },
+      {
+        id: 4,
+        value: 'Debugging',
+      },
+    ],
+    id: 33,
+    answer: 1,
+  },
+];
+
+export const questionsAnswers = [
+  {
+    id: 26,
+    answer: 4,
+  },
+  {
+    id: 33,
+    answer: 4,
+  },
+  {
+    id: 27,
+    answer: 3,
+  },
+];
 export const modesDescription = {
   practice:
     'No pressure, just practice! In this mode, you can take all the time you need to answer questions. Perfect for sharpening your skills and learning at your own pace.',
