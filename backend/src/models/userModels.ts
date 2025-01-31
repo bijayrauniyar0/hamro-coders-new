@@ -34,6 +34,7 @@ User.init(
     number: {
       type: DataTypes.STRING,
       allowNull: true,
+      unique: true,
     },
   },
   {
