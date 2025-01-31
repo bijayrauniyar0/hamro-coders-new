@@ -4,6 +4,7 @@ import DashboardPage from '@Views/Dashboard';
 import ModesPage from '@Views/Modes';
 import MCQBox from '@Components/Academics/MCQSection';
 import AuthenticationComponent from '@Components/UserAuthentication';
+import MCQ from '@Components/Academics/MCQSection';
 
 const appRoutes: IRoute[] = [
   {
@@ -40,7 +41,7 @@ const appRoutes: IRoute[] = [
   {
     name: 'MCQ',
     path: '/mcq',
-    component: MCQBox,
+    component: MCQ,
   },
 ];
 
