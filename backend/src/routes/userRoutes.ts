@@ -12,8 +12,8 @@ import { authenticate } from 'src/middlewares/authenticate';
 
 const userRouter = express.Router();
 
-userRouter.post('/login', loginController);
-userRouter.post('/signup', createUser);
+userRouter.post('/login/', loginController);
+userRouter.post('/signup/', createUser);
 userRouter.get('/', authenticate, getAllUsers);
 userRouter.get('/:id/', authenticate, getUserById);
 userRouter.put('/edit-user/:id/', authenticate, updateUser);
