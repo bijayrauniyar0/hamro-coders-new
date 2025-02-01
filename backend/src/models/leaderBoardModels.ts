@@ -1,11 +1,15 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import User from './userModels';
+import Subject from './subjectsModels';
 
 class LeaderBoard extends Model {
   public id!: number;
   public userId!: number;
   public score!: number;
+  public subject_code!: string;
+  public semester!: number;
+  public readonly createdAt!: Date;
 }
 
 LeaderBoard.init(
@@ -15,7 +19,7 @@ LeaderBoard.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    userId: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -23,8 +27,12 @@ LeaderBoard.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    semester: {
+    subject_code: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    semester: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },
@@ -32,11 +40,24 @@ LeaderBoard.init(
     tableName: 'leaderboard',
     sequelize,
     timestamps: true,
+    updatedAt: false,
   },
 );
 
 User.hasMany(LeaderBoard, {
   foreignKey: 'userId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Subject.hasMany(LeaderBoard, {
+  foreignKey: 'subject_code',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+LeaderBoard.belongsTo(Subject, {
+  foreignKey: 'subject_code',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
@@ -47,3 +68,5 @@ LeaderBoard.belongsTo(User, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
+
+export default LeaderBoard;
