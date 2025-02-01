@@ -14,12 +14,13 @@ import { useTypedSelector } from '@Store/hooks';
 import { toast } from 'react-toastify';
 import Modal from '@Components/common/Modal';
 import Icon from '@Components/common/Icon';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { getMcqAnswers, getMcqs } from '@Services/academics';
 import Skeleton from '@Components/radix/Skeleton';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import isEmpty from '@Utils/isEmpty';
 import FromStepper from './FormStepper';
+import { createLeaderboardEntry } from '@Services/leaderboard';
 
 type Option = {
   id: number;
@@ -55,6 +56,7 @@ const MCQBox = () => {
   const [searchParams] = useSearchParams();
   const selectedModeParams = searchParams.get('selectedMode');
   const subject_code = searchParams.get('subject_code');
+  const semester = searchParams.get('semester');
   const navigate = useNavigate();
   const resultsRef = useRef<{
     right: number;
@@ -84,6 +86,12 @@ const MCQBox = () => {
     select: ({ data }) => data as AnswerType[],
     enabled: gameOver,
   });
+
+  const { mutate: createLeaderboardRecord } = useMutation({
+    mutationFn: (payload: Record<string, any>) =>
+      createLeaderboardEntry(payload),
+  });
+
   function handleNextSkipClick(clickType: string) {
     if (!gameOver) {
       const value = clickType === 'skip' ? false : true;
@@ -91,6 +99,7 @@ const MCQBox = () => {
     }
     setQuestionCount(prevCount => prevCount + 1);
   }
+
   const startCountdown = useCallback((time: number) => {
     const interval = setInterval(() => {
       setTimeOut(time);
@@ -119,6 +128,12 @@ const MCQBox = () => {
 
       return () => clearInterval(intervalId);
     }
+    if (selectedModeParams === 'ranked') {
+      setTimeout(() => {
+        setQuestionCount(0);
+        setModeToShow('answers');
+      }, 600000);
+    }
 
     const timeoutId = setTimeout(() => {
       // console.log("object");
@@ -131,6 +146,14 @@ const MCQBox = () => {
     if (questionCount === questions.length) {
       if (gameOver) {
         setModeToShow('results');
+        if (selectedModeParams === 'ranked') {
+          const payload = {
+            subject_code,
+            score: resultsRef.current.right,
+            semester: Number(semester),
+          };
+          createLeaderboardRecord(payload);
+        }
         startCountdown(5);
         setTimeout(() => {
           navigate('/academics/BCA');
