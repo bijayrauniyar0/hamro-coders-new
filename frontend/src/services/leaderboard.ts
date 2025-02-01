@@ -5,5 +5,9 @@ export const createLeaderboardEntry = (payload: Record<string, any>) => {
 };
 
 export const getLeaderboard = (params: Record<string, any>) => {
-  return api.get('/api/leaderboard/', { params });
+  return api.get('/api/leaderboard/rank/', { params });
+};
+
+export const getUserStats = () => {
+  return authenticated(api).get('/api/leaderboard/stats/');
 };
