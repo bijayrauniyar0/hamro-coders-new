@@ -15,6 +15,7 @@
       "@Utils/*": ["src/utils/*"],
       "@Models/*": ["src/models/*"],
       "@Controllers/*": ["src/controllers/*"],
+      "@Services/*": ["src/services/*"],
       "@Routes/*": ["src/routes/*"]
     }
   },
