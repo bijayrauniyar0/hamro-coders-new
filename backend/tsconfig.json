@@ -10,7 +10,7 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "typeRoots": ["./src/@types", "./node_modules/@types"],
-    "types": [],
+    "types": ["node", "express"],
     "paths": {
       "@Utils/*": ["src/utils/*"],
       "@Models/*": ["src/models/*"],
