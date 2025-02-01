@@ -5,7 +5,7 @@ import ModesPage from '@Views/Modes';
 import MCQBox from '@Components/Academics/MCQSection';
 import AuthenticationComponent from '@Components/UserAuthentication';
 import MCQ from '@Components/Academics/MCQSection';
-import Leaderboard from '@Views/Leaderboard';
+import LeaderboardPage from '@Views/LeaderboardPage';
 
 const appRoutes: IRoute[] = [
   {
@@ -47,7 +47,7 @@ const appRoutes: IRoute[] = [
   {
     name: 'Leaderboard',
     path: '/leaderboard',
-    component: Leaderboard,
+    component: LeaderboardPage,
   },
 ];
 
