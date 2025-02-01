@@ -9,7 +9,7 @@ export interface IChildLinkData {
 export interface INavbarLinkData {
   id: number;
   name: string;
-  link?: string;
+  link: string;
   children?: IChildLinkData[];
 }
 
