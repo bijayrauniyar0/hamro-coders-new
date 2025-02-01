@@ -5,6 +5,7 @@ import sequelize from './config/database';
 import cors from 'cors';
 import mcqRouter from '@Routes/mcqsRoutes';
 import academicsRouter from '@Routes/academicRoutes';
+import leaderboardRouter from '@Routes/leaderboardRoutes';
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,7 @@ const port = 9000;
 app.use('/api/user', userRoutes);
 app.use('/api/mcq', mcqRouter);
 app.use('/api/academics', academicsRouter);
+app.use('/api/leaderboard', leaderboardRouter);
 
 sequelize.authenticate();
 
