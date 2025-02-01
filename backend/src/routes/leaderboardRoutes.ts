@@ -1,9 +1,10 @@
-import { postLeaderboardEntry } from "@Controllers/leaderboardController";
-import express from "express";
-import { authenticate } from "src/middlewares/authenticate";
+import { createScoreEntry, getRank } from '@Controllers/leaderboardController';
+import express from 'express';
+import { authenticate } from 'src/middlewares/authenticate';
 
-const leaderboardRouter = express.Router();
+const userScoresRouter = express.Router();
 
-leaderboardRouter.post("/", authenticate, postLeaderboardEntry);
+userScoresRouter.post('/', authenticate, createScoreEntry);
+userScoresRouter.get('/rank/', authenticate, getRank);
 
-export default leaderboardRouter;
+export default userScoresRouter;
