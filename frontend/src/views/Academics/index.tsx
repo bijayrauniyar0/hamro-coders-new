@@ -1,13 +1,14 @@
 import Academics from '@Components/Academics';
+import BindContentContainer from '@Components/common/BindContentContainer';
 import React from 'react';
 
 const AcademicsPage = () => {
   return (
-    <div className="min-h-screen w-full bg-[#F4F7FE] px-4 pb-[2rem] pt-[6rem]">
-      <div className="mx-auto w-11/12">
+    <BindContentContainer>
+      <div className="mt-7">
         <Academics />
       </div>
-    </div>
+    </BindContentContainer>
   );
 };
 
