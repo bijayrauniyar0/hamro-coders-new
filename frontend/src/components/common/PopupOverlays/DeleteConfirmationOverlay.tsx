@@ -1,7 +1,6 @@
 import { Button } from '@Components/radix/Button';
 import { IOverlayComponentProps } from '@Constants/interface';
 import Icon from '../Icon';
-import Alert from '../Alert';
 
 interface IDeleteConfirmationOverlayProps extends IOverlayComponentProps {
   onDelete: () => any;
@@ -13,8 +12,6 @@ export default function DeleteConfirmationOverlay({
   onClose,
   onDelete,
   isLoading,
-  isError,
-  error,
 }: IDeleteConfirmationOverlayProps) {
   return (
     <div
@@ -53,7 +50,6 @@ export default function DeleteConfirmationOverlay({
             <p className="button">Delete</p>
           </Button>
         </div>
-        {isError && <Alert message={error?.message} error />}
       </div>
     </div>
   );
