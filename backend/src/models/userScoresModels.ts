@@ -2,7 +2,6 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import User from './userModels';
 import Subject from './subjectsModels';
-import Rank from './rankModel';
 
 class UserScores extends Model {
   public id!: number;
@@ -20,10 +19,6 @@ UserScores.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    rank_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -40,6 +35,10 @@ UserScores.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    previous_rank: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
   },
   {
     tableName: 'user_scores',
@@ -49,7 +48,6 @@ UserScores.init(
     updatedAt: 'updated_at',
   },
 );
-
 
 Subject.hasMany(UserScores, {
   foreignKey: 'subject_code',
@@ -69,23 +67,8 @@ User.hasMany(UserScores, {
   onUpdate: 'CASCADE',
 });
 
-
 UserScores.belongsTo(User, {
   foreignKey: 'user_id',
-  targetKey: 'id',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-});
-
-Rank.hasMany(UserScores, {
-  foreignKey: 'rank_id',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-});
-
-
-UserScores.belongsTo(Rank, {
-  foreignKey: 'rank_id',
   targetKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',

@@ -2,6 +2,9 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { v4 as uuidv4 } from 'uuid';
 
+import fallBack1 from '@Assets/images/avatar-images.svg';
+import fallBack2 from '@Assets/images/fallBack2.jpeg';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -50,3 +53,26 @@ export function getStyle(selectedStyle: string) {
       return '';
   }
 }
+
+export function rearrangeByRank(arr: any[]) {
+  // Define the desired order of ranks
+  const rankOrder = [2, 1, 3];
+
+  // Filter and sort the array based on the rankOrder
+  const sorted = arr
+    .filter(item => rankOrder.includes(item.rank)) // Keep only objects with ranks 1, 2, or 3
+    .sort((a, b) => rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank)); // Sort by rankOrder
+
+  // If there are fewer than 3 objects, fill the remaining slots with null or a default object
+  while (sorted.length < 3) {
+    sorted.push(null); // or push a default object like { rank: null, name: "N/A", totalScore: 0 }
+  }
+
+  // Return only the first 3 objects
+  return sorted.slice(0, 3);
+}
+
+export const getFallBackImage = () => {
+  const images = [fallBack1, fallBack2];
+  return images[Math.floor(Math.random() * images.length)];
+};
