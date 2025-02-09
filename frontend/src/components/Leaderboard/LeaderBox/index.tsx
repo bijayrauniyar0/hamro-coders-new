@@ -62,8 +62,8 @@ const LeaderBox = ({ className, rank, name, score }: LeaderBoxProps) => {
         className={`absolute -z-10 w-full select-none ${roundedCorners[rank]}`}
       >
         <FlexColumn className="h-full w-full items-center justify-center pt-[50%]">
-          <p className="text-md">{name}</p>
-          <p className="text-lg font-semibold text-blue-400">{score}</p>
+          <p className="text-xs sm:text-md ">{name}</p>
+          <p className="text-sm md:text-lg font-semibold text-blue-400">{score}</p>
         </FlexColumn>
       </div>
     </div>
