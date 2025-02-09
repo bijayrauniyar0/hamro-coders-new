@@ -55,21 +55,22 @@ export function getStyle(selectedStyle: string) {
 }
 
 export function rearrangeByRank(arr: any[]) {
-  // Define the desired order of ranks
   const rankOrder = [2, 1, 3];
 
-  // Filter and sort the array based on the rankOrder
-  const sorted = arr
-    .filter(item => rankOrder.includes(item.rank)) // Keep only objects with ranks 1, 2, or 3
-    .sort((a, b) => rankOrder.indexOf(a.rank) - rankOrder.indexOf(b.rank)); // Sort by rankOrder
+  // Default object template
+  const defaultObj = (rank: number) => ({
+    user_id: null,
+    name: 'N/A',
+    totalScore: 0,
+    rank,
+    previous_rank: null,
+  });
 
-  // If there are fewer than 3 objects, fill the remaining slots with null or a default object
-  while (sorted.length < 3) {
-    sorted.push(null); // or push a default object like { rank: null, name: "N/A", totalScore: 0 }
-  }
+  // Create a map of available ranks
+  const rankMap = new Map(arr.map(item => [item.rank, item]));
 
-  // Return only the first 3 objects
-  return sorted.slice(0, 3);
+  // Ensure the order is always 2 → 1 → 3, filling missing ranks
+  return rankOrder.map(rank => rankMap.get(rank) || defaultObj(rank));
 }
 
 export const getFallBackImage = () => {
