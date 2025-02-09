@@ -40,3 +40,9 @@ export const scores = [
     rank: 5,
   },
 ];
+
+export const filterOptions = [
+  { id: 1, label: 'Daily', value: 'daily' },
+  { id: 2, label: 'Weekly', value: 'weekly' },
+  { id: 3, label: 'Monthly', value: 'monthly' },
+];
