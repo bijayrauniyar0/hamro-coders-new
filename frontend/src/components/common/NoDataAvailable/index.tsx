@@ -7,13 +7,13 @@ type NoDataAvailableProps = {
 };
 const NoDataAvailable = ({ className }: NoDataAvailableProps) => {
   return (
-    <FlexColumn className="items-center justify-center">
+    <FlexColumn className="h-[calc(100vh-20rem)] items-center justify-center">
       <img
         src={noDataFound}
         alt=""
-        className={`${className} aspect-square h-[18rem] w-[18rem] object-contain`}
+        className={`${className} aspect-square h-[14rem] w-[14rem] object-contain`}
       />
-      <p className='text-xl font-medium'>No Data Available</p>
+      <p className="text-xl font-medium">No Data Available</p>
     </FlexColumn>
   );
 };
