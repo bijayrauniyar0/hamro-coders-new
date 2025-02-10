@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import UserScores from '@Models/userScoresModels';
 import { getAllUserRanks, getUserRankById } from '@Services/index';
 import User from '@Models/userModels';
+import { Rank } from '@Constants/Types/leaderboard';
 
 type UserRank = {
   user_id: number;
@@ -41,7 +42,7 @@ export const getRank = async (req: Request, res: Response) => {
       id: user.id,
     },
   });
-  const sampleRank = {
+  const sampleRank: Rank = {
     user_id: user.id,
     name: userName?.name,
     totalScore: 0,
@@ -49,7 +50,7 @@ export const getRank = async (req: Request, res: Response) => {
     previous_rank: null,
   };
   try {
-    const ranks = await getAllUserRanks(
+    const ranks: any[] = await getAllUserRanks(
       (filter_by as 'daily' | 'weekly' | 'monthly') || 'daily',
     );
     if (ranks.length === 0) {
