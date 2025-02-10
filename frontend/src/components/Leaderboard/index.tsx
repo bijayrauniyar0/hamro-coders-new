@@ -15,7 +15,7 @@ import { filterOptions } from '@Constants/Leaderboard';
 type UserRank = {
   user_id: number;
   name: string;
-  totalScore: number;
+  total_score: number;
   rank: number;
   previous_rank: number;
 };
@@ -43,9 +43,16 @@ const Leaderboard = () => {
       <div className="select-none px-4 pt-3">
         {leaderBoardIsLoading ? (
           <FlexColumn className="gap-2">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <Skeleton key={index} className="h-20 w-full" />
-            ))}
+            <FlexRow className="items-end justify-center">
+              <Skeleton className="h-[8rem] w-[8rem]" />
+              <Skeleton className="h-[12rem] w-[10rem]" />
+              <Skeleton className="h-[8rem] w-[8rem]" />
+            </FlexRow>
+            <FlexColumn className="gap-2">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton key={index} className="h-16 w-full" />
+              ))}
+            </FlexColumn>
           </FlexColumn>
         ) : (
           <FlexRow className="relative mx-auto items-end md:max-w-[25rem]">
@@ -58,7 +65,7 @@ const Leaderboard = () => {
                   <LeaderBox
                     rank={leaderboard?.rank}
                     name={leaderboard?.name}
-                    score={leaderboard?.totalScore}
+                    score={leaderboard?.total_score}
                   />
                 </div>
               ),
@@ -66,19 +73,21 @@ const Leaderboard = () => {
           </FlexRow>
         )}
         <FlexColumn className="mx-auto mt-[7rem] gap-2 md:mt-[5rem]">
-          {leaderboardData?.map(({ rank, name, totalScore, previous_rank }) => {
-            if (rank <= 3) return null;
-            return (
-              <ScoreRow
-                key={rank}
-                rank={rank}
-                name={name}
-                score={totalScore}
-                image=""
-                previous_rank={previous_rank}
-              />
-            );
-          })}
+          {leaderboardData?.map(
+            ({ rank, name, total_score, previous_rank }) => {
+              if (rank <= 3) return null;
+              return (
+                <ScoreRow
+                  key={rank}
+                  rank={rank}
+                  name={name}
+                  score={total_score}
+                  image=""
+                  previous_rank={previous_rank}
+                />
+              );
+            },
+          )}
         </FlexColumn>
       </div>
     </BindContentContainer>

@@ -61,7 +61,7 @@ export function rearrangeByRank(arr: any[]) {
   const defaultObj = (rank: number) => ({
     user_id: null,
     name: 'N/A',
-    totalScore: 0,
+    total_score: 0,
     rank,
     previous_rank: null,
   });

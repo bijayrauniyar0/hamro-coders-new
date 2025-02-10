@@ -22,7 +22,7 @@ export const getAllUserRanks = async (type: 'daily' | 'weekly' | 'monthly') => {
     SELECT 
       u."id" as "user_id", 
       u."name",
-      CAST(SUM(us."score") AS INTEGER) AS "totalScore",
+      CAST(SUM(us."score") AS INTEGER) AS "total_score",
       CAST(RANK() OVER (ORDER BY SUM(us."score") DESC) AS INTEGER) AS "rank",
       CAST(MAX(us."previous_rank"->>'daily') AS INTEGER) AS "previous_rank"
     FROM "user_scores" AS us
