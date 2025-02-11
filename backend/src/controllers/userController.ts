@@ -20,7 +20,10 @@ export const getUserById = async (
   res: Response,
 ): Promise<any> => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findOne({
+      where: { id: req.params.id },
+      attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+    });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -111,6 +114,19 @@ export const loginController = async (
       token,
       user_id: user.id,
     });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error.', error });
+  }
+};
+
+export const checkLogin = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.user;
+    if (id) {
+      res.status(200).json({ message: 'User is logged in', id });
+      return;
+    }
+    res.status(401).json({ message: 'User is not logged in' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error.', error });
   }
