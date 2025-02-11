@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@Assets/css/index.css';
 import '@Assets/css/tailwind.css';
 import { BrowserRouter } from 'react-router-dom';
-import store from '@Store/index.tsx';
+import store from '@Store/index.ts';
 import { Provider } from 'react-redux';
 
 const queryClient = new QueryClient();
