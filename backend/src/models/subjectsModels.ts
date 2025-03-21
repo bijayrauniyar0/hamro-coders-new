@@ -2,28 +2,40 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
 class Subject extends Model {
+  public id!: number;
   public subject_code!: string;
-  public title!: string;
-  public semester!: number;
+  public subject_title!: string;
   public course_name!: string;
+  public full_marks!: number;
+  public duration!: number;
 }
 
 Subject.init(
   {
-    subject_code: {
-      type: DataTypes.STRING,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
     },
-    title: {
+    subject_code: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true,
     },
-    semester: {
-      type: DataTypes.INTEGER,
+    subject_title: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     course_name: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    full_marks: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    duration: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

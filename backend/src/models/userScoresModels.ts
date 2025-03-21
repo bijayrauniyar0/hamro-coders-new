@@ -31,10 +31,6 @@ UserScores.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    semester: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     previous_rank: {
       type: DataTypes.JSON,
       allowNull: true,
@@ -57,6 +53,7 @@ Subject.hasMany(UserScores, {
 
 UserScores.belongsTo(Subject, {
   foreignKey: 'subject_code',
+  targetKey: 'subject_code',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });

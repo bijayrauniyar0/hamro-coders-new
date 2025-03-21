@@ -20,6 +20,6 @@ app.use('/api/leaderboard', userScoresRouter);
 
 sequelize.authenticate();
 
-sequelize.sync().then(() => {
+sequelize.sync({ force: false }).then(() => {
   app.listen(port);
 });
