@@ -1,11 +1,11 @@
 import Subject from '@Models/subjectsModels';
 import { Request, Response } from 'express';
 
-export const getSubjectsBySemester = async (req: Request, res: Response) => {
-  const { semester, course_name } = req.params;
+export const getSubjectsByCourse = async (req: Request, res: Response) => {
+  const { course_id } = req.params;
   try {
     const subjects = await Subject.findAll({
-      where: { semester, course_name },
+      where: { course_id },
     });
     res.status(200).json(subjects);
   } catch {
