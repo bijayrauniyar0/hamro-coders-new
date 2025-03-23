@@ -7,6 +7,10 @@ export const getSubjectsBySemester = async (params: Record<string, any>) => {
   );
 };
 
+export const getCourses = async () => {
+  return authenticated(api).get('/api/courses/');
+};
+
 export const getMcqs = async (params: Record<string, any>) => {
   const { subject_code } = params;
   return authenticated(api).get(`/api/mcq/questions/${subject_code}/`);
