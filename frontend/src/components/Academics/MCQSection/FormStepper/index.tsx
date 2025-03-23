@@ -1,9 +1,10 @@
 import { FlexRow } from '@Components/common/Layouts';
+import { QuestionType } from '..';
 
 type FromStepperProps = {
   currentQuestion: boolean[];
   questionCount: number;
-  questionData: { id: number; question: string; options: string[] }[];
+  questionData: QuestionType[];
 };
 const FromStepper = ({
   currentQuestion,

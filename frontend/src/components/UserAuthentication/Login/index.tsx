@@ -33,6 +33,10 @@ export default function Login() {
       toast.success('Login Successful');
       navigate('/dashboard');
     },
+    onError: ({ response }: any) => {
+      const caughtError = response?.data?.message || 'Something went wrong.';
+      toast.error(caughtError || 'Login Failed Something Went Wrong');
+    },
   });
 
   const {
@@ -44,13 +48,7 @@ export default function Login() {
   });
 
   const onSubmit = (data: Record<string, any>) => {
-    // try {
     mutate(data);
-    // } catch (error: any) {
-    //   const caughtError =
-    //     error?.response?.data?.detail || 'Something went wrong.';
-    //   showToast('failure', caughtError || 'Login Failed Something Went Wrong');
-    // }
   };
 
   return (
@@ -62,12 +60,6 @@ export default function Login() {
           <p className="select-none text-5xl font-semibold text-primary-700">
             Hamro Coders
           </p>
-          {/* <img
-            src={NSOIcon}
-            alt="NSO Icon"
-            className="mx-auto w-48 justify-between"
-          /> */}
-
           {/*  ------ form ------ */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl className="mb-4">

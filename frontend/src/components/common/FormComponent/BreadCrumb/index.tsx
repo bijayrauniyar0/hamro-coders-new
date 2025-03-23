@@ -14,12 +14,12 @@ const BreadCrumb = ({
   const [beforeSlash, afterSlash] = heading.split(' / ');
 
   return (
-    <div className="flex w-full items-end justify-start gap-x-2">
+    <div className="flex w-full items-center justify-start gap-x-2">
       {onBackClick && (
         <IconButton
           name="arrow_back"
-          iconClassName="text-[#0B2E62]"
-          className="rounded-full !font-normal leading-6 duration-200 hover:bg-primary-200"
+          iconClassName="text-primary-700 group-hover:!text-white"
+          className="rounded-full !font-normal leading-6 duration-200 hover:bg-primary-400 group"
           onClick={() => {
             onBackClick();
             overlayStatus?.();
@@ -27,11 +27,11 @@ const BreadCrumb = ({
         />
       )}
       <div>
-        <span className="!text-[24px] !font-bold leading-[38px] tracking-[-0.48px] text-[#0B2E62]">
+        <span className="!text-xl !font-semibold leading-[38px] tracking-[-0.48px] text-primary-700">
           {beforeSlash} {afterSlash ? `/ ` : ''}
         </span>
 
-        <span className="!text-[24px] !font-light leading-[38px] tracking-[-0.48px] text-[#0B2E62]">
+        <span className="!text-xl !font-light leading-[38px] tracking-[-0.48px] text-primary-700">
           {afterSlash}
         </span>
       </div>

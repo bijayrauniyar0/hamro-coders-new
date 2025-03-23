@@ -16,7 +16,7 @@ export const theme = {
   },
   extend: {
     fontFamily: {
-      primary: ['Poppins', 'sans-serif'],
+      primary: ['Poppins'],
     },
     colors: {
       primary: {
@@ -53,6 +53,8 @@ export const theme = {
       light: '0px 2px 20px 4px rgba(0, 0, 0, 0.12)',
       dark: '0px 4px 16px 8px rgba(217, 217, 217, 0.28)',
       formshadow: '4px 0px 19px 0px rgba(58, 58, 58, 0.16)',
+      custom: '0px 2px 6px 0px rgba(20, 86, 146, 0.12)',
+
     },
     animation: {
       loader: 'loader 0.6s infinite alternate',
@@ -99,15 +101,17 @@ export const theme = {
     },
   },
   fontSize: {
-    xs: '0.75rem',
-    sm: '0.838rem',
+    xs: '0.625rem',
+    sm: '0.75rem',
+    md: '0.875rem',
     base: '1rem',
-    lg: '1.063rem',
-    xl: '1.25rem',
-    '2xl': '1.563rem',
-    '3xl': '1.953rem',
-    '4xl': '2.441rem',
-    '5xl': '3.052rem',
+    lg: '1.25rem',
+    xl: '1.375rem',
+    '2xl': '1.5rem',
+    '3xl': '1.75rem',
+    '4xl': '2rem',
+    '5xl': '2.25rem',
+    '6xl': '2.5rem',
   },
 };
 export const plugins = [import('tailwindcss-animate')];

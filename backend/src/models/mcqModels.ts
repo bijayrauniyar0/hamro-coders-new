@@ -1,0 +1,56 @@
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../config/database';
+import Subject from './subjectsModels';
+
+class MCQ extends Model {
+  public id!: number;
+  public question!: string;
+  public subject_code!: string;
+  public options!: JSON;
+  public answer!: string;
+}
+
+MCQ.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    subject_code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    question: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    options: {
+      type: DataTypes.JSON,
+      allowNull: false,
+    },
+    answer: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: 'mcq_questions',
+    sequelize,
+    timestamps: false,
+  },
+);
+
+Subject.hasMany(MCQ, {
+  foreignKey: 'subject_code',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+MCQ.belongsTo(Subject, {
+  foreignKey: 'subject_code',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+export default MCQ;

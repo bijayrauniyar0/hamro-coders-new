@@ -16,8 +16,7 @@ export const authenticate = (
 
   try {
     const decoded = verifyToken(token);
-    // @ts-ignore
-    req.user = decoded; // Attach decoded user data to the request object
+    req.user = decoded as Record<string, any>; // Attach decoded user data to the request object
     return next(); // Proceed to the next middleware
   } catch {
     res.status(401).json({ message: 'Invalid or expired token' });

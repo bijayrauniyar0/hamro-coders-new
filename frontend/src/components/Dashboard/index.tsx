@@ -11,13 +11,13 @@ const Dashboard = () => {
   });
   return (
     <FlexColumn className="w-full gap-2 !mt-[8rem]">
-      {data?.map((user: any) => (
+      {/* {data?.map((user: any) => (
         <FlexRow key={user.id} className='gap-4'>
           <p className='text-xl text-primary-700'>{user.id}</p>
           <p className='text-xl text-primary-700'>{user.email}</p>
           <p className='text-xl text-primary-700'>{user.name}</p>
         </FlexRow>
-      ))}
+      ))} */}
       {/* <TopBox /> */}
     </FlexColumn>
   );

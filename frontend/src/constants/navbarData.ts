@@ -9,7 +9,7 @@ export interface IChildLinkData {
 export interface INavbarLinkData {
   id: number;
   name: string;
-  link?: string;
+  link: string;
   children?: IChildLinkData[];
 }
 
@@ -19,25 +19,20 @@ export const navbarData: INavbarLinkData[] = [
     name: 'Academics',
     link: '/academics/BCA',
   },
-  {
-    id: 2,
-    name: 'Coding',
-    link: '/coding',
-  },
+  // {
+  //   id: 2,
+  //   name: 'Coding',
+  //   link: '/coding',
+  // },
 
+  // {
+  //   id: 3,
+  //   name: 'Gaming Zone',
+  //   link: '/gaming-zone',
+  // },
   {
-    id: 3,
-    name: 'Gaming Zone',
-    link: '/gaming-zone',
+    id: 4,
+    name: 'Leaderboard',
+    link: '/leaderboard',
   },
-  // {
-  //   id: 4,
-  //   name: 'Data Bank',
-  //   link: '/data-bank/report',
-  // },
-  // {
-  //   id: 5,
-  //   name: 'Tutorial',
-  //   link: '/dvs-tutorial',
-  // },
 ];
