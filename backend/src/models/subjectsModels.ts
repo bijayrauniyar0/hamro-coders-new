@@ -1,11 +1,12 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
+import Course from './courseModels';
 
 class Subject extends Model {
   public id!: number;
+  course_id!: number;
   public subject_code!: string;
   public subject_title!: string;
-  public course_name!: string;
   public full_marks!: number;
   public duration!: number;
 }
@@ -16,6 +17,10 @@ Subject.init(
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+    },
+    course_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     subject_code: {
       type: DataTypes.STRING,
@@ -45,5 +50,17 @@ Subject.init(
     timestamps: false,
   },
 );
+
+Subject.hasMany(Course, {
+  foreignKey: 'course_id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Course.belongsTo(Subject, {
+  foreignKey: 'course_id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
 
 export default Subject;
