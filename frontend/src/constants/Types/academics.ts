@@ -8,3 +8,8 @@ export interface ISubjectBoxProps {
   courseDetails: ISubjects;
   handlePlay: () => void;
 }
+
+export interface Courses {
+  course_name: string;
+  id: number;
+}
