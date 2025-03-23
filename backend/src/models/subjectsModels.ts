@@ -25,7 +25,7 @@ Subject.init(
     subject_code: {
       type: DataTypes.STRING,
       allowNull: false,
-      primaryKey: true,
+      unique: true,
     },
     subject_title: {
       type: DataTypes.STRING,
@@ -51,14 +51,16 @@ Subject.init(
   },
 );
 
-Subject.hasMany(Course, {
+Course.hasMany(Subject, {
   foreignKey: 'course_id',
+  sourceKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
-Course.belongsTo(Subject, {
+Subject.belongsTo(Course, {
   foreignKey: 'course_id',
+  targetKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
