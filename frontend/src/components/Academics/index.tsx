@@ -1,107 +1,94 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import CourseBox from './CourseBox';
-import { semestersData, switchTabData } from '@Constants/Academics';
-import HeaderSwitchTab from '@Components/common/HeaderSwitchTab';
-import { useNavigate, useParams } from 'react-router-dom';
-import ToolTip from '@Components/radix/ToolTip';
-import { Select } from '@Components/common/FormUI';
-import Modes from '@Components/Modes';
-import { useTypedSelector } from '@Store/hooks';
+// import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getSubjectsBySemester } from '@Services/academics';
+import { getCourses } from '@Services/academics';
 import isEmpty from '@Utils/isEmpty';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import Skeleton from '@Components/radix/Skeleton';
-import { getStyle } from '@Utils/index';
+import Searchbar from '@Components/common/SearchBar';
+import { motion } from 'framer-motion';
+import { cardVariants, containerVariants } from '@Animations/index';
+import { Courses } from '@Constants/Types/academics';
+import ToolTip from '@Components/radix/ToolTip';
 
 const Academics = () => {
-  const { courseName } = useParams();
-  const isModesOpen = useTypedSelector(state => state.commonSlice.isModesOpen);
-  const navigate = useNavigate();
-  const [selectedSemester, setSelectedSemester] = useState<string | number>(1);
-  const [selectedStyle, setSelectedStyle] = useState<string>('grid');
-  const [selectedSubjectCode, setSelectedSubjectCode] = useState<string>('');
-  const selectedMode = useTypedSelector(
-    state => state.commonSlice.selectedMode,
-  );
-  function handleNextClick() {
-    navigate(
-      `/mcq?course=${courseName}&subject_code=${selectedSubjectCode}&semester=${selectedSemester}&selectedMode=${selectedMode}`,
-    );
-  }
-  const { data: subjectsData, isLoading: subjectsDataIsLoading } = useQuery({
-    queryKey: ['subjects', courseName, selectedSemester],
-    queryFn: () =>
-      getSubjectsBySemester({
-        semester: selectedSemester,
-        course_name: courseName,
-      }),
-    select: ({ data }) => data,
+  // const isModesOpen = useTypedSelector(state => state.commonSlice.isModesOpen);
+  // const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState('');
+  // function handleNextClick() {
+  //   navigate(
+  //     `/mcq?course=${courseName}&subject_code=${selectedSubjectCode}&semester=${selectedSemester}&selectedMode=${selectedMode}`,
+  //   );
+  // }
+  const { data: courseData, isLoading: subjectsDataIsLoading } = useQuery({
+    queryKey: ['courses'],
+    queryFn: () => getCourses(),
+    select: ({ data }) => data as Courses[],
   });
+
+  const courses = useMemo(() => {
+    const searchedCourses = courseData?.filter(course =>
+      course.course_name.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+    return searchedCourses;
+  }, [courseData, searchValue]);
 
   return (
     <>
-      <FlexColumn className="gap-4">
-        <FlexRow className="items-center justify-between">
-          <HeaderSwitchTab
-            headerOptions={switchTabData}
-            activeTab={courseName}
-            onChange={(value: string) => {
-              // setActiveTab(value);
-              navigate(`/academics/${value}`);
-            }}
-            className="flex-1 gap-2 md:gap-4"
+      <FlexColumn className="w-full gap-4">
+        <FlexRow className="w-full items-center justify-between">
+          <p className="text-xl font-semibold text-matt-100">Courses</p>
+          <Searchbar
+            wrapperStyle="!w-[15rem]"
+            placeholder="Search Courses"
+            onChange={e => setSearchValue(e.target.value)}
+            value={searchValue}
           />
-          <FlexRow className="items-center gap-2">
-            <ToolTip
-              name="grid_view"
-              message="Show Grid View"
-              iconClick={() => setSelectedStyle('grid')}
-              className={`${selectedStyle === 'grid' ? 'rounded-sm !bg-primary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
-            />
-            <ToolTip
-              name="view_list"
-              message="Show List View"
-              iconClick={() => setSelectedStyle('list')}
-              className={`${selectedStyle === 'list' ? 'rounded-sm !bg-primary-100 p-1' : ''} flex w-[1.5rem] items-center justify-center text-base md:min-w-[2rem] md:text-2xl`}
-            />
-            <Select
-              options={semestersData || []}
-              placeholder="Select"
-              className="!z-0 h-8 !w-[7.25rem] rounded !border border-[#D0D5DD] bg-white md:!w-[11.75rem]"
-              valueKey="value"
-              selectedOption={+selectedSemester}
-              onChange={value => {
-                setSelectedSemester(value);
-              }}
-            />
-          </FlexRow>
         </FlexRow>
         {subjectsDataIsLoading ? (
-          <div className={getStyle(selectedStyle)}>
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
             {[...Array(5).keys()].map(key => (
-              <Skeleton
-                className={`h-[12rem] ${selectedStyle === 'list' ? 'w-full' : 'w-[18rem]'}`}
-                key={key}
-              />
+              <Skeleton className="h-[12rem] w-[18rem]" key={key} />
             ))}
           </div>
-        ) : isEmpty(subjectsData) ? (
+        ) : isEmpty(courses) ? (
           <NoDataAvailable />
         ) : (
-          <div key={courseName}>
-            <CourseBox
-              courseDetails={subjectsData}
-              selectedStyle={selectedStyle}
-              handlePlay={(subjectCode: string) =>
-                setSelectedSubjectCode(subjectCode)
-              }
-            />
-          </div>
+          <FlexColumn className="gap-4">
+            <motion.div
+              className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
+              {courses?.map((courses, index) => {
+                return (
+                  <motion.div
+                    variants={cardVariants}
+                    key={index}
+                    className="flex cursor-pointer flex-col gap-8 rounded-lg border bg-white px-6 py-8 shadow-md hover:shadow-lg"
+                  >
+                    <FlexRow className="w-full items-center justify-between">
+                      <p className="!w-[18rem] text-lg font-medium leading-5">
+                        {courses.course_name}
+                      </p>
+                      <ToolTip message="View Course Details" name="info" />
+                    </FlexRow>
+                    <div className="h-[1px] w-full bg-slate-400" />
+                    <FlexRow className="items-center justify-between gap-1">
+                      <p className="w-[75%] text-base font-medium leading-5">
+                        <span className="text-primary-700">8</span> Subjects
+                      </p>
+                    </FlexRow>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          </FlexColumn>
         )}
       </FlexColumn>
-      {isModesOpen && <Modes handleNextClick={handleNextClick} />}
+      {/* {isModesOpen && <Modes handleNextClick={handleNextClick} />} */}
     </>
   );
 };
