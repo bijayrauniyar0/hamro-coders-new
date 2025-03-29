@@ -1,4 +1,4 @@
-import AcademicsPage from '@Views/Academics';
+import CoursesPage from '@Views/Courses';
 import { IRoute } from './type';
 import DashboardPage from '@Views/Dashboard';
 import ModesPage from '@Views/Modes';
@@ -26,13 +26,13 @@ const appRoutes: IRoute[] = [
   {
     name: 'Academics',
     path: '/courses',
-    component: AcademicsPage,
+    component: CoursesPage,
     authenticated: true,
   },
   {
     name: 'Courses',
     path: '/academics/:courseName',
-    component: AcademicsPage,
+    component: CoursesPage,
     authenticated: true,
   },
   {

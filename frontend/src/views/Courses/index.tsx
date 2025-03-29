@@ -1,15 +1,15 @@
-import Academics from '@Components/Academics';
+import Courses from '@Components/Courses';
 import BindContentContainer from '@Components/common/BindContentContainer';
 import React from 'react';
 
-const AcademicsPage = () => {
+const CoursesPage = () => {
   return (
     <BindContentContainer>
       <div className="mt-7">
-        <Academics />
+        <Courses />
       </div>
     </BindContentContainer>
   );
 };
 
-export default AcademicsPage;
+export default CoursesPage;
