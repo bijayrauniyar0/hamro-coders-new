@@ -1,10 +1,7 @@
 import { api, authenticated } from '.';
 
-export const getSubjectsBySemester = async (params: Record<string, any>) => {
-  const { semester, course_name } = params;
-  return authenticated(api).get(
-    `/api/academics/subjects/${semester}/${course_name}/`,
-  );
+export const getSubjectsByCourse = async (course_id: number) => {
+  return authenticated(api).get(`/api/courses/subjects/${course_id}/`);
 };
 
 export const getCourses = async () => {
