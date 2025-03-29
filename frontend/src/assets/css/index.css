@@ -65,6 +65,10 @@ body {
   }
 }
 
+button {
+  all: unset;
+}
+
 /* * {
   border: 1px solid red !important;
 } */
