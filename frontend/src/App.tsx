@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import appRoutes from './routes/appRoutes';
 import generateRoutes from './routes/generateRoutes';
 import Navbar from './components/common/Navbar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { checkLogin, getUserById } from '@Services/common';
 import { useEffect } from 'react';
@@ -14,30 +14,44 @@ import { setUserProfile } from '@Store/actions/common';
 function App() {
   const { pathname } = useLocation();
   const dispatch = useTypedDispatch();
+  const navigate = useNavigate();
 
   const routesWithoutNavbar = ['/login', '/signup'];
   const showNavbar = !routesWithoutNavbar.some(route =>
     pathname.includes(route),
   );
 
-  const { isSuccess: isUserLoggedIn, data: userId } = useQuery({
+  const {
+    isSuccess: isUserLoggedIn,
+    isError: errorUserLogin,
+    data: userId,
+  } = useQuery({
     queryKey: ['user-profile'],
     queryFn: () => checkLogin(),
     select: ({ data }) => data?.id,
+    enabled: !localStorage.getItem('token'),
   });
 
   const { isSuccess: userProfileIsFetched, data: userProfile } = useQuery({
-    queryKey: ['user-profile'],
+    queryKey: ['user-profile', isUserLoggedIn, userId],
     queryFn: () => getUserById(userId),
     select: ({ data }) => data,
     enabled: isUserLoggedIn && !!userId,
   });
 
   useEffect(() => {
+    if (errorUserLogin) {
+      localStorage.removeItem('token');
+      navigate('/login');
+    }
+  }, [errorUserLogin]);
+
+  useEffect(() => {
     if (userProfileIsFetched) {
       dispatch(setUserProfile(userProfile));
     }
   }, [userProfileIsFetched, userProfile]);
+
   return (
     <>
       {showNavbar && <Navbar />}
