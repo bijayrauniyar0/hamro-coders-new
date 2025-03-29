@@ -31,7 +31,7 @@ export default function Login() {
     onSuccess: (res: any) => {
       localStorage.setItem('token', res?.data?.token);
       toast.success('Login Successful');
-      navigate('/dashboard');
+      navigate('/');
     },
     onError: ({ response }: any) => {
       const caughtError = response?.data?.message || 'Something went wrong.';
