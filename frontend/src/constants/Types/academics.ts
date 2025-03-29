@@ -9,7 +9,8 @@ export interface ISubjectBoxProps {
   handlePlay: () => void;
 }
 
-export interface Courses {
+export type CoursesType = {
   course_name: string;
   id: number;
-}
+  subjects_count: number;
+};
