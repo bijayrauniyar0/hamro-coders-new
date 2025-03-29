@@ -3,7 +3,7 @@ import { Button } from '@Components/radix/Button';
 import { ISubjectBoxProps } from '@Constants/Types/academics';
 import mcqThumbnail from '@Assets/images/mcq-thumbnail.png';
 
-const SubjectBox = ({ courseDetails, handlePlay }: ISubjectBoxProps) => {
+const SubjectBox = ({ title, handlePlay }: ISubjectBoxProps) => {
   return (
     <>
       <FlexColumn className="w-full flex-1 gap-4">
@@ -16,7 +16,7 @@ const SubjectBox = ({ courseDetails, handlePlay }: ISubjectBoxProps) => {
         </div>
         <FlexRow className="items-center justify-between gap-1">
           <p className="w-[75%] text-base font-medium leading-5">
-            {courseDetails.title}
+            {title}
           </p>
           <Button onClick={handlePlay}>Play</Button>
         </FlexRow>
