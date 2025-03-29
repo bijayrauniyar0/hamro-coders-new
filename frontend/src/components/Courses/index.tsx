@@ -9,22 +9,16 @@ import Skeleton from '@Components/radix/Skeleton';
 import Searchbar from '@Components/common/SearchBar';
 import { motion } from 'framer-motion';
 import { cardVariants, containerVariants } from '@Animations/index';
-import { Courses } from '@Constants/Types/academics';
+import { CoursesType } from '@Constants/Types/academics';
 import ToolTip from '@Components/radix/ToolTip';
 
 const Academics = () => {
-  // const isModesOpen = useTypedSelector(state => state.commonSlice.isModesOpen);
-  // const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
-  // function handleNextClick() {
-  //   navigate(
-  //     `/mcq?course=${courseName}&subject_code=${selectedSubjectCode}&semester=${selectedSemester}&selectedMode=${selectedMode}`,
-  //   );
-  // }
+
   const { data: courseData, isLoading: subjectsDataIsLoading } = useQuery({
     queryKey: ['courses'],
     queryFn: () => getCourses(),
-    select: ({ data }) => data as Courses[],
+    select: ({ data }) => data as CoursesType[],
   });
 
   const courses = useMemo(() => {
@@ -38,7 +32,7 @@ const Academics = () => {
     <>
       <FlexColumn className="w-full gap-4">
         <FlexRow className="w-full items-center justify-between">
-          <p className="text-xl font-semibold text-matt-100">Courses</p>
+          <p className="text-xl font-semibold text-primary-700">Courses</p>
           <Searchbar
             wrapperStyle="!w-[15rem]"
             placeholder="Search Courses"
@@ -62,23 +56,27 @@ const Academics = () => {
               initial="hidden"
               animate="show"
             >
-              {courses?.map((courses, index) => {
+              {courses?.map(course => {
                 return (
                   <motion.div
                     variants={cardVariants}
-                    key={index}
-                    className="flex cursor-pointer flex-col gap-8 rounded-lg border bg-white px-6 py-8 shadow-md hover:shadow-lg"
+                    key={course.id}
+                    className="flex cursor-pointer flex-col gap-8 rounded-lg border bg-white px-6 py-8 shadow-box hover:shadow-lg"
+                    onClick={() => {}}
                   >
                     <FlexRow className="w-full items-center justify-between">
                       <p className="!w-[18rem] text-lg font-medium leading-5">
-                        {courses.course_name}
+                        {course.course_name}
                       </p>
                       <ToolTip message="View Course Details" name="info" />
                     </FlexRow>
                     <div className="h-[1px] w-full bg-slate-400" />
                     <FlexRow className="items-center justify-between gap-1">
                       <p className="w-[75%] text-base font-medium leading-5">
-                        <span className="text-primary-700">8</span> Subjects
+                        <span className="text-primary-700">
+                          {course?.subjects_count || 0}
+                        </span>
+                        Subjects
                       </p>
                     </FlexRow>
                   </motion.div>

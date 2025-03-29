@@ -7,8 +7,8 @@ class UserScores extends Model {
   public id!: number;
   public user_id!: number;
   public score!: number;
-  public subject_code!: string;
-  public semester!: number;
+  public subject_id!: string;
+  public previous_rank!: string | null;
   public readonly createdAt!: Date;
 }
 
@@ -27,8 +27,8 @@ UserScores.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    subject_code: {
-      type: DataTypes.STRING,
+    subject_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     previous_rank: {
@@ -46,14 +46,14 @@ UserScores.init(
 );
 
 Subject.hasMany(UserScores, {
-  foreignKey: 'subject_code',
+  foreignKey: 'subject_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
 UserScores.belongsTo(Subject, {
-  foreignKey: 'subject_code',
-  targetKey: 'subject_code',
+  foreignKey: 'subject_id',
+  targetKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });

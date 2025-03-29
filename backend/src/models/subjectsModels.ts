@@ -4,10 +4,9 @@ import Course from './courseModels';
 
 class Subject extends Model {
   public id!: number;
-  course_id!: number;
-  public subject_code!: string;
-  public subject_title!: string;
-  public full_marks!: number;
+  public course_id!: number;
+  public title!: string;
+  public marks!: number;
   public duration!: number;
 }
 
@@ -22,24 +21,15 @@ Subject.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    subject_code: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    subject_title: {
+    title: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    course_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    full_marks: {
+    marks: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    duration: {
+    duration_in_minutes: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

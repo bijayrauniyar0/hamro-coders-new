@@ -5,7 +5,7 @@ import Subject from './subjectsModels';
 class MCQ extends Model {
   public id!: number;
   public question!: string;
-  public subject_code!: string;
+  public subject_id!: string;
   public options!: JSON;
   public answer!: string;
 }
@@ -17,8 +17,8 @@ MCQ.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    subject_code: {
-      type: DataTypes.STRING,
+    subject_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     question: {
@@ -42,13 +42,14 @@ MCQ.init(
 );
 
 Subject.hasMany(MCQ, {
-  foreignKey: 'subject_code',
+  foreignKey: 'subject_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
 MCQ.belongsTo(Subject, {
-  foreignKey: 'subject_code',
+  foreignKey: 'subject_id',
+  targetKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });

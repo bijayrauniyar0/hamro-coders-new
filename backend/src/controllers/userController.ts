@@ -122,7 +122,8 @@ export const loginController = async (
 export const checkLogin = async (req: Request, res: Response) => {
   try {
     const { id } = req.user;
-    if (id) {
+    const user = await User.findByPk(id);
+    if (id && user) {
       res.status(200).json({ message: 'User is logged in', id });
       return;
     }

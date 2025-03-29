@@ -54,7 +54,7 @@ export const theme = {
       dark: '0px 4px 16px 8px rgba(217, 217, 217, 0.28)',
       formshadow: '4px 0px 19px 0px rgba(58, 58, 58, 0.16)',
       custom: '0px 2px 6px 0px rgba(20, 86, 146, 0.12)',
-
+      box: '2px 6px 6px rgba(16, 24, 40, 0.5)',
     },
     animation: {
       loader: 'loader 0.6s infinite alternate',
