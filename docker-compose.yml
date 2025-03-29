@@ -44,16 +44,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network # Ensure the database is on the app-network
-  # mongodb:
-  #   image: mongo:latest
-  #   container_name: mongodb
-  #   ports:
-  #     - "27017:27017" # Maps the host port 27017 to the container port 27017
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: admin # Sets the MongoDB admin username
-  #     MONGO_INITDB_ROOT_PASSWORD: admin123 # Sets the MongoDB admin password
-  #   volumes:
-  #     - mongodb_data:/data/db
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
@@ -74,5 +64,3 @@ networks:
 volumes:
   postgres_data:
   pgadmin_data:
-  # mongodb_data:
-  #   driver: local
