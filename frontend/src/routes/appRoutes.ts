@@ -2,9 +2,9 @@ import AcademicsPage from '@Views/Academics';
 import { IRoute } from './type';
 import DashboardPage from '@Views/Dashboard';
 import ModesPage from '@Views/Modes';
-import MCQBox from '@Components/Academics/MCQSection';
+import MCQBox from '@Components/Courses/MCQSection';
 import AuthenticationComponent from '@Components/UserAuthentication';
-import MCQ from '@Components/Academics/MCQSection';
+import MCQ from '@Components/Courses/MCQSection';
 import LeaderboardPage from '@Views/LeaderboardPage';
 
 const appRoutes: IRoute[] = [
@@ -25,6 +25,12 @@ const appRoutes: IRoute[] = [
   },
   {
     name: 'Academics',
+    path: '/courses',
+    component: AcademicsPage,
+    authenticated: true,
+  },
+  {
+    name: 'Courses',
     path: '/academics/:courseName',
     component: AcademicsPage,
     authenticated: true,
