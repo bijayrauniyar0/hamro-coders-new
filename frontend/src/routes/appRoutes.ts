@@ -1,7 +1,7 @@
 import CoursesPage from '@Views/Courses';
 import { IRoute } from './type';
 import DashboardPage from '@Views/Dashboard';
-import ModesPage from '@Views/Modes';
+// import ModesPage from '@Views/Modes';
 import MCQBox from '@Components/Courses/MCQSection';
 import AuthenticationComponent from '@Components/UserAuthentication';
 import MCQ from '@Components/Courses/MCQSection';
