@@ -12,6 +12,7 @@
 html,
 body {
   font-family: 'Poppins' !important;
+  background: #faf9ff;
 }
 
 .has-dropshadow {
@@ -85,6 +86,30 @@ body {
 .reset-button {
   all: unset;
 }
+
+.filter-checkbox:checked::before {
+  content: '\e5ca';
+  font-family: 'Material Icons';
+  color: #475467;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.filter-checkbox:checked::before {
+  width: 1rem;
+  height: 1rem;
+  background-color: #833177;
+  color: white;
+  display: grid;
+  place-content: center;
+  border-radius: 2px;
+  border: none;
+}
+
 
 /* * {
   border: 1px solid red !important;
