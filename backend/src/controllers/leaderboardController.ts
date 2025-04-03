@@ -12,16 +12,15 @@ type UserRank = {
 
 export const createScoreEntry = async (req: Request, res: Response) => {
   try {
-    const { subject_code, score, semester } = req.body;
+    const { subject_id, score } = req.body;
     const user = req.user;
     const currentRank = await getUserRankById(user.id, 'daily');
     const currentRankWeekly = await getUserRankById(user.id, 'weekly');
     const currentRankMonthly = await getUserRankById(user.id, 'monthly');
     await UserScores.create({
       score,
-      subject_code,
+      subject_id,
       user_id: user?.id,
-      semester,
       previous_rank: {
         daily: (currentRank as UserRank)?.rank || null,
         weekly: (currentRankWeekly as UserRank)?.rank || null,
