@@ -1,5 +1,5 @@
 import climbingLadderImg from '@Assets/images/climbing_ladder.png';
-import rapidModeImg from '@Assets/images/rapid_mode.png';
+// import rapidModeImg from '@Assets/images/rapid_mode.png';
 import practiceModeImg from '@Assets/images/practice_mode.png';
 
 export const modesData = [
@@ -11,14 +11,14 @@ export const modesData = [
     imageUrl: climbingLadderImg,
     value: 'ranked',
   },
-  {
-    id: 2,
-    modeTitle: 'Rapid Mode',
-    modeDescription:
-      'Solve questions in a limited time and improve your speed and accuracy',
-    imageUrl: rapidModeImg,
-    value: 'rapid',
-  },
+  // {
+  //   id: 2,
+  //   modeTitle: 'Rapid Mode',
+  //   modeDescription:
+  //     'Solve questions in a limited time and improve your speed and accuracy',
+  //   imageUrl: rapidModeImg,
+  //   value: 'rapid',
+  // },
   {
     id: 3,
     modeTitle: 'Practice Mode',
