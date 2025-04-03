@@ -1,31 +1,17 @@
 import { Request, Response } from 'express';
 import UserScores from '@Models/userScoresModels';
-import { getAllUserRanks, getUserRankById } from '@Services/index';
+import { getAllUserRanks } from '@Services/index';
 import User from '@Models/userModels';
 import { Rank } from '@Constants/Types/leaderboard';
-
-type UserRank = {
-  user_id: number;
-  total_score: number;
-  rank: number;
-};
 
 export const createScoreEntry = async (req: Request, res: Response) => {
   try {
     const { subject_id, score } = req.body;
     const user = req.user;
-    const currentRank = await getUserRankById(user.id, 'daily');
-    const currentRankWeekly = await getUserRankById(user.id, 'weekly');
-    const currentRankMonthly = await getUserRankById(user.id, 'monthly');
     await UserScores.create({
       score,
       subject_id,
       user_id: user?.id,
-      previous_rank: {
-        daily: (currentRank as UserRank)?.rank || null,
-        weekly: (currentRankWeekly as UserRank)?.rank || null,
-        monthly: (currentRankMonthly as UserRank)?.rank || null,
-      },
     });
     res.status(201).json({ message: 'Score added successfully' });
   } catch (error) {
@@ -34,7 +20,7 @@ export const createScoreEntry = async (req: Request, res: Response) => {
 };
 
 export const getRank = async (req: Request, res: Response) => {
-  const { filter_by } = req.query;
+  const { filter_by, course_id, subject_id } = req.query;
   const user = req.user;
   const userName = await User.findOne({
     where: {
