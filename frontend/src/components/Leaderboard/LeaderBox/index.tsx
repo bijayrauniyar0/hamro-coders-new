@@ -33,7 +33,7 @@ const LeaderBox = ({ className, rank, name, score }: LeaderBoxProps) => {
 
   return (
     <div className="relative h-full w-full">
-      <FlexColumn className="relative h-full w-full items-center">
+      <FlexColumn className="relative h-full w-full items-center z-10">
         {rank === 1 && (
           <img
             src={crown}
@@ -59,7 +59,7 @@ const LeaderBox = ({ className, rank, name, score }: LeaderBoxProps) => {
         </div>
       </FlexColumn>
       <div
-        className={`absolute -z-10 w-full select-none ${roundedCorners[rank]}`}
+        className={`absolute w-full select-none ${roundedCorners[rank]}`}
       >
         <FlexColumn className="h-full w-full items-center justify-center pt-[50%]">
           <p className="text-xs sm:text-md ">{name}</p>
