@@ -8,7 +8,7 @@ class UserScores extends Model {
   public user_id!: number;
   public score!: number;
   public subject_id!: string;
-  public previous_rank!: string | null;
+  public mode!: 'practice' | 'ranked';
   public readonly createdAt!: Date;
 }
 
@@ -23,17 +23,18 @@ UserScores.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    score: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     subject_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    previous_rank: {
-      type: DataTypes.JSON,
-      allowNull: true,
+    mode: {
+      type: DataTypes.ENUM('practice', 'ranked'),
+      allowNull: false,
+      defaultValue: 'practice',
+    },
+    score: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
@@ -41,7 +42,7 @@ UserScores.init(
     sequelize,
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at',
+    updatedAt: false,
   },
 );
 
