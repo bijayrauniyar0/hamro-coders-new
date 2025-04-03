@@ -15,10 +15,12 @@ const SubjectBox = ({ title, handlePlay }: ISubjectBoxProps) => {
           />
         </div>
         <FlexRow className="items-center justify-between gap-1">
-          <p className="w-[75%] text-base font-medium leading-5">
+          <p className="w-full max-w-[calc(100%-4rem)] text-start text-base font-medium leading-5">
             {title}
           </p>
-          <Button onClick={handlePlay}>Play</Button>
+          <Button onClick={handlePlay} variant="primary">
+            Play
+          </Button>
         </FlexRow>
       </FlexColumn>
     </>
