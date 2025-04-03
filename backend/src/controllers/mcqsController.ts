@@ -3,21 +3,21 @@ import { Request, Response } from 'express';
 import sequelize from 'src/config/database';
 
 export const getMCQs = async (req: Request, res: Response) => {
-  const { subject_code } = req.params;
+  const { subject_id } = req.params;
   try {
     const mcqQuestions = await MCQ.findAll({
       attributes: {
-        exclude: ['subject_code'], // Excludes the 'answer' column
+        exclude: ['subject_id'], // Excludes the 'answer' column
       },
       order: sequelize.random(),
       limit: 3,
-      where: { subject_code: subject_code },
+      where: { subject_id, },
     });
     const mcqQuestionsArray = mcqQuestions.map(mcq => {
       return {
         question: mcq.question,
         options: Object.entries(mcq.options).map(([key, value]) => {
-          return { id: Number(key), value: value };
+          return { id: Number(key), value };
         }),
         id: mcq.id,
         answer: Number(mcq.answer),
@@ -29,13 +29,13 @@ export const getMCQs = async (req: Request, res: Response) => {
   }
 };
 export const getMCQsAnswers = async (req: Request, res: Response) => {
-  const { subject_code } = req.params;
+  const { subject_id } = req.params;
   const { questions } = req.query;
   try {
     const mcqAnswers = await MCQ.findAll({
       attributes: ['id', 'answer'],
       where: {
-        subject_code: subject_code,
+        subject_id,
         id: (questions as string)?.split(','),
       },
     });
