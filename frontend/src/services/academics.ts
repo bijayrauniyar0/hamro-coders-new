@@ -9,13 +9,13 @@ export const getCourses = async () => {
 };
 
 export const getMcqs = async (params: Record<string, any>) => {
-  const { subject_code } = params;
-  return authenticated(api).get(`/api/mcq/questions/${subject_code}/`);
+  const { subject_id } = params;
+  return authenticated(api).get(`/api/mcq/questions/${subject_id}/`);
 };
 
 export const getMcqAnswers = async (paramsX: Record<string, any>) => {
-  const { subject_code, ...params } = paramsX;
-  return authenticated(api).get(`/api/mcq/answers/${subject_code}/`, {
+  const { subject_id, ...params } = paramsX;
+  return authenticated(api).get(`/api/mcq/answers/${subject_id}/`, {
     params,
   });
 };
