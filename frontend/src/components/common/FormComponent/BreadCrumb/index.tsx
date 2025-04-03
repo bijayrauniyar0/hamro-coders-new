@@ -14,7 +14,7 @@ const BreadCrumb = ({
   const [beforeSlash, afterSlash] = heading.split(' / ');
 
   return (
-    <div className="flex w-full items-center justify-start gap-x-2">
+    <div className="flex w-fit items-center justify-start gap-x-2">
       {onBackClick && (
         <IconButton
           name="arrow_back"
