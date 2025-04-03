@@ -14,6 +14,7 @@ import SubjectBox from './SubjectBox';
 import hasErrorBoundary from '@Components/common/hasErrorBoundary';
 import Modes from '@Components/Modes';
 import { useTypedSelector } from '@Store/hooks';
+import BreadCrumb from '@Components/common/FormComponent/BreadCrumb';
 
 const Subjects = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -43,7 +44,7 @@ const Subjects = () => {
     <>
       <FlexColumn className="w-full gap-4">
         <FlexRow className="w-full items-center justify-between">
-          <p className="text-xl font-semibold text-primary-700">Subjects</p>
+          <BreadCrumb onBackClick={() => navigate(-1)} heading="Subjects" />
           <Searchbar
             wrapperStyle="!w-[15rem]"
             placeholder="Search Subjects"
