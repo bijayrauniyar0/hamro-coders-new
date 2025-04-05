@@ -36,6 +36,11 @@ UserScores.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    elapsed_time: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   },
   {
     tableName: 'user_scores',
