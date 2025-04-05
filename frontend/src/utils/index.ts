@@ -64,3 +64,26 @@ export function rearrangeByRank(arr: any[]) {
 export const getFallBackImage = () => {
   return fallBack2;
 };
+
+export const calculatePercentage = (value: number, total: number) => {
+  if (total === 0) return 0;
+  return Math.round((value / total) * 100);
+};
+
+export const getPercentageColor = (value: number, total: number) => {
+  const percentage = calculatePercentage(value, total);
+  switch (true) {
+    case percentage === 0:
+      return 'text-red-500';
+    case percentage <= 25:
+      return 'text-orange-500';
+    case percentage <= 50:
+      return 'text-yellow-500';
+    case percentage <= 75:
+      return 'text-green-500';
+    case percentage <= 100:
+      return 'text-green-700';
+    default:
+      return 'text-gray-500';
+  }
+};
