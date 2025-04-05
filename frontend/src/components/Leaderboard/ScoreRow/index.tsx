@@ -33,8 +33,8 @@ const ScoreRow = ({
       <FlexColumn className="place-items-end">
         <p className="text-md font-medium tracking-tighter">{score}</p>
         <Icon
-          className={`flex justify-center p-0 text-[2.25rem] leading-4 tracking-[-0.625rem] ${previous_rank > rank ? 'text-green-600' : 'text-red-700'}`}
-          name={`${previous_rank > rank ? 'arrow_drop_up' : 'arrow_drop_down'}`}
+          className={`flex items-center justify-center p-0 !text-md ${previous_rank >= rank ? 'text-green-600' : 'text-red-700'}`}
+          name={`${previous_rank > rank ? 'arrow_drop_up' : previous_rank === rank ? 'equal' : 'arrow_drop_down'}`}
         />
       </FlexColumn>
       {/* <Icon className="text-primary-700" name="arrow_drop_up" /> */}
