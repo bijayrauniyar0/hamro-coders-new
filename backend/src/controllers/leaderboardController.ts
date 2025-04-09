@@ -3,11 +3,12 @@ import UserScores from '@Models/userScoresModels';
 import User from '@Models/userModels';
 import Subject from '@Models/subjectsModels';
 import { Op } from 'sequelize';
+import { getStartOfDay, getStartOfMonth, getStartOfWeek } from '@Utils/index';
 
 interface MyQuery {
   filter_by?: string;
   course_id?: string;
-  subject_id?: string; 
+  subject_id?: string;
 }
 
 export const createScoreEntry = async (req: Request, res: Response) => {
@@ -35,23 +36,22 @@ export const getLeaderboard = async (
     attributes: ['id'],
   });
   let subjectIds = subjects.map((subject: Subject) => subject.id);
-
   if (subject_id) {
     subjectIds = subject_id.split(',').map((id: string) => Number(id));
   }
 
-  const startDate = new Date();
+  let startDate = new Date();
   if (filter_by === 'daily') {
-    startDate.setHours(0, 0, 0, 0);
+    startDate = getStartOfDay();
   } else if (filter_by === 'weekly') {
-    startDate.setDate(startDate.getDate() - startDate.getDay()); // Start of the week
-    startDate.setHours(0, 0, 0, 0);
+    startDate = getStartOfWeek();
   } else if (filter_by === 'monthly') {
-    startDate.setDate(1); // Start of the month
-    startDate.setHours(0, 0, 0, 0);
+    startDate = getStartOfMonth();
   }
+
   const fiveMinutesAgo = new Date();
   fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - 5);
+
   const userScores = await UserScores.findAll({
     attributes: ['user_id', 'score'],
     where: {
