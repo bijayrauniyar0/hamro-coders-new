@@ -12,6 +12,7 @@
 html,
 body {
   font-family: 'Poppins' !important;
+  background: #faf9ff;
 }
 
 .has-dropshadow {
@@ -54,6 +55,23 @@ body {
   animation: glow 1s infinite alternate;
 }
 
+.spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #ffffff;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 @keyframes glow {
   0% {
     filter: drop-shadow(0 0 2px rgba(140, 0, 255, 0.192)) /* light purple */
@@ -64,6 +82,34 @@ body {
       drop-shadow(0 0 4px rgb(140, 0, 255));
   }
 }
+
+.reset-button {
+  all: unset;
+}
+
+.filter-checkbox:checked::before {
+  content: '\e5ca';
+  font-family: 'Material Icons';
+  color: #475467;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.filter-checkbox:checked::before {
+  width: 1rem;
+  height: 1rem;
+  background-color: #833177;
+  color: white;
+  display: grid;
+  place-content: center;
+  border-radius: 2px;
+  border: none;
+}
+
 
 /* * {
   border: 1px solid red !important;

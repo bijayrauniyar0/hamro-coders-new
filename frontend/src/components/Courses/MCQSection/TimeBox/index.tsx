@@ -12,22 +12,6 @@ const TimeBox = ({ startTimer, stopTimer }: TimeBoxProps) => {
   useEffect(() => {
     if (!startTimer) return;
     stopWatch.start();
-    // setTimeout(() => {
-    //   stopWatch.stop();
-    // }, 3000);
-    // console.log(selectedMode);
-    // if (selectedMode === 'practice') return () => {};
-    // if (selectedMode === 'rapid') {
-    //   const intervalId = setInterval(() => {
-    //     handleNextSkipClick('skip');
-    //   }, 15000);
-
-    //   return () => clearInterval(intervalId);
-    // }
-    // const timeoutId = setTimeout(() => {
-    //   stopWatch.stop();
-    // }, 3000);
-    // return () => clearInterval(timeoutId);
   }, [startTimer]);
   useEffect(() => {
     if (!stopTimer) return;
@@ -35,11 +19,12 @@ const TimeBox = ({ startTimer, stopTimer }: TimeBoxProps) => {
   }, [stopTimer]);
   return (
     <FlexRow className="items-center gap-1">
-      <Icon name="access_alarm" className="flex items-center justify-center" />
-      <FlexRow className="items-center gap-1">
+      <Icon name="access_alarm" className="flex items-center justify-center !text-xl !font-light" />
+      <p className='font-medium text-sm md:text-md'>Time: </p>
+      <FlexRow className="items-center gap-1 text-primary-600 text-sm md:text-md">
         <span>{stopWatch.time.minutes}:</span>
         <span>{stopWatch.time.seconds}:</span>
-        <span className="text-primary-500">{stopWatch.time.milliseconds}</span>
+        <span>{stopWatch.time.milliseconds}</span>
       </FlexRow>
     </FlexRow>
   );

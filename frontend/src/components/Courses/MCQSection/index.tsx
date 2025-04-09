@@ -5,23 +5,28 @@ import {
   modesDescription,
   optionsLabel,
 } from '@Constants/QuestionsBox';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-// import FromStepper from './FormStepper';
-import buttonPng from '@Assets/images/button.png';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import TimeBox from './TimeBox';
-import { useTypedSelector } from '@Store/hooks';
 import { toast } from 'react-toastify';
 import Modal from '@Components/common/Modal';
 import Icon from '@Components/common/Icon';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getMcqAnswers, getMcqs } from '@Services/academics';
-import Skeleton from '@Components/radix/Skeleton';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import isEmpty from '@Utils/isEmpty';
-import FromStepper from './FormStepper';
 import { createLeaderboardEntry } from '@Services/leaderboard';
 import BindContentContainer from '@Components/common/BindContentContainer';
+import MCQButton from './MCQButton';
+import MCQSkeleton from './MCQSkeleton';
+import { getPercentageColor } from '@Utils/index';
 
 type Option = {
   id: number;
@@ -39,6 +44,10 @@ type AnswerType = {
 };
 
 const MCQBox = () => {
+  const handleBeforeUnload = useRef((event: BeforeUnloadEvent) => {
+    event.preventDefault();
+  });
+  const startTimeRef = useRef(new Date());
   const [currentQuestion, setCurrentQuestion] = useState<boolean[]>([]);
   const [questionCount, setQuestionCount] = useState(0);
   const [selectedOption, setSelectedOption] = useState<Record<string, any>[]>(
@@ -46,33 +55,26 @@ const MCQBox = () => {
   );
   const [showModal, setShowModal] = useState(true);
   const [timeOut, setTimeOut] = useState(5);
-  const selectedMode = useTypedSelector(
-    state => state.commonSlice.selectedMode,
-  );
+  const timeOutRef = useRef<NodeJS.Timeout>();
+
   const [gameOver, setGameOver] = useState(false);
   const [modeToShow, setModeToShow] = useState<
-    'answers' | 'question' | 'results'
-  >('question');
+    'answers' | 'questions' | 'results'
+  >('questions');
 
   const [searchParams] = useSearchParams();
-  const selectedModeParams = searchParams.get('selectedMode');
-  const subject_code = searchParams.get('subject_code');
-  const semester = searchParams.get('semester');
+  const selectedMode = searchParams.get('mode');
+  const subject_id = searchParams.get('subject_id');
+  const { course_id } = useParams();
   const navigate = useNavigate();
-  const resultsRef = useRef<{
-    right: number;
-    wrong: number;
-    [key: string]: number;
-  }>({
-    right: 0,
-    wrong: 0,
-  });
+
+  const [isRecordCreated, setIsRecordCreated] = useState(false);
 
   const { data: questions, isLoading: questionsIsLoading } = useQuery({
     queryKey: ['questions'],
     queryFn: () =>
       getMcqs({
-        subject_code,
+        subject_id,
       }),
     select: ({ data }) => data as QuestionType[],
   });
@@ -81,17 +83,50 @@ const MCQBox = () => {
     queryKey: ['answers'],
     queryFn: () =>
       getMcqAnswers({
-        subject_code,
+        subject_id,
         questions: questions?.map(question => question.id).join(','),
       }),
     select: ({ data }) => data as AnswerType[],
-    enabled: gameOver,
+    enabled: questionCount === (questions?.length ?? 0) - 1,
   });
 
   const { mutate: createLeaderboardRecord } = useMutation({
     mutationFn: (payload: Record<string, any>) =>
       createLeaderboardEntry(payload),
   });
+
+  const results: { [key: string]: number } = useMemo(() => {
+    if (!questions || !answers) return { right: 0, wrong: 0 };
+    const results = selectedOption.map(({ question_id, id }) => {
+      const correctAnswer = answers.find(answer => answer.id === question_id);
+      return {
+        question_id,
+        correct: correctAnswer?.answer === id, // Compare selected option with correct answer
+      };
+    });
+    const rightAnswers = results.filter(result => result.correct).length;
+
+    const wrongAnswers = questions.length - rightAnswers;
+
+    return {
+      right: rightAnswers,
+      wrong: wrongAnswers,
+    };
+  }, [answers]);
+
+  const handleScoreSubmission = () => {
+    const payload = {
+      subject_id,
+      score: results.right,
+      mode: selectedMode,
+      elapsed_time:
+        (new Date().getTime() - startTimeRef.current.getTime()) / 1000,
+    };
+    if (!isRecordCreated) {
+      createLeaderboardRecord(payload);
+    }
+    setIsRecordCreated(true);
+  };
 
   function handleNextSkipClick(clickType: string) {
     if (!gameOver) {
@@ -113,23 +148,30 @@ const MCQBox = () => {
   }, []);
 
   useEffect(() => {
+    const listener = handleBeforeUnload.current;
+
+    window.addEventListener('beforeunload', listener);
+
+    return () => {
+      window.removeEventListener('beforeunload', listener);
+    };
+  }, []);
+
+  const disableBeforeUnload = () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload.current);
+  };
+
+  useEffect(() => {
     if (!selectedMode) {
       toast.error('Please select a mode to continue');
       setTimeout(() => {
-        navigate('/academics/BCA');
+        navigate(`/courses/${course_id}`);
       }, 500);
       return () => {};
     }
     startCountdown(5);
-    if (selectedModeParams === 'practice') return () => {};
-    if (selectedModeParams === 'rapid') {
-      const intervalId = setInterval(() => {
-        handleNextSkipClick('skip');
-      }, 10000);
-
-      return () => clearInterval(intervalId);
-    }
-    if (selectedModeParams === 'ranked') {
+    if (selectedMode === 'practice') return () => {};
+    if (selectedMode === 'ranked') {
       setTimeout(() => {
         setQuestionCount(0);
         setModeToShow('answers');
@@ -140,50 +182,30 @@ const MCQBox = () => {
       // console.log("object");
     }, 3000);
     return () => clearInterval(timeoutId);
-  }, [selectedModeParams]);
+  }, [selectedMode]);
 
   useEffect(() => {
     if (!questions) return;
     if (questionCount === questions.length) {
-      if (gameOver) {
-        setModeToShow('results');
-        if (selectedModeParams === 'ranked') {
-          const payload = {
-            subject_code,
-            score: resultsRef.current.right,
-            semester: Number(semester),
-          };
-          createLeaderboardRecord(payload);
-        }
-        startCountdown(5);
-        setTimeout(() => {
-          navigate('/academics/BCA');
-        }, 6000);
-        return;
-      }
-      setQuestionCount(0);
-      setModeToShow('answers');
-      setGameOver(true);
+      setModeToShow('results');
+      handleScoreSubmission();
     }
   }, [questionCount]);
 
   useEffect(() => {
-    if (!questions || !answers) return;
-    const results = selectedOption.map(({ question_id, id }) => {
-      const correctAnswer = answers.find(answer => answer.id === question_id);
-      return {
-        question_id,
-        correct: correctAnswer?.answer === id, // Compare selected option with correct answer
-      };
-    });
-    const rightAnswers = results.filter(result => result.correct).length;
+    if (gameOver) {
+      startCountdown(10);
+      timeOutRef.current = setTimeout(() => {
+        navigate(`/courses/${course_id}`);
+      }, 10000);
+    }
+  }, [gameOver]);
 
-    const wrongAnswers = questions.length - rightAnswers;
-    resultsRef.current = {
-      right: rightAnswers,
-      wrong: wrongAnswers,
-    };
-  }, [answers, gameOver]);
+  const cancelTimeout = () => {
+    if (timeOutRef.current) {
+      clearTimeout(timeOutRef.current);
+    }
+  };
 
   return (
     <>
@@ -193,230 +215,286 @@ const MCQBox = () => {
         title={`${selectedMode?.toUpperCase()} MODE`}
       >
         <FlexColumn className="gap-4">
-          <p>
-            {
-              modesDescription[
-                (selectedMode as keyof typeof modesDescription) || 'practice'
-              ]
-            }
-          </p>
+          <p>{modesDescription[selectedMode || 'practice']}</p>
           <p className="text-center text-base font-medium">
             Game starting in <span className="text-primary-500">{timeOut}</span>
           </p>
         </FlexColumn>
       </Modal>
       <BindContentContainer>
-        <FlexColumn className="w-full gap-8 pt-7">
-          <FromStepper
-            currentQuestion={currentQuestion}
-            questionCount={questionCount}
-            questionData={questions || []}
-          />
-
-          <div className="w-full">
-            <div className="mx-auto w-full rounded-lg border bg-white p-4 shadow-lg md:w-4/5">
-              {questionsIsLoading || answersIsLoading ? (
-                <FlexColumn className="gap-6">
-                  <Skeleton className="h-20 w-full" />
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    {[...Array(4).keys()].map(key => (
-                      <Skeleton key={key} className="h-16 w-full" />
-                    ))}
-                  </div>
-                </FlexColumn>
-              ) : isEmpty(questions) || !questions ? (
-                <NoDataAvailable />
-              ) : (
-                <FlexColumn className="items-end gap-6 px-3 py-2 md:px-6 md:py-4">
-                  <FlexRow className="w-full justify-between">
-                    <TimeBox
-                      startTimer={!showModal || timeOut < 1}
-                      stopTimer={questionCount === questions.length || gameOver}
-                    />
-                    <FlexRow className="gap-4">
-                      <p className="text-base">
-                        <span className="font-medium">Solved: </span>
-                        <span className="text-yellow-500">
-                          {currentQuestion.filter(item => item === true).length}
-                        </span>
-                      </p>
-                      {selectedModeParams !== 'practice' && (
-                        <p className="text-base">
-                          <span className="font-medium">Skipped: </span>
-                          <span className="text-red-500">
-                            {
-                              currentQuestion.filter(item => item === false)
-                                .length
-                            }
-                          </span>
-                        </p>
-                      )}
-                    </FlexRow>
-                  </FlexRow>
-                  {modeToShow === 'question' ? (
-                    <div className="w-full">
-                      {questions.map((questionData, index) => {
-                        if (index !== questionCount) return null;
-                        return (
-                          <FlexColumn className="gap-5" key={questionData.id}>
-                            <p className="text-lg font-medium leading-5">
-                              {questionData.question}
-                            </p>
-                            <div className="grid select-none grid-cols-1 gap-4 md:grid-cols-2">
-                              {questionData.options.map(
-                                ({ id, value }, subIndex) => {
-                                  const isOptionSelected =
-                                    selectedOption[questionCount]?.id === id;
-                                  return (
-                                    <div
-                                      className={`flex cursor-pointer items-center justify-start gap-4 rounded-lg border bg-white p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4 ${isOptionSelected ? 'border-primary-400' : 'border-gray-200'}`}
-                                      key={subIndex}
-                                      onClick={() => {
-                                        setSelectedOption(
-                                          (prevData: Record<string, any>[]) => {
-                                            // Check if the option is already selected
-                                            if (
-                                              prevData[questionCount]?.id === id
-                                            ) {
-                                              // If selected, deselect it (remove it from the array)
-                                              return prevData.filter(
-                                                (_, index) =>
-                                                  index !== questionCount,
-                                              );
-                                            } else {
-                                              // If not selected, add it to the array at the specific index
-                                              const updatedData = [...prevData];
-                                              updatedData[questionCount] = {
-                                                question_id: questionData.id,
-                                                id,
-                                              };
-                                              return updatedData;
-                                            }
-                                          },
-                                        );
-                                      }}
-                                    >
-                                      <div className="relative">
-                                        <img
-                                          src={buttonPng}
-                                          className="max-h-[3rem] max-w-[3rem]"
-                                        />
-                                        <p className="left absolute left-1/2 top-1/2 z-50 translate-x-[-50%] translate-y-[-50%] text-lg font-bold text-white">
-                                          {optionsLabel[subIndex]}
-                                        </p>
-                                      </div>
-                                      <p className="text-sm leading-4 lg:text-base">
-                                        {value}
-                                      </p>
-                                    </div>
-                                  );
-                                },
-                              )}
-                            </div>
-                          </FlexColumn>
-                        );
-                      })}
-                    </div>
-                  ) : modeToShow === 'answers' && answers ? (
-                    <div className="w-full">
-                      {questions.map((questionData, index) => {
-                        if (index !== questionCount) return null;
-                        return (
-                          <FlexColumn className="gap-5" key={questionData.id}>
-                            <p className="text-lg font-medium leading-5">
-                              {questionData.question}
-                            </p>
-                            <div className="grid select-none grid-cols-1 gap-4 md:grid-cols-2">
-                              {questionData.options.map(
-                                ({ id, value }, subIndex) => {
-                                  const isOptionSelected =
-                                    selectedOption[questionCount]?.id === id;
-                                  const correctAnswer =
-                                    answers?.find(
-                                      answer =>
-                                        Number(answer.id) === questionData.id,
-                                    )?.answer || null;
-                                  const isCorrectAnswer = correctAnswer === id;
-
-                                  return (
-                                    <div
-                                      className={`flex cursor-pointer items-center justify-start gap-4 rounded-lg border p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4 ${isOptionSelected && isCorrectAnswer ? 'bg-green-600 text-white' : ''} ${isOptionSelected && !isCorrectAnswer ? 'bg-red-400 text-white' : ''} ${!isOptionSelected && isCorrectAnswer ? 'bg-green-600 text-white' : ''}`}
-                                      key={subIndex}
-                                    >
-                                      <div className="relative">
-                                        <img
-                                          src={buttonPng}
-                                          className="max-h-[3rem] max-w-[3rem]"
-                                        />
-                                        <p className="left absolute left-1/2 top-1/2 z-50 translate-x-[-50%] translate-y-[-50%] text-lg font-bold text-white">
-                                          {optionsLabel[subIndex]}
-                                        </p>
-                                      </div>
-                                      <p className="text-sm leading-4 lg:text-base">
-                                        {value}
-                                      </p>
-                                    </div>
-                                  );
-                                },
-                              )}
-                            </div>
-                          </FlexColumn>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="flex w-full items-center justify-center p-8">
-                      <FlexColumn className="gap-8">
-                        <FlexColumn className="gap-3">
-                          <p className="text-xl font-medium">
-                            Congrats! You made it till the end.
+        <div className="mx-auto w-full rounded-lg border bg-white p-2 shadow-lg md:w-4/5 md:p-4">
+          {questionsIsLoading ? (
+            <MCQSkeleton />
+          ) : isEmpty(questions) || !questions ? (
+            <NoDataAvailable />
+          ) : (
+            <FlexColumn className="items-end gap-6 px-3 py-2 md:px-6 md:py-4">
+              <FlexRow className="w-full justify-between">
+                <TimeBox
+                  startTimer={!showModal || timeOut < 1}
+                  stopTimer={questionCount === questions.length || gameOver}
+                />
+                <FlexRow className="items-center justify-center rounded-3xl bg-gray-100 px-2 py-1">
+                  <p className="text-sm md:text-md">
+                    <span className="font-medium">Solved: </span>
+                    <span
+                      className={`tracking-[-0.1rem] ${modeToShow === 'questions' ? getPercentageColor(questionCount, questions.length) : 'text-green-700'}`}
+                    >
+                      {currentQuestion.filter(item => item === true).length} /{' '}
+                      {questions.length}
+                    </span>
+                  </p>
+                </FlexRow>
+              </FlexRow>
+              {modeToShow === 'questions' ? (
+                <>
+                  <div className="w-full">
+                    {questions.map((questionData, index) => {
+                      if (index !== questionCount) return null;
+                      return (
+                        <FlexColumn className="gap-5" key={questionData.id}>
+                          <p className="text-lg font-medium leading-5">
+                            {questionData.question}
                           </p>
-                          <FlexColumn className="gap-2">
-                            <p className="text-base font-semibold">
-                              Your Stats:
-                            </p>
-                            {endStats.map((stat, idx) => (
-                              <FlexRow key={idx} className="items-center gap-2">
-                                <Icon
-                                  name={stat.name}
-                                  className={`flex items-center justify-center ${stat.color}`}
-                                />
-                                <p className="text-base font-medium">{`${resultsRef.current[stat.keyName]} ${stat.text}`}</p>
-                              </FlexRow>
-                            ))}
-                          </FlexColumn>
+                          <div className="grid select-none grid-cols-1 gap-4 md:grid-cols-2">
+                            {questionData.options.map(
+                              ({ id, value }, subIndex) => {
+                                const isOptionSelected =
+                                  selectedOption[questionCount]?.id === id;
+                                return (
+                                  <button
+                                    className={`flex cursor-pointer items-center justify-start gap-4 rounded-lg border bg-white p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4 ${isOptionSelected ? 'border-primary-400' : 'border-gray-200'}`}
+                                    key={subIndex}
+                                    onClick={() => {
+                                      setSelectedOption(
+                                        (prevData: Record<string, any>[]) => {
+                                          // Check if the option is already selected
+                                          if (
+                                            prevData[questionCount]?.id === id
+                                          ) {
+                                            // If selected, deselect it (remove it from the array)
+                                            return prevData.filter(
+                                              (_, index) =>
+                                                index !== questionCount,
+                                            );
+                                          } else {
+                                            // If not selected, add it to the array at the specific index
+                                            const updatedData = [...prevData];
+                                            updatedData[questionCount] = {
+                                              question_id: questionData.id,
+                                              id,
+                                            };
+                                            return updatedData;
+                                          }
+                                        },
+                                      );
+                                    }}
+                                  >
+                                    <MCQButton
+                                      label={optionsLabel[subIndex]}
+                                      value={value}
+                                    />
+                                  </button>
+                                );
+                              },
+                            )}
+                          </div>
                         </FlexColumn>
-                        {timeOut !== 0 && (
-                          <p className="text-center text-base font-medium">
-                            Redirecting to MCQs in{' '}
-                            <span className="text-primary-500">{timeOut}</span>
-                          </p>
-                        )}
-                      </FlexColumn>
-                    </div>
-                  )}
-
+                      );
+                    })}
+                  </div>
                   <FlexRow className="gap-4">
-                    {selectedModeParams !== 'practice' && (
+                    {selectedMode === 'practice' && (
                       <Button
                         variant="secondary"
-                        onClick={() => handleNextSkipClick('skip')}
+                        onClick={() => {
+                          setQuestionCount(questionCount - 1);
+                        }}
+                        disabled={questionCount === 0}
                       >
-                        SKIP
+                        PREV
                       </Button>
                     )}
                     <Button
-                      onClick={() => handleNextSkipClick('next')}
+                      onClick={() => {
+                        handleNextSkipClick('next');
+                        if (questionCount === questions.length) {
+                          setGameOver(true);
+                          setModeToShow('results');
+                        }
+                      }}
                       disabled={selectedOption[questionCount] === undefined}
                     >
                       NEXT
                     </Button>
                   </FlexRow>
-                </FlexColumn>
+                </>
+              ) : modeToShow === 'answers' && answers ? (
+                <>
+                  <div className="w-full">
+                    {questions.map((questionData, index) => {
+                      if (index !== questionCount) return null;
+                      return (
+                        <FlexColumn className="gap-5" key={questionData.id}>
+                          <p className="text-lg font-medium leading-5">
+                            {questionData.question}
+                          </p>
+                          <div className="grid select-none grid-cols-1 gap-4 md:grid-cols-2">
+                            {questionData.options.map(
+                              ({ id, value }, subIndex) => {
+                                const isOptionSelected =
+                                  selectedOption[questionCount]?.id === id;
+                                const correctAnswer =
+                                  answers?.find(
+                                    answer =>
+                                      Number(answer.id) === questionData.id,
+                                  )?.answer || null;
+                                const isCorrectAnswer = correctAnswer === id;
+
+                                return (
+                                  <button
+                                    className={`flex cursor-pointer items-center justify-start gap-4 rounded-lg border p-2 shadow-sm md:p-4 ${isOptionSelected && isCorrectAnswer ? 'bg-green-600 text-white' : ''} ${isOptionSelected && !isCorrectAnswer ? 'bg-red-400 text-white' : ''} ${!isOptionSelected && isCorrectAnswer ? 'bg-green-600 text-white' : ''}`}
+                                    key={subIndex}
+                                  >
+                                    <MCQButton
+                                      label={optionsLabel[subIndex]}
+                                      value={value}
+                                    />
+                                  </button>
+                                );
+                              },
+                            )}
+                          </div>
+                        </FlexColumn>
+                      );
+                    })}
+                  </div>
+                  <FlexRow className="gap-4">
+                    <Button
+                      variant="secondary"
+                      disabled={questionCount === 0}
+                      onClick={() => {
+                        setQuestionCount(questionCount - 1);
+                      }}
+                    >
+                      PREV
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (questionCount !== questions.length - 1) {
+                          setQuestionCount(questionCount + 1);
+                          return;
+                        }
+                        setGameOver(true);
+                        setModeToShow('results');
+                      }}
+                    >
+                      NEXT
+                    </Button>
+                  </FlexRow>
+                </>
+              ) : (
+                <>
+                  <FlexColumn className="flex w-full items-center gap-6 p-2 md:p-4">
+                    <FlexColumn className="w-full items-center gap-1">
+                      <p className="text-base font-semibold leading-4 md:text-lg md:leading-normal">
+                        Challenge Completed
+                      </p>
+                      <p className="text-center text-sm leading-4 md:text-base">
+                        You&apos;ve finished all the problems! Here&apos;s your
+                        performance summary
+                      </p>
+                    </FlexColumn>
+                    <FlexColumn className="w-full gap-4 rounded-lg bg-gray-100 px-2 py-4 md:px-6 md:py-6 md:pt-4">
+                      <p className="text-center text-md font-semibold md:text-base">
+                        Your Stats:
+                      </p>
+                      <FlexColumn className="items-start gap-4">
+                        {endStats.map((stat, idx) => (
+                          <FlexRow key={idx} className="items-center gap-2">
+                            <Icon
+                              name={stat.name}
+                              className={`flex items-center justify-center ${stat.bg_color} ${stat.color} rounded-full p-1`}
+                            />
+                            <p className="text-md font-medium leading-4 tracking-tight md:text-base md:tracking-normal">{`${results[stat.keyName]} ${stat.text}`}</p>
+                          </FlexRow>
+                        ))}
+                      </FlexColumn>
+                    </FlexColumn>
+                    <FlexColumn className="w-full gap-4 rounded-lg bg-purple-50 px-2 py-4 md:px-6 md:py-6 md:pt-4">
+                      <FlexRow className="items-center gap-2">
+                        <Icon
+                          name="deployed_code"
+                          className="flex items-center justify-center text-primary-600"
+                        />
+                        <p className="text-base font-semibold">
+                          Learning Resources
+                        </p>
+                      </FlexRow>
+                      <FlexColumn className="items-start gap-4 pt-2">
+                        <FlexRow className={`items-center gap-2`}>
+                          <Icon
+                            name="stacks"
+                            className={`flex items-center justify-center text-primary-600`}
+                          />
+                          <p className="text-md text-primary-600">
+                            Practice Exercises
+                          </p>
+                        </FlexRow>
+                      </FlexColumn>
+                    </FlexColumn>
+                    {timeOut !== 0 && gameOver && (
+                      <FlexColumn className="items-center">
+                        <p className="text-center text-base font-medium leading-3">
+                          Redirecting to Courses in{' '}
+                          <span className="text-primary-500">{timeOut}</span>
+                        </p>
+                        <Button
+                          variant="link"
+                          onClick={() => {
+                            cancelTimeout();
+                            navigate(`/courses/${course_id}`);
+                          }}
+                          className="!py-0"
+                        >
+                          Redirect Now
+                        </Button>
+                      </FlexColumn>
+                    )}
+                  </FlexColumn>
+                  <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
+                    <Button
+                      onClick={() => {
+                        cancelTimeout();
+                        setQuestionCount(0);
+                        setModeToShow('answers');
+                      }}
+                      variant="secondary"
+                      disabled={answersIsLoading}
+                      isLoading={answersIsLoading}
+                      className="w-full md:w-fit"
+                    >
+                      {answersIsLoading
+                        ? 'Analyzing Results'
+                        : gameOver
+                          ? 'Preview Answers Again'
+                          : 'Preview Answers'}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        disableBeforeUnload();
+                        navigate(0);
+                      }}
+                      className="w-full md:w-fit"
+                    >
+                      Try Again
+                    </Button>
+                  </div>
+                </>
               )}
-            </div>
-          </div>
-        </FlexColumn>
+            </FlexColumn>
+          )}
+        </div>
       </BindContentContainer>
     </>
   );

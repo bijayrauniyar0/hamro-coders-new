@@ -11,10 +11,9 @@ const BreadCrumb = ({
   overlayStatus,
   onBackClick,
 }: BreadCrumbProps) => {
-  const [beforeSlash, afterSlash] = heading.split(' / ');
 
   return (
-    <div className="flex w-full items-center justify-start gap-x-2">
+    <div className="flex w-fit items-center justify-start gap-x-2">
       {onBackClick && (
         <IconButton
           name="arrow_back"
@@ -26,15 +25,9 @@ const BreadCrumb = ({
           }}
         />
       )}
-      <div>
-        <span className="!text-xl !font-semibold leading-[38px] tracking-[-0.48px] text-primary-700">
-          {beforeSlash} {afterSlash ? `/ ` : ''}
-        </span>
-
-        <span className="!text-xl !font-light leading-[38px] tracking-[-0.48px] text-primary-700">
-          {afterSlash}
-        </span>
-      </div>
+      <p className='text-base md:text-xl !font-semibold leading-[38px] tracking-[-0.48px] text-primary-700'>
+          {heading}
+      </p>
     </div>
   );
 };

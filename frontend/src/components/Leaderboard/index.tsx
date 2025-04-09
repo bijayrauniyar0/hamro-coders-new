@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
 import LeaderBox from './LeaderBox';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import ScoreRow from './ScoreRow';
 import { useQuery } from '@tanstack/react-query';
 import { getLeaderboard } from '@Services/leaderboard';
 import Skeleton from '@Components/radix/Skeleton';
-import { rearrangeByRank } from '@Utils/index';
 import BreadCrumb from '@Components/common/FormComponent/BreadCrumb';
 import BindContentContainer from '@Components/common/BindContentContainer';
-import HeaderSwitchTab from '@Components/common/HeaderSwitchTab';
 import { useNavigate } from 'react-router-dom';
-import { filterOptions } from '@Constants/Leaderboard';
+import Filters from './Filters';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import { Button } from '@Components/radix/Button';
+import Icon from '@Components/common/Icon';
+import { setIsFiltersOpen } from '@Store/actions/leaderboard';
+import isEmpty from '@Utils/isEmpty';
+import NoDataAvailable from '@Components/common/NoDataAvailable';
 
 type UserRank = {
   user_id: number;
@@ -21,74 +24,125 @@ type UserRank = {
 };
 
 const Leaderboard = () => {
-  const [activeTab, setActiveTab] = useState('daily');
   const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
+
+  const { course_id, subject_id, filter_by } = useTypedSelector(
+    state => state.leaderboardSlice.filters,
+  );
+  const isFiltersOpen = useTypedSelector(
+    state => state.leaderboardSlice.isFiltersOpen,
+  );
   const { data: leaderboardData, isLoading: leaderBoardIsLoading } = useQuery({
-    queryKey: ['leaderboard', activeTab],
-    queryFn: () => getLeaderboard({ filter_by: activeTab }),
+    queryKey: ['leaderboard', course_id, subject_id, filter_by],
+    queryFn: () =>
+      getLeaderboard({
+        filter_by,
+        course_id,
+        subject_id: subject_id.join(','),
+      }),
     select: ({ data }) => data as UserRank[],
   });
 
+  const findRankDetails = (rank: number) => {
+    const rankDetails = leaderboardData?.find(
+      ({ rank: r }) => r === rank,
+    ) as UserRank;
+    if (!rankDetails) return {};
+    return {
+      name: rankDetails.name,
+      total_score: rankDetails.total_score,
+      previous_rank: rankDetails.previous_rank,
+    };
+  };
+
   return (
-    <BindContentContainer className="pt-7">
-      <BreadCrumb onBackClick={() => navigate(-1)} heading="Leaderboard" />
-      <div className="mt-4 flex items-center justify-center">
-        <HeaderSwitchTab
-          headerOptions={filterOptions}
-          activeTab={activeTab}
-          onChange={(val: any) => setActiveTab(val)}
-          className="rounded-lg bg-gray-50 px-4 py-2 shadow-sm"
-        />
-      </div>
-      <div className="select-none px-4 pt-3">
-        {leaderBoardIsLoading ? (
-          <FlexColumn className="gap-2">
-            <FlexRow className="items-end justify-center">
-              <Skeleton className="h-[8rem] w-[8rem]" />
-              <Skeleton className="h-[12rem] w-[10rem]" />
-              <Skeleton className="h-[8rem] w-[8rem]" />
-            </FlexRow>
+    <BindContentContainer className="relative flex flex-col gap-4 pt-7">
+      <FlexRow className="items-center justify-between">
+        <BreadCrumb onBackClick={() => navigate(-1)} heading="Leaderboard" />
+        <Button
+          className="flex w-fit py-1 text-sm font-medium sm:text-md md:hidden"
+          onClick={() => dispatch(setIsFiltersOpen(!isFiltersOpen))}
+          size="sm"
+        >
+          <Icon
+            name={isFiltersOpen ? 'chevron_left' : 'chevron_right'}
+            className="!text-lg sm:!text-xl"
+          />
+          {isFiltersOpen ? 'Hide' : 'Show'} Filters
+        </Button>
+      </FlexRow>
+      <div className="grid overflow-hidden md:grid-cols-[1fr_22rem]">
+        <div className="select-none px-4 pt-3">
+          {leaderBoardIsLoading ? (
             <FlexColumn className="gap-2">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton key={index} className="h-16 w-full" />
-              ))}
+              <FlexRow className="items-end justify-center">
+                <Skeleton className="h-[6rem] w-[6rem] rounded-full" />
+                <Skeleton className="h-[8rem] w-[8rem] rounded-full" />
+                <Skeleton className="h-[6rem] w-[6rem] rounded-full" />
+              </FlexRow>
+              <FlexColumn className="gap-2">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton key={index} className="h-16 w-full" />
+                ))}
+              </FlexColumn>
             </FlexColumn>
-          </FlexColumn>
-        ) : (
-          <FlexRow className="relative mx-auto items-end md:max-w-[25rem]">
-            {rearrangeByRank(leaderboardData as any[])?.map(
-              (leaderboard: any) => (
-                <div
-                  key={leaderboard?.rank}
-                  className={`w-full ${leaderboard.rank === 1 ? 'pb-8' : ''}`}
-                >
+          ) : isEmpty(leaderboardData) ? (
+            <NoDataAvailable />
+          ) : (
+            <FlexColumn className="w-full gap-4">
+              <FlexRow className="w-full items-end justify-center gap-4">
+                <LeaderBox
+                  rank={2}
+                  name={findRankDetails(2)?.name}
+                  score={findRankDetails(2)?.total_score || 0}
+                  previous_rank={findRankDetails(2)?.previous_rank || 0}
+                  imageClassName="w-12 h-12 md:w-20 md:h-20"
+                  outlineColor="outline-blue-400"
+                  rankClassName="bg-blue-400"
+                />
+                <div className="pb-4">
                   <LeaderBox
-                    rank={leaderboard?.rank}
-                    name={leaderboard?.name}
-                    score={leaderboard?.total_score}
+                    rank={1}
+                    name={findRankDetails(1).name}
+                    score={findRankDetails(1)?.total_score || 0}
+                    previous_rank={findRankDetails(1)?.previous_rank || 0}
+                    imageClassName="w-16 h-16 md:w-24 md:h-24"
+                    outlineColor="outline-primary-400"
+                    rankClassName="bg-primary-400"
                   />
                 </div>
-              ),
-            )}
-          </FlexRow>
-        )}
-        <FlexColumn className="mx-auto mt-[7rem] gap-2 md:mt-[5rem]">
-          {leaderboardData?.map(
-            ({ rank, name, total_score, previous_rank }) => {
-              if (rank <= 3) return null;
-              return (
-                <ScoreRow
-                  key={rank}
-                  rank={rank}
-                  name={name}
-                  score={total_score}
-                  image=""
-                  previous_rank={previous_rank}
+                <LeaderBox
+                  rank={3}
+                  name={findRankDetails(3).name}
+                  score={findRankDetails(3)?.total_score || 0}
+                  previous_rank={findRankDetails(3)?.previous_rank || 0}
+                  imageClassName="w-12 h-12 md:w-20 md:h-20"
+                  outlineColor="outline-green-400"
+                  rankClassName="bg-green-400"
                 />
-              );
-            },
+              </FlexRow>
+              <FlexColumn className="scrollbar max-h-[calc(100vh-19.5rem)] w-full gap-2 overflow-y-auto md:max-h-[calc(100vh-23.5rem)]">
+                {leaderboardData?.map(
+                  ({ rank, name, total_score, previous_rank }) => {
+                    if (rank <= 3) return null;
+                    return (
+                      <ScoreRow
+                        key={rank}
+                        rank={rank}
+                        name={name}
+                        score={total_score}
+                        image=""
+                        previous_rank={previous_rank}
+                      />
+                    );
+                  },
+                )}
+              </FlexColumn>
+            </FlexColumn>
           )}
-        </FlexColumn>
+        </div>
+        <Filters />
       </div>
     </BindContentContainer>
   );

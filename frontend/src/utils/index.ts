@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { v4 as uuidv4 } from 'uuid';
 
-import fallBack1 from '@Assets/images/avatar-images.svg';
 import fallBack2 from '@Assets/images/fallBack2.jpeg';
 
 export function cn(...inputs: ClassValue[]) {
@@ -43,17 +42,6 @@ export function removeObjectAtIndex<T>(array: T[], index: number): T[] {
   return newArray;
 }
 
-export function getStyle(selectedStyle: string) {
-  switch (selectedStyle) {
-    case 'grid':
-      return 'grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5';
-    case 'list':
-      return 'flex flex-col gap-4 w-full';
-    default:
-      return '';
-  }
-}
-
 export function rearrangeByRank(arr: any[]) {
   const rankOrder = [2, 1, 3];
 
@@ -74,6 +62,28 @@ export function rearrangeByRank(arr: any[]) {
 }
 
 export const getFallBackImage = () => {
-  const images = [fallBack1, fallBack2];
-  return images[Math.floor(Math.random() * images.length)];
+  return fallBack2;
+};
+
+export const calculatePercentage = (value: number, total: number) => {
+  if (total === 0) return 0;
+  return Math.round((value / total) * 100);
+};
+
+export const getPercentageColor = (value: number, total: number) => {
+  const percentage = calculatePercentage(value, total);
+  switch (true) {
+    case percentage === 0:
+      return 'text-red-500';
+    case percentage <= 25:
+      return 'text-orange-500';
+    case percentage <= 50:
+      return 'text-yellow-500';
+    case percentage <= 75:
+      return 'text-green-500';
+    case percentage <= 100:
+      return 'text-green-700';
+    default:
+      return 'text-gray-500';
+  }
 };

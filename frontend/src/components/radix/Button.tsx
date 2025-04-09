@@ -46,7 +46,14 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant, size, asChild = false, isLoading = false, ...props },
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      isLoading = false,
+      ...props
+    },
     ref,
   ) => {
     const Comp = asChild ? Slot : 'button';
@@ -57,7 +64,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {props.children}
-        {isLoading ? <div className="spinner ml-2" /> : ''}
+        {isLoading ? (
+          <div
+            className={`spinner ml-2 ${props?.disabled ? '!border-t-primary-500' : ''}`}
+          />
+        ) : (
+          ''
+        )}
       </Comp>
     );
   },

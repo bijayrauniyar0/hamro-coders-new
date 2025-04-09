@@ -1,12 +1,12 @@
-import Courses from '@Components/Courses';
 import BindContentContainer from '@Components/common/BindContentContainer';
-import React from 'react';
+import courseRoutes from '@Routes/courseRoutes';
+import generateRoutes from '@Routes/generateRoutes';
 
 const CoursesPage = () => {
   return (
     <BindContentContainer>
       <div className="mt-7">
-        <Courses />
+        {generateRoutes({routes: courseRoutes})}
       </div>
     </BindContentContainer>
   );

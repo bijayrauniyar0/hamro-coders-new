@@ -1,32 +1,24 @@
 import { Request, Response } from 'express';
 import UserScores from '@Models/userScoresModels';
-import { getAllUserRanks, getUserRankById } from '@Services/index';
 import User from '@Models/userModels';
-import { Rank } from '@Constants/Types/leaderboard';
+import Subject from '@Models/subjectsModels';
+import { Op } from 'sequelize';
+import { getStartOfDay, getStartOfMonth, getStartOfWeek } from '@Utils/index';
 
-type UserRank = {
-  user_id: number;
-  total_score: number;
-  rank: number;
-};
+interface MyQuery {
+  filter_by?: string;
+  course_id?: string;
+  subject_id?: string;
+}
 
 export const createScoreEntry = async (req: Request, res: Response) => {
   try {
-    const { subject_code, score, semester } = req.body;
+    const { subject_id, score } = req.body;
     const user = req.user;
-    const currentRank = await getUserRankById(user.id, 'daily');
-    const currentRankWeekly = await getUserRankById(user.id, 'weekly');
-    const currentRankMonthly = await getUserRankById(user.id, 'monthly');
     await UserScores.create({
       score,
-      subject_code,
+      subject_id,
       user_id: user?.id,
-      semester,
-      previous_rank: {
-        daily: (currentRank as UserRank)?.rank || null,
-        weekly: (currentRankWeekly as UserRank)?.rank || null,
-        monthly: (currentRankMonthly as UserRank)?.rank || null,
-      },
     });
     res.status(201).json({ message: 'Score added successfully' });
   } catch (error) {
@@ -34,29 +26,117 @@ export const createScoreEntry = async (req: Request, res: Response) => {
   }
 };
 
-export const getRank = async (req: Request, res: Response) => {
-  const { filter_by } = req.query;
-  const user = req.user;
-  const userName = await User.findOne({
-    where: {
-      id: user.id,
-    },
+export const getLeaderboard = async (
+  req: Request<null, null, null, MyQuery>,
+  res: Response,
+) => {
+  const { filter_by, course_id, subject_id } = req.query;
+  const subjects = await Subject.findAll({
+    where: { course_id },
+    attributes: ['id'],
   });
-  const sampleRank: Rank = {
-    user_id: user.id,
-    name: userName?.name,
-    totalScore: 0,
-    rank: 1,
-    previous_rank: null,
-  };
-  try {
-    const ranks: any[] = await getAllUserRanks(
-      (filter_by as 'daily' | 'weekly' | 'monthly') || 'daily',
-    );
-    if (ranks.length === 0) {
-      ranks.push(sampleRank);
+  let subjectIds = subjects.map((subject: Subject) => subject.id);
+  if (subject_id) {
+    subjectIds = subject_id.split(',').map((id: string) => Number(id));
+  }
+
+  let startDate = new Date();
+  if (filter_by === 'daily') {
+    startDate = getStartOfDay();
+  } else if (filter_by === 'weekly') {
+    startDate = getStartOfWeek();
+  } else if (filter_by === 'monthly') {
+    startDate = getStartOfMonth();
+  }
+
+  const fiveMinutesAgo = new Date();
+  fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - 5);
+
+  const userScores = await UserScores.findAll({
+    attributes: ['user_id', 'score'],
+    where: {
+      subject_id: subjectIds,
+      mode: 'ranked',
+      created_at: { [Op.gte]: startDate }, // Filter by start date
+    },
+    include: [
+      {
+        model: User,
+        attributes: ['id', 'name'],
+      },
+    ],
+  });
+  const previousUserScores = await UserScores.findAll({
+    attributes: ['user_id', 'score'],
+    where: {
+      subject_id: subjectIds,
+      mode: 'ranked',
+      created_at: { [Op.gte]: startDate, [Op.lt]: fiveMinutesAgo }, // Filter by start date
+    },
+    include: [
+      {
+        model: User,
+        attributes: ['id'],
+      },
+    ],
+  });
+
+  const userTotalScores = userScores.reduce((acc: any, userScore) => {
+    const userId = userScore.user_id;
+
+    if (!acc[userId]) {
+      acc[userId] = {
+        id: userId,
+        // @ts-ignore
+        name: userScore.User.name,
+        total_score: 0,
+      };
     }
-    res.status(200).json(ranks);
+
+    acc[userId].total_score += userScore.score;
+
+    return acc;
+  }, {});
+
+  const userTotalPreviousScores = previousUserScores.reduce(
+    (acc: any, userScore) => {
+      const userId = userScore.user_id;
+
+      if (!acc[userId]) {
+        acc[userId] = {
+          id: userId,
+          total_score: 0,
+        };
+      }
+
+      acc[userId].total_score += userScore.score;
+
+      return acc;
+    },
+    {},
+  );
+
+  const sortedUserScores = Object.values(userTotalScores).sort(
+    (a: any, b: any) => b.total_score - a.total_score,
+  );
+  const sortedUserPreviousScores = Object.values(userTotalPreviousScores).sort(
+    (a: any, b: any) => b.total_score - a.total_score,
+  );
+  const rankedPrevious = sortedUserPreviousScores.map(
+    (user: any, index: number) => ({
+      ...user,
+      rank: index + 1,
+    }),
+  );
+  const rankedUserScores = sortedUserScores.map((user: any, index: number) => ({
+    ...user,
+    rank: index + 1,
+    previous_rank: rankedPrevious.find(
+      previousRank => previousRank.id === user.id,
+    ).rank,
+  }));
+  try {
+    res.status(200).json(rankedUserScores);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
   }

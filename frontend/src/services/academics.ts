@@ -1,10 +1,7 @@
 import { api, authenticated } from '.';
 
-export const getSubjectsBySemester = async (params: Record<string, any>) => {
-  const { semester, course_name } = params;
-  return authenticated(api).get(
-    `/api/academics/subjects/${semester}/${course_name}/`,
-  );
+export const getSubjectsByCourse = async (course_id: number) => {
+  return authenticated(api).get(`/api/courses/subjects/${course_id}/`);
 };
 
 export const getCourses = async () => {
@@ -12,13 +9,13 @@ export const getCourses = async () => {
 };
 
 export const getMcqs = async (params: Record<string, any>) => {
-  const { subject_code } = params;
-  return authenticated(api).get(`/api/mcq/questions/${subject_code}/`);
+  const { subject_id } = params;
+  return authenticated(api).get(`/api/mcq/questions/${subject_id}/`);
 };
 
 export const getMcqAnswers = async (paramsX: Record<string, any>) => {
-  const { subject_code, ...params } = paramsX;
-  return authenticated(api).get(`/api/mcq/answers/${subject_code}/`, {
+  const { subject_id, ...params } = paramsX;
+  return authenticated(api).get(`/api/mcq/answers/${subject_id}/`, {
     params,
   });
 };

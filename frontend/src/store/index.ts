@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import commonSlice from './slices/common';
+import leaderboardSlice from './slices/leaderboard';
 
 const store = configureStore({
   reducer: {
     commonSlice,
+    leaderboardSlice,
   },
 });
 
