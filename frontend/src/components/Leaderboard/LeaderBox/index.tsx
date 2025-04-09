@@ -52,12 +52,12 @@ const LeaderBox = ({
       <FlexColumn className="h-full w-full items-center justify-center">
         <p className="text-xs sm:text-md">{name}</p>
         <FlexRow className="items-center gap-1">
-          <p className="text-sm font-semibold text-blue-400 md:text-lg">
+          <p className="text-sm font-semibold text-blue-400 md:text-base">
             {score}
           </p>
           <Icon
-            className={`flex items-center justify-center p-0 !text-md ${previous_rank >= rank ? 'text-green-600' : 'text-red-700'}`}
-            name={`${previous_rank > rank ? 'arrow_drop_up' : previous_rank === rank ? 'equal' : 'arrow_drop_down'}`}
+            className={`flex items-center justify-center p-0 !text-lg ${previous_rank > rank ? 'text-green-600' : previous_rank === rank ? 'text-gray-400' : 'text-red-700'}`}
+            name={`${previous_rank > rank ? 'arrow_drop_up' : previous_rank === rank ? 'check_indeterminate_small' : 'arrow_drop_down'}`}
           />
         </FlexRow>
       </FlexColumn>

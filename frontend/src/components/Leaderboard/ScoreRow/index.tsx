@@ -30,11 +30,11 @@ const ScoreRow = ({
           <p className="text-base font-semibold leading-4">{name}</p>
         </FlexColumn>
       </FlexRow>
-      <FlexColumn className="place-items-end">
-        <p className="text-md font-medium tracking-tighter">{score}</p>
+      <FlexColumn className="items-center">
+        <p className="text-md font-medium tracking-tighter leading-3">{score}</p>
         <Icon
-          className={`flex items-center justify-center p-0 !text-md ${previous_rank >= rank ? 'text-green-600' : 'text-red-700'}`}
-          name={`${previous_rank > rank ? 'arrow_drop_up' : previous_rank === rank ? 'equal' : 'arrow_drop_down'}`}
+          className={`flex items-center justify-center p-0 !text-xl ${previous_rank > rank ? 'text-green-600' : previous_rank === rank ? 'text-gray-400' : 'text-red-700'}`}
+          name={`${previous_rank > rank ? 'arrow_drop_up' : previous_rank === rank ? 'check_indeterminate_small' : 'arrow_drop_down'}`}
         />
       </FlexColumn>
       {/* <Icon className="text-primary-700" name="arrow_drop_up" /> */}
