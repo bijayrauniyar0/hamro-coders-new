@@ -34,7 +34,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="shadow-custom sticky right-0 top-0 z-[11] flex w-full items-center justify-between bg-white px-4 py-2 xl:px-7">
+      <header className="shadow-custom sticky right-0 top-0 z-[11] flex w-full items-center justify-between bg-white px-4 py-1 xl:px-7">
         <div
           tabIndex={0}
           role="button"
@@ -49,7 +49,7 @@ const Navbar = () => {
               <NavLink
                 key={navbarItem.id}
                 className={({ isActive }) =>
-                  `border-b-2 border-transparent p-3 text-base font-medium tracking-[-0.5px] text-matt-100 ${
+                  `border-b-2 border-transparent px-3 py-2 text-base font-medium tracking-[-0.5px] text-matt-100 ${
                     isActive
                       ? 'border-b-primary-600 duration-200'
                       : 'duration-200 hover:text-primary-600'
