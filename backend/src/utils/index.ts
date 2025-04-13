@@ -27,3 +27,15 @@ export const getEndOfMonth = () => {
   const today = new Date();
   return new Date(today.getFullYear(), today.getMonth() + 1, 0);
 };
+
+export const getStartDate = (dateType: string) => {
+  let startDate = new Date();
+  if (dateType === 'daily') {
+    startDate = getStartOfDay();
+  } else if (dateType === 'weekly') {
+    startDate = getStartOfWeek();
+  } else if (dateType === 'monthly') {
+    startDate = getStartOfMonth();
+  }
+  return startDate;
+};
