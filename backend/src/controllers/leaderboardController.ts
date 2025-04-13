@@ -3,7 +3,12 @@ import UserScores from '@Models/userScoresModels';
 import User from '@Models/userModels';
 import Subject from '@Models/subjectsModels';
 import { Op } from 'sequelize';
-import { getStartOfDay, getStartOfMonth, getStartOfWeek } from '@Utils/index';
+import {
+  getStartDate,
+  getStartOfDay,
+  getStartOfMonth,
+  getStartOfWeek,
+} from '@Utils/index';
 import Notification from '@Models/notificationModel';
 import {
   AggregatedScore,
@@ -14,17 +19,18 @@ import {
   ScoreFilter,
 } from '@Constants/Types/leaderboard';
 
+const PERIODS = ['daily', 'weekly', 'monthly'] as const;
+type Period = (typeof PERIODS)[number];
+
 const filterUserByDate = ({
   scores,
   startDate,
   endDate,
 }: FilterScoresByDateProps): UserScores[] => {
-  const filteredScores = scores.filter(
-    (userScore: UserScores) =>
-      userScore.created_at.getDate() === startDate.getDate() &&
-      userScore.created_at.getDate() <= endDate.getDate(),
-  );
-  return filteredScores;
+  return scores.filter(score => {
+    const createdAt = new Date(score.created_at).getTime();
+    return createdAt >= startDate.getTime() && createdAt <= endDate.getTime();
+  });
 };
 
 export class LeaderboardService {
@@ -65,6 +71,35 @@ export class LeaderboardService {
     return Object.values(aggregated);
   };
 
+  private getAggregatedRanks(
+    scores: UserScores[],
+    endDate: Date,
+  ): Record<Period, Rank[]> {
+    const periods: Record<Period, Date> = {
+      daily: getStartOfDay(),
+      weekly: getStartOfWeek(),
+      monthly: getStartOfMonth(),
+    };
+
+    const ranks: Record<Period, Rank[]> = {
+      daily: [],
+      weekly: [],
+      monthly: [],
+    };
+
+    PERIODS.forEach(period => {
+      const filtered = filterUserByDate({
+        scores,
+        startDate: periods[period],
+        endDate,
+      });
+      const aggregated = this.aggregateScores(filtered);
+      ranks[period] = this.getRanks(aggregated);
+    });
+
+    return ranks;
+  }
+
   getRanks = (scores: AggregatedScore[]): Rank[] => {
     const rankedScores = scores
       .sort((a, b) => b.total_score - a.total_score)
@@ -85,6 +120,43 @@ export class LeaderboardService {
     return this.getRanks(aggregatedScores);
   }
 
+  // async getRankedUsersByDate({
+  //   subjectIds,
+  //   endDate = new Date(),
+  // }: RankUserByDateProps) {
+  //   const scores = await this.getUserScores({
+  //     subjectIds,
+  //     startDate:
+  //       getStartOfMonth() > getStartOfWeek()
+  //         ? getStartOfMonth()
+  //         : getStartOfWeek(),
+  //     endDate: new Date(),
+  //   });
+  //   const userScoresDaily = filterUserByDate({
+  //     scores,
+  //     startDate: getStartOfDay(),
+  //     endDate,
+  //   });
+  //   const userScoresWeekly = filterUserByDate({
+  //     scores,
+  //     startDate: getStartOfWeek(),
+  //     endDate,
+  //   });
+  //   const userScoresMonthly = filterUserByDate({
+  //     scores,
+  //     startDate: getStartOfMonth(),
+  //     endDate,
+  //   });
+  //   const aggregatedDaily = this.aggregateScores(userScoresDaily);
+  //   const aggregatedWeekly = this.aggregateScores(userScoresWeekly);
+  //   const aggregatedMonthly = this.aggregateScores(userScoresMonthly);
+
+  //   return {
+  //     daily: this.getRanks(aggregatedDaily),
+  //     weekly: this.getRanks(aggregatedWeekly),
+  //     monthly: this.getRanks(aggregatedMonthly),
+  //   };
+  // }
   async getRankedUsersByDate({
     subjectIds,
     endDate = new Date(),
@@ -92,35 +164,12 @@ export class LeaderboardService {
     const scores = await this.getUserScores({
       subjectIds,
       startDate:
-        getStartOfMonth() > getStartOfWeek()
+        getStartOfMonth() < getStartOfWeek()
           ? getStartOfMonth()
           : getStartOfWeek(),
-      endDate: new Date(),
-    });
-    const userScoresDaily = filterUserByDate({
-      scores,
-      startDate: getStartOfDay(),
       endDate,
     });
-    const userScoresWeekly = filterUserByDate({
-      scores,
-      startDate: getStartOfWeek(),
-      endDate,
-    });
-    const userScoresMonthly = filterUserByDate({
-      scores,
-      startDate: getStartOfMonth(),
-      endDate,
-    });
-    const aggregatedDaily = this.aggregateScores(userScoresDaily);
-    const aggregatedWeekly = this.aggregateScores(userScoresWeekly);
-    const aggregatedMonthly = this.aggregateScores(userScoresMonthly);
-
-    return {
-      daily: this.getRanks(aggregatedDaily),
-      weekly: this.getRanks(aggregatedWeekly),
-      monthly: this.getRanks(aggregatedMonthly),
-    };
+    return this.getAggregatedRanks(scores, endDate);
   }
 
   async createSurpassedUserNotification(
@@ -146,89 +195,160 @@ const getUserRank = (ranks: Rank[], userId: number) => {
   return rank ? rank : ranks.length + 1;
 };
 
+const compareAndNotify = async (
+  leaderboardService: LeaderboardService,
+  oldRanks: Record<Period, Rank[]>,
+  newRanks: Record<Period, Rank[]>,
+  userId: number,
+  subject: string,
+  userName: string,
+) => {
+  await Promise.all(
+    PERIODS.map(async period => {
+      const previousRank = getUserRank(oldRanks[period], userId);
+      const newRank = getUserRank(newRanks[period], userId);
+      const surpassedUsers = oldRanks[period].filter(
+        ({ rank, id }) =>
+          rank >= newRank && rank <= previousRank && id !== userId,
+      );
+      // console.log(surpassedUsers, 'suprasssed--------------------------');
+
+      if (surpassedUsers.length > 0) {
+        await leaderboardService.createSurpassedUserNotification(
+          surpassedUsers,
+          subject,
+          period,
+          userName,
+        );
+      }
+    }),
+  );
+};
+
 export const createScoreEntry = async (req: Request, res: Response) => {
   try {
     const { subject_id, score, mode, elapsed_time } = req.body;
-    const user = req.user;
+    // const user = req.user;
+    const user = {
+      id: 18,
+      name: 'Anonymous',
+    };
     const leaderboardService = new LeaderboardService();
-    const {
-      daily: rankDaily,
-      monthly: rankMonthly,
-      weekly: rankWeekly,
-    } = await leaderboardService.getRankedUsersByDate({
+    const oldRanks = await leaderboardService.getRankedUsersByDate({
       subjectIds: [subject_id],
     });
+
     await UserScores.create({
-      user_id: user?.id,
+      user_id: user.id,
       score,
       subject_id,
       mode,
       elapsed_time,
     });
-    const {
-      daily: rankDailyAfterCreation,
-      monthly: rankMonthlyAfterCreation,
-      weekly: rankWeeklyAfterCreation,
-    } = await leaderboardService.getRankedUsersByDate({
+
+    const newRanks = await leaderboardService.getRankedUsersByDate({
       subjectIds: [subject_id],
     });
 
-    const userRankDaily = getUserRank(rankDaily, user?.id);
-    const userRankWeekly = getUserRank(rankWeekly, user?.id);
-    const userRankMonthly = getUserRank(rankMonthly, user?.id);
-    const userRankDailyAfterCreation = getUserRank(
-      rankDailyAfterCreation,
-      user?.id,
-    );
-    const userRankWeeklyAfterCreation = getUserRank(
-      rankWeeklyAfterCreation,
-      user?.id,
-    );
-    const userRankMonthlyAfterCreation = getUserRank(
-      rankMonthlyAfterCreation,
-      user?.id,
-    );
-    const surpassedUsersDaily = rankDaily.filter(
-      (rank: Rank) =>
-        rank.rank > userRankDailyAfterCreation && rank.rank <= userRankDaily,
-    );
-    const surpassedUsersWeekly = rankWeekly.filter(
-      (rank: Rank) =>
-        rank.rank > userRankWeeklyAfterCreation && rank.rank <= userRankWeekly,
-    );
-    const surpassedUsersMonthly = rankMonthly.filter(
-      (rank: Rank) =>
-        rank.rank > userRankMonthlyAfterCreation &&
-        rank.rank <= userRankMonthly,
-    );
-
     const subject = await Subject.findByPk(subject_id);
-    await Promise.all([
-      leaderboardService.createSurpassedUserNotification(
-        surpassedUsersDaily,
-        subject?.title || 'Unknown',
-        'daily',
-        user?.name,
-      ),
-      leaderboardService.createSurpassedUserNotification(
-        surpassedUsersWeekly,
-        subject?.title || 'Unknown',
-        'weekly',
-        user?.name,
-      ),
-      leaderboardService.createSurpassedUserNotification(
-        surpassedUsersMonthly,
-        subject?.title || 'Unknown',
-        'monthly',
-        user?.name,
-      ),
-    ]);
+    await compareAndNotify(
+      leaderboardService,
+      oldRanks,
+      newRanks,
+      user?.id,
+      subject?.title || 'Unknown',
+      user?.name,
+    );
 
     res.status(201).json({ message: 'Score added successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
   }
 };
+
+// export const createScoreEntry = async (req: Request, res: Response) => {
+//   try {
+//     const { subject_id, score, mode, elapsed_time } = req.body;
+//     const user = req.user;
+//     const leaderboardService = new LeaderboardService();
+//     const {
+//       daily: rankDaily,
+//       monthly: rankMonthly,
+//       weekly: rankWeekly,
+//     } = await leaderboardService.getRankedUsersByDate({
+//       subjectIds: [subject_id],
+//     });
+//     await UserScores.create({
+//       user_id: user?.id,
+//       score,
+//       subject_id,
+//       mode,
+//       elapsed_time,
+//     });
+//     const {
+//       daily: rankDailyAfterCreation,
+//       monthly: rankMonthlyAfterCreation,
+//       weekly: rankWeeklyAfterCreation,
+//     } = await leaderboardService.getRankedUsersByDate({
+//       subjectIds: [subject_id],
+//     });
+
+//     const userRankDaily = getUserRank(rankDaily, user?.id);
+//     const userRankWeekly = getUserRank(rankWeekly, user?.id);
+//     const userRankMonthly = getUserRank(rankMonthly, user?.id);
+//     const userRankDailyAfterCreation = getUserRank(
+//       rankDailyAfterCreation,
+//       user?.id,
+//     );
+//     const userRankWeeklyAfterCreation = getUserRank(
+//       rankWeeklyAfterCreation,
+//       user?.id,
+//     );
+//     const userRankMonthlyAfterCreation = getUserRank(
+//       rankMonthlyAfterCreation,
+//       user?.id,
+//     );
+//     const surpassedUsersDaily = rankDaily.filter(
+//       (rank: Rank) =>
+//         rank.rank > userRankDailyAfterCreation && rank.rank <= userRankDaily,
+//     );
+//     const surpassedUsersWeekly = rankWeekly.filter(
+//       (rank: Rank) =>
+//         rank.rank > userRankWeeklyAfterCreation && rank.rank <= userRankWeekly,
+//     );
+//     const surpassedUsersMonthly = rankMonthly.filter(
+//       (rank: Rank) =>
+//         rank.rank > userRankMonthlyAfterCreation &&
+//         rank.rank <= userRankMonthly,
+//     );
+
+//     const subject = await Subject.findByPk(subject_id);
+//     await Promise.all([
+//       leaderboardService.createSurpassedUserNotification(
+//         surpassedUsersDaily,
+//         subject?.title || 'Unknown',
+//         'daily',
+//         user?.name,
+//       ),
+//       leaderboardService.createSurpassedUserNotification(
+//         surpassedUsersWeekly,
+//         subject?.title || 'Unknown',
+//         'weekly',
+//         user?.name,
+//       ),
+//       leaderboardService.createSurpassedUserNotification(
+//         surpassedUsersMonthly,
+//         subject?.title || 'Unknown',
+//         'monthly',
+//         user?.name,
+//       ),
+//     ]);
+
+//     res.status(201).json({ message: 'Score added successfully' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Internal server error', details: error });
+//   }
+// };
 
 export const getLeaderboard = async (
   req: Request<null, null, null, LeaderboardQuery>,
@@ -245,14 +365,7 @@ export const getLeaderboard = async (
     subjectIds = subject_id.split(',').map((id: string) => Number(id));
   }
 
-  let startDate = new Date();
-  if (filter_by === 'daily') {
-    startDate = getStartOfDay();
-  } else if (filter_by === 'weekly') {
-    startDate = getStartOfWeek();
-  } else if (filter_by === 'monthly') {
-    startDate = getStartOfMonth();
-  }
+  const startDate = getStartDate(filter_by);
 
   const fiveMinutesAgo = new Date();
   fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - 5);
