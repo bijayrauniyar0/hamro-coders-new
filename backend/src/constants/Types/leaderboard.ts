@@ -1,7 +1,7 @@
 import UserScores from '@Models/userScoresModels';
 
 export interface LeaderboardQuery {
-  filter_by?: string;
+  filter_by: string;
   course_id?: string;
   subject_id?: string;
 }
