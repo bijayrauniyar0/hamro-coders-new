@@ -12,6 +12,7 @@ const sequelize = new Sequelize({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   dialect: 'postgres',
+  timezone: '+05:45', // Nepal Time!
 //   logging: false, // Turn off logging for production
 });
 

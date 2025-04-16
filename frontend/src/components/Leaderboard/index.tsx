@@ -122,7 +122,7 @@ const Leaderboard = () => {
                   rankClassName="bg-green-400"
                 />
               </FlexRow>
-              <FlexColumn className="scrollbar max-h-[calc(100vh-19.5rem)] w-full gap-2 overflow-y-auto md:max-h-[calc(100vh-23.5rem)]">
+              <FlexColumn className="scrollbar h-[calc(100vh-19.5rem)] w-full gap-2 overflow-y-auto md:max-h-[calc(100vh-22.5rem)]">
                 {leaderboardData?.map(
                   ({ rank, name, total_score, previous_rank }) => {
                     if (rank <= 3) return null;

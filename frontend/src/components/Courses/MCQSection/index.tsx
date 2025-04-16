@@ -119,8 +119,9 @@ const MCQBox = () => {
       subject_id,
       score: results.right,
       mode: selectedMode,
-      elapsed_time:
+      elapsed_time: Math.floor(
         (new Date().getTime() - startTimeRef.current.getTime()) / 1000,
+      ),
     };
     if (!isRecordCreated) {
       createLeaderboardRecord(payload);

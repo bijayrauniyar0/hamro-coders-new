@@ -5,11 +5,12 @@ import Subject from './subjectsModels';
 
 class UserScores extends Model {
   public id!: number;
+  public User!: { name: string; id: number };
   public user_id!: number;
   public score!: number;
   public subject_id!: string;
   public mode!: 'practice' | 'ranked';
-  public readonly createdAt!: Date;
+  public readonly created_at!: Date;
 }
 
 UserScores.init(

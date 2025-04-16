@@ -64,7 +64,7 @@ const Filters = () => {
       variants={variants}
       initial="hidden"
       animate={isFiltersOpen ? 'visible' : 'hidden'}
-      className={`absolute z-[20] flex h-[calc(100vh-11rem)] w-[95%] flex-col gap-4 rounded-lg border bg-gray-50 px-6 py-4 shadow-lg md:relative md:w-full md:!translate-x-0 md:!opacity-100 ${!isFiltersOpen ? 'hidden md:flex' : ''}`}
+      className={`absolute z-[20] flex h-[calc(100vh-9.75rem)] w-[95%] flex-col gap-4 rounded-lg border bg-gray-50 px-6 py-4 shadow-lg md:relative md:w-full md:!translate-x-0 md:!opacity-100 ${!isFiltersOpen ? 'hidden md:flex' : ''}`}
     >
       <FlexRow className="items-center justify-between">
         <p className="text-lg font-semibold text-matt-100">Filters</p>
