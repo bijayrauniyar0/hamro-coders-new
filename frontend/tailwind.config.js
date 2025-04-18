@@ -20,15 +20,15 @@ export const theme = {
     },
     colors: {
       primary: {
-        100: '#efe1fc',
-        200: '#dfc3f9',
-        300: '#cfa5f5',
-        400: '#bf87f2',
-        500: '#af69ef',
-        600: '#8c54bf',
-        700: '#693f8f',
-        800: '#462a60',
-        900: '#231530',
+        100: '#f3ecfa', // Very light, almost white
+        200: '#e1d4f3', // Soft lavender
+        300: '#cebceb', // Light purple
+        400: '#bfa2e2', // Slightly stronger, but still calm
+        500: '#aa8bd3', // Base color - muted lavender
+        600: '#886db0', // Muted mid-tone
+        700: '#65508c', // Comfortable for dark mode
+        800: '#433569', // Deep but readable
+        900: '#261b3d', // Very dark, but not pitch black
       },
       // grey and neutral represent same color
       grey: {

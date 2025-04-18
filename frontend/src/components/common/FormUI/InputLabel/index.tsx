@@ -19,12 +19,12 @@ export default function InputLabel({
 }: IInputLabelProps) {
   return (
     <div
-      className={`input-label flex items-center gap-x-[0.375rem] ${className} ${
+      className={` flex items-center gap-x-[0.375rem] ${className} ${
         disabled ? 'text-grey-600' : ''
       }`}
     >
       <div className="flex items-center">
-        <p id={id} className="body-md-regular text-black-700 mb-1">
+        <p id={id} className="text-md text-gray-700">
           {label}
         </p>
         {astric ? <span className="text-red-700">&nbsp;*</span> : null}

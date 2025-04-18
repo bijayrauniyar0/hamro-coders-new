@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ChangeEvent, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { format } from 'date-fns';
-import useCustomUpload from '@Hooks/useCustomUpload';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import Icon from '@Components/common/Icon';
-import Image from '@Components/radix/Image';
-import { UseFormPropsType } from '@Constants/Types/type';
-import { convertFileUrlToFileArray } from '@Utils/index';
 import { toast } from 'react-toastify';
+import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
+
+import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import { convertFileUrlToFileArray } from '@Utils/index';
+import { UseFormPropsType } from '@Constants/Types/type';
+import useCustomUpload from '@Hooks/useCustomUpload';
+
 import Input from '../Input';
 
 type FileType = File & {
@@ -63,7 +63,7 @@ export default function FileUpload({
   // register form element to useForm
   useEffect(() => {
     register(name);
-     
+
     // setValue(name, []);
   }, [register, name, setValue]);
 
@@ -170,7 +170,7 @@ export default function FileUpload({
                     />
                   </div>
                 ) : (
-                  <Image src={previewURL} alt="" />
+                  <img className='h-8 w-8 object-cover aspect-square' src={previewURL} alt="" />
                 )}
               </div>
               <FlexColumn className="w-[85%]">

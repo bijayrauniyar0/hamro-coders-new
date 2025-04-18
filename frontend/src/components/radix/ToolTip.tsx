@@ -1,11 +1,12 @@
 import {
+  Arrow,
+  Portal,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  Arrow,
-  Portal,
 } from '@radix-ui/react-tooltip';
+
 import Icon from '../common/Icon';
 
 interface ToolTipProps {

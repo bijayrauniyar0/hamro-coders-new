@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+ 
 import * as React from 'react';
 import { CalendarIcon } from '@radix-ui/react-icons';
-// import { format } from 'date-fns';
-import { cn } from '@Utils/index';
+
+import Icon from '@Components/common/Icon';
 import { Button } from '@Components/radix/Button';
 import { Calendar } from '@Components/radix/Calendar';
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@Components/radix/Popover';
-import Icon from '@Components/common/Icon';
+// import { format } from 'date-fns';
+import { cn } from '@Utils/index';
 
 interface IDatePickerProps {
   date: string;

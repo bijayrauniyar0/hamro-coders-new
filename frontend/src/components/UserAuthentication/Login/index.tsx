@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
 
 import ErrorMessage from '@Components/common/ErrorMessage';
 import { Input } from '@Components/common/FormUI';
 import Checkbox from '@Components/common/FormUI/CheckBox';
 import InputLabel from '@Components/common/FormUI/InputLabel';
+import { FlexColumn } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
+import { login } from '@Services/common';
 
 import FormControl from '../../common/FormUI/FormControl';
 import Icon from '../../common/Icon';
-
-import { FlexColumn } from '@Components/common/Layouts';
-import { login } from '@Services/common';
-import { toast } from 'react-toastify';
 
 const initialState = {
   email: '',
@@ -31,7 +30,7 @@ export default function Login() {
     onSuccess: (res: any) => {
       localStorage.setItem('token', res?.data?.token);
       toast.success('Login Successful');
-      navigate('/');
+      navigate('/courses');
     },
     onError: ({ response }: any) => {
       const caughtError = response?.data?.message || 'Something went wrong.';

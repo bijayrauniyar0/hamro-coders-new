@@ -1,9 +1,10 @@
  
-import { IDivProps } from '@Constants/interface';
-import { createPortal } from 'react-dom';
 import { useEffect, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
+
 // import { motion } from 'framer-motion';
 import hasErrorBoundary from '@Components/common/hasErrorBoundary';
+import { IDivProps } from '@Constants/interface';
 
 /**
  * This is a functional component called `PortalTemplate` that takes in a prop called `children` of

@@ -1,7 +1,8 @@
+import React, { useEffect } from 'react';
+
 import Icon from '@Components/common/Icon';
 import { FlexRow } from '@Components/common/Layouts';
 import useStopwatch from '@Components/common/StopWatch';
-import React, { useEffect } from 'react';
 
 type TimeBoxProps = {
   startTimer: boolean;

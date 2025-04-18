@@ -1,4 +1,5 @@
 import React, { Component as ReactComponent, ReactNode } from 'react';
+
 import Icon from '../Icon';
 
 interface ErrorBoundaryProps {

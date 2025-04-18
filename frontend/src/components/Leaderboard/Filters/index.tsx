@@ -1,3 +1,7 @@
+import React, { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+
 import DropDown from '@Components/common/DropDown';
 import { Label } from '@Components/common/FormUI';
 import Checkbox from '@Components/common/FormUI/CheckBox';
@@ -5,15 +9,12 @@ import HeaderSwitchTab from '@Components/common/HeaderSwitchTab';
 import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import Skeleton from '@Components/radix/Skeleton';
+import isEmpty from '@Utils/isEmpty';
+import { resetFilters, setFilters } from '@Store/actions/leaderboard';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
 import { filterOptions } from '@Constants/Leaderboard';
 import { SubjectType } from '@Constants/Types/academics';
 import { getCourses, getSubjectsByCourse } from '@Services/academics';
-import { resetFilters, setFilters } from '@Store/actions/leaderboard';
-import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
-import { useQuery } from '@tanstack/react-query';
-import isEmpty from '@Utils/isEmpty';
-import { motion } from 'framer-motion';
-import React, { useEffect } from 'react';
 
 const Filters = () => {
   const dispatch = useTypedDispatch();

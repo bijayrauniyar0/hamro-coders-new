@@ -1,19 +1,21 @@
-import LeaderBox from './LeaderBox';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import ScoreRow from './ScoreRow';
-import { useQuery } from '@tanstack/react-query';
-import { getLeaderboard } from '@Services/leaderboard';
-import Skeleton from '@Components/radix/Skeleton';
-import BreadCrumb from '@Components/common/FormComponent/BreadCrumb';
-import BindContentContainer from '@Components/common/BindContentContainer';
 import { useNavigate } from 'react-router-dom';
-import Filters from './Filters';
-import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
-import { Button } from '@Components/radix/Button';
+import { useQuery } from '@tanstack/react-query';
+
+import BindContentContainer from '@Components/common/BindContentContainer';
+import BreadCrumb from '@Components/common/FormComponent/BreadCrumb';
 import Icon from '@Components/common/Icon';
-import { setIsFiltersOpen } from '@Store/actions/leaderboard';
-import isEmpty from '@Utils/isEmpty';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
+import { Button } from '@Components/radix/Button';
+import Skeleton from '@Components/radix/Skeleton';
+import isEmpty from '@Utils/isEmpty';
+import { setIsFiltersOpen } from '@Store/actions/leaderboard';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import { getLeaderboard } from '@Services/leaderboard';
+
+import Filters from './Filters';
+import LeaderBox from './LeaderBox';
+import ScoreRow from './ScoreRow';
 
 type UserRank = {
   user_id: number;

@@ -2,26 +2,26 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+// import NSOIcon from '@Assets/images/login/NSO.svg';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
 import ErrorMessage from '@Components/common/ErrorMessage';
 import { Input } from '@Components/common/FormUI';
 import Checkbox from '@Components/common/FormUI/CheckBox';
 import InputLabel from '@Components/common/FormUI/InputLabel';
-import { Button } from '@Components/radix/Button';
-// import NSOIcon from '@Assets/images/login/NSO.svg';
-
-import { zodResolver } from '@hookform/resolvers/zod';
-import FormControl from '../../common/FormUI/FormControl';
-import Icon from '../../common/Icon';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import IconButton from '@Components/common/IconButton';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import { Button } from '@Components/radix/Button';
+import { createNewUser } from '@Services/common';
 import {
   signupSchemaStepOne,
   signupSchemaStepTwo,
 } from '@Validations/Authentication';
-import { createNewUser } from '@Services/common';
-import { toast } from 'react-toastify';
+
+import FormControl from '../../common/FormUI/FormControl';
+import Icon from '../../common/Icon';
 
 const initialState = {
   name: '',

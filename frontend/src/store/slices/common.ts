@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;
   number: string;
+  avatar: string;
 };
 
 type CommonState = {

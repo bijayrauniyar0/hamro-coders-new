@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { useRef, useEffect } from 'react';
+import { useEffect,useRef } from 'react';
+
 import SearchIcon from '@Assets/images/icons/searchIcon.svg';
 
 interface ISearchbarProps {

@@ -1,7 +1,7 @@
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { ISubjectBoxProps } from '@Constants/Types/academics';
 import mcqThumbnail from '@Assets/images/mcq-thumbnail.png';
+import { ISubjectBoxProps } from '@Constants/Types/academics';
 
 const SubjectBox = ({ title, handlePlay }: ISubjectBoxProps) => {
   return (

@@ -1,13 +1,14 @@
 /* eslint-disable no-unused-vars */
+import { NavLink } from 'react-router-dom';
+
 import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import {
   DropdownMenu,
-  DropdownMenuItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@Components/radix/DropDownMenu';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import { NavLink } from 'react-router-dom';
 import { INavbarLinkData } from '@Constants/navbarData';
 
 type nestedNavLinkProps = {

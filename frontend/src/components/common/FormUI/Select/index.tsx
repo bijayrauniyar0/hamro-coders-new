@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+ 
 /* eslint-disable no-unused-vars */
 
 import { useEffect, useRef, useState } from 'react';
+
 import Icon from '@Components/common/Icon';
 
 interface ISelectProps {

@@ -1,10 +1,3 @@
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import { Button } from '@Components/radix/Button';
-import {
-  endStats,
-  modesDescription,
-  optionsLabel,
-} from '@Constants/QuestionsBox';
 import React, {
   useCallback,
   useEffect,
@@ -12,21 +5,29 @@ import React, {
   useRef,
   useState,
 } from 'react';
-
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import TimeBox from './TimeBox';
 import { toast } from 'react-toastify';
-import Modal from '@Components/common/Modal';
-import Icon from '@Components/common/Icon';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getMcqAnswers, getMcqs } from '@Services/academics';
-import NoDataAvailable from '@Components/common/NoDataAvailable';
-import isEmpty from '@Utils/isEmpty';
-import { createLeaderboardEntry } from '@Services/leaderboard';
+
 import BindContentContainer from '@Components/common/BindContentContainer';
+import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import Modal from '@Components/common/Modal';
+import NoDataAvailable from '@Components/common/NoDataAvailable';
+import { Button } from '@Components/radix/Button';
+import { getPercentageColor } from '@Utils/index';
+import isEmpty from '@Utils/isEmpty';
+import {
+  endStats,
+  modesDescription,
+  optionsLabel,
+} from '@Constants/QuestionsBox';
+import { getMcqAnswers, getMcqs } from '@Services/academics';
+import { createLeaderboardEntry } from '@Services/leaderboard';
+
 import MCQButton from './MCQButton';
 import MCQSkeleton from './MCQSkeleton';
-import { getPercentageColor } from '@Utils/index';
+import TimeBox from './TimeBox';
 
 type Option = {
   id: number;
@@ -212,7 +213,7 @@ const MCQBox = () => {
     <>
       <Modal
         onClose={() => setShowModal(false)}
-        isOpen={showModal && !!selectedMode}
+        show={showModal && !!selectedMode}
         title={`${selectedMode?.toUpperCase()} MODE`}
       >
         <FlexColumn className="gap-4">

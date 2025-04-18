@@ -1,6 +1,7 @@
 import React from 'react';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+
 import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { getFallBackImage } from '@Utils/index';
 
 type ScoreRowProps = {
