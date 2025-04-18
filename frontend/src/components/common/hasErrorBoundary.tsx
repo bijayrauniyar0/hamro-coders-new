@@ -1,4 +1,5 @@
 import React from 'react';
+
 import ErrorBoundary from './ErrorBoundary';
 
 function hasErrorBoundary<T>(

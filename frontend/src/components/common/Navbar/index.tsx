@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { navbarData } from '@Constants/navbarData';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import AccountMenu from '@Components/common/Navbar/AccountMenu';
+import { navbarData } from '@Constants/navbarData';
+
 import Icon from '../Icon';
-import { AnimatePresence, motion } from 'framer-motion';
 
 const Navbar = () => {
   const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);

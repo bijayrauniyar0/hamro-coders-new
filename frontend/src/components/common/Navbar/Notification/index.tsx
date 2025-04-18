@@ -1,12 +1,12 @@
+import Icon from '@Components/common/Icon';
+import { FlexRow } from '@Components/common/Layouts';
+// import { getInitialsFromString } from '@Utils/index';
+import Flex from '@Components/common/Layouts/Flex';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@Components/radix/DropDownMenu';
-import Icon from '@Components/common/Icon';
-import { FlexRow } from '@Components/common/Layouts';
-// import { getInitialsFromString } from '@Utils/index';
-import Flex from '@Components/common/Layouts/Flex';
 
 const notificationData = [
   {

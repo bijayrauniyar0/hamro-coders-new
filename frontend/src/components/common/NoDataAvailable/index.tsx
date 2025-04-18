@@ -1,6 +1,8 @@
 import React from 'react';
-import { FlexColumn } from '../Layouts';
+
 import noDataFound from '@Assets/images/no-data-found.png';
+
+import { FlexColumn } from '../Layouts';
 
 type NoDataAvailableProps = {
   className?: string;

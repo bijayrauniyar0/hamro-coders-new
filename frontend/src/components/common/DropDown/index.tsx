@@ -1,7 +1,6 @@
  
 import React, { useEffect, useRef } from 'react';
-import { cn } from '@Utils/index';
-import { IComboBoxProps, IDropDownData } from '@Constants/interface';
+
 import { Button } from '@Components/radix/Button';
 import { Command, CommandGroup, CommandItem } from '@Components/radix/Command';
 import {
@@ -9,9 +8,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@Components/radix/Popover';
+import { cn } from '@Utils/index';
+import { IComboBoxProps, IDropDownData } from '@Constants/interface';
 import useDebouncedInput from '@Hooks/useDebouncedInput';
-import Icon from '../Icon';
+
 import hasErrorBoundary from '../hasErrorBoundary';
+import Icon from '../Icon';
 import Searchbar from '../SearchBar';
 
 function Dropdown({
