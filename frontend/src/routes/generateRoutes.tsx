@@ -1,9 +1,11 @@
-import { Route, Routes } from 'react-router-dom';
 import { ReactNode, Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
+
 import Fallback from '@Components/common/Fallback';
-import { IRoute } from './type';
 import useAuth from '@Hooks/useAuth';
+
 import ProtectedRoute from './protectedRoute';
+import { IRoute } from './type';
 
 interface IGenerateRouteProps {
   routes: IRoute[];

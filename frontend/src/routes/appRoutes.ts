@@ -1,9 +1,10 @@
-import CoursesPage from '@Views/Courses';
-import { IRoute } from './type';
-import DashboardPage from '@Views/Dashboard';
 // import ModesPage from '@Views/Modes';
 import AuthenticationComponent from '@Components/UserAuthentication';
+import CoursesPage from '@Views/Courses';
+import DashboardPage from '@Views/Dashboard';
 import LeaderboardPage from '@Views/LeaderboardPage';
+
+import { IRoute } from './type';
 
 const appRoutes: IRoute[] = [
   {

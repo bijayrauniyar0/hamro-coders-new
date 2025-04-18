@@ -1,7 +1,8 @@
-import { IRoute } from './type';
-import Subjects from '@Components/Courses/Subjects';
 import Courses from '@Components/Courses';
 import MCQBox from '@Components/Courses/MCQSection';
+import Subjects from '@Components/Courses/Subjects';
+
+import { IRoute } from './type';
 
 const courseRoutes: IRoute[] = [
   {
