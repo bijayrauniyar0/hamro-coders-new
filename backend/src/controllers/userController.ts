@@ -15,19 +15,20 @@ export const getAllUsers = async (_: Request, res: Response) => {
 };
 
 // Get user by ID
-export const getUserById = async (
+export const getUserProfile = async (
   req: Request,
   res: Response,
 ): Promise<any> => {
   try {
-    const user = await User.findOne({
-      where: { id: req.params.id },
-      attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+    const { user } = req;
+    const userData = await User.findOne({
+      where: { id: user.id },
+      attributes: { exclude: ['password', 'created_at', 'updated_at'] },
     });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json(user);
+    res.status(200).json(userData);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user', error });
   }
@@ -53,16 +54,28 @@ export const createUser = async (req: Request, res: Response) => {
 // Update user by ID
 export const updateUser = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { name, email, password } = req.body;
-    const user = await User.findByPk(req.params.id);
+    const { password, old_password, ...restValues } = req.body;
+    const payload: Partial<User> = { ...restValues };
+    const user: User | null = await User.findByPk(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    user.name = name || user.name;
-    user.email = email || user.email;
-    user.password = password || user.password;
+    if ((old_password || password) && (!old_password || !password)) {
+      return res.status(400).json({
+        message:
+          'Both old password and new password are required to change the password',
+      });
+    }
+    if (old_password && password) {
+      const isPasswordValid = await bcrypt.compare(old_password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: 'Invalid old password' });
+      }
+      user.password = bcrypt.hashSync(password, 10);
+    }
+    Object.assign(user, payload);
     await user.save();
-    res.status(200).json(user);
+    res.status(200).json({message: "User updated successfully"});
   } catch (error) {
     res.status(500).json({ message: 'Error updating user', error });
   }
