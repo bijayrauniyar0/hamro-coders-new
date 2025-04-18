@@ -213,7 +213,7 @@ const MCQBox = () => {
     <>
       <Modal
         onClose={() => setShowModal(false)}
-        isOpen={showModal && !!selectedMode}
+        show={showModal && !!selectedMode}
         title={`${selectedMode?.toUpperCase()} MODE`}
       >
         <FlexColumn className="gap-4">
