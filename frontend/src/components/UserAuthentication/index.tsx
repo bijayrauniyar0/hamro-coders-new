@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import Login from './Login';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import { FlexRow } from '@Components/common/Layouts';
 import singInImg from '@Assets/images/sign-in.jpg';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Signup from './Signup';
 import useAuth from '@Hooks/useAuth';
+
+import Login from './Login';
+import Signup from './Signup';
 
 const AuthenticationComponent = () => {
   const { pathname } = useLocation();

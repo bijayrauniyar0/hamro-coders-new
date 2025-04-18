@@ -1,17 +1,18 @@
 import React, { useMemo, useState } from 'react';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import { useNavigate } from 'react-router-dom';
+import { cardVariants, containerVariants } from '@Animations/index';
 // import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getCourses } from '@Services/academics';
-import isEmpty from '@Utils/isEmpty';
-import NoDataAvailable from '@Components/common/NoDataAvailable';
-import Skeleton from '@Components/radix/Skeleton';
-import Searchbar from '@Components/common/SearchBar';
 import { motion } from 'framer-motion';
-import { cardVariants, containerVariants } from '@Animations/index';
-import { CoursesType } from '@Constants/Types/academics';
+
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import NoDataAvailable from '@Components/common/NoDataAvailable';
+import Searchbar from '@Components/common/SearchBar';
+import Skeleton from '@Components/radix/Skeleton';
 import ToolTip from '@Components/radix/ToolTip';
-import { useNavigate } from 'react-router-dom';
+import isEmpty from '@Utils/isEmpty';
+import { CoursesType } from '@Constants/Types/academics';
+import { getCourses } from '@Services/academics';
 
 const Courses = () => {
   const [searchValue, setSearchValue] = useState('');

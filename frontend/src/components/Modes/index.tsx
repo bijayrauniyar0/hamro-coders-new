@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
-import ModesBox from './ModesBox';
-import { LeftCustomArrow, modesData, RightCustomArrow } from '@Constants/modes';
-import Portal from '@Components/common/Layouts/Portal';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import { motion } from 'framer-motion';
-import { cardVariants, containerVariants } from '@Animations/index';
 import Slider, { Settings } from 'react-slick';
-import useScreenWidth from '@Hooks/useScreenWidth';
-import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
-import { setSelectedMode } from '@Store/actions/common';
+import { cardVariants, containerVariants } from '@Animations/index';
+import { motion } from 'framer-motion';
+
 import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import Portal from '@Components/common/Layouts/Portal';
 import { Button } from '@Components/radix/Button';
+import { setSelectedMode } from '@Store/actions/common';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import { LeftCustomArrow, modesData, RightCustomArrow } from '@Constants/modes';
+import useScreenWidth from '@Hooks/useScreenWidth';
+
+import ModesBox from './ModesBox';
 
 type ModesProps = {
   handleNextClick: () => void;

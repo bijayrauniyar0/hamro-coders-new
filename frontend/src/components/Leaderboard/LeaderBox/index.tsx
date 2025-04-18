@@ -1,8 +1,9 @@
 import React from 'react';
-import crown from '@Assets/images/crown.png';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import { getFallBackImage } from '@Utils/index';
+
 import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import crown from '@Assets/images/crown.png';
+import { getFallBackImage } from '@Utils/index';
 
 type LeaderBoxProps = {
   className?: string;

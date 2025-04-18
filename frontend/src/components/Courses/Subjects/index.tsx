@@ -1,20 +1,22 @@
+import React, { useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { cardVariants, containerVariants } from '@Animations/index';
+import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+
+import BreadCrumb from '@Components/common/FormComponent/BreadCrumb';
+import hasErrorBoundary from '@Components/common/hasErrorBoundary';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import Searchbar from '@Components/common/SearchBar';
-import Skeleton from '@Components/radix/Skeleton';
-import { getSubjectsByCourse } from '@Services/academics';
-import { useQuery } from '@tanstack/react-query';
-import isEmpty from '@Utils/isEmpty';
-import React, { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { cardVariants, containerVariants } from '@Animations/index';
-import { SubjectType } from '@Constants/Types/academics';
-import SubjectBox from './SubjectBox';
-import hasErrorBoundary from '@Components/common/hasErrorBoundary';
 import Modes from '@Components/Modes';
+import Skeleton from '@Components/radix/Skeleton';
+import isEmpty from '@Utils/isEmpty';
 import { useTypedSelector } from '@Store/hooks';
-import BreadCrumb from '@Components/common/FormComponent/BreadCrumb';
+import { SubjectType } from '@Constants/Types/academics';
+import { getSubjectsByCourse } from '@Services/academics';
+
+import SubjectBox from './SubjectBox';
 
 const Subjects = () => {
   const [searchValue, setSearchValue] = useState('');
