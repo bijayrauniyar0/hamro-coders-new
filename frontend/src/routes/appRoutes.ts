@@ -3,6 +3,7 @@ import AuthenticationComponent from '@Components/UserAuthentication';
 import CoursesPage from '@Views/Courses';
 import DashboardPage from '@Views/Dashboard';
 import LeaderboardPage from '@Views/LeaderboardPage';
+import MyStatsPage from '@Views/MyStatsPage';
 
 import { IRoute } from './type';
 
@@ -32,6 +33,11 @@ const appRoutes: IRoute[] = [
     name: 'Leaderboard',
     path: '/leaderboard',
     component: LeaderboardPage,
+  },
+  {
+    name: 'My Stats',
+    path: '/stats',
+    component: MyStatsPage,
   },
 ];
 
