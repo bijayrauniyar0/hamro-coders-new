@@ -1,6 +1,7 @@
 import UserScores from '@Models/userScoresModels';
+import { ParsedQs } from 'qs';
 
-export interface LeaderboardQuery {
+export interface LeaderboardQuery extends ParsedQs {
   filter_by: string;
   course_id?: string;
   subject_id?: string;
