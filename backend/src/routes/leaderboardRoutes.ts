@@ -8,7 +8,6 @@ import { authenticate } from 'src/middlewares/authenticate';
 const userScoresRouter = express.Router();
 
 userScoresRouter.post('/', authenticate, createScoreEntry);
-// @ts-ignore
 userScoresRouter.get('/rank/', authenticate, getLeaderboard);
 
 export default userScoresRouter;

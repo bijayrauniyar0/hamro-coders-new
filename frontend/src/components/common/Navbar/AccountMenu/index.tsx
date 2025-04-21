@@ -67,6 +67,13 @@ const AccountMenu = () => {
             <Icon name="settings" className="text-[#475467]" />
             <p className="pb-1 text-md text-[#475467]">Account settings</p>
           </DropdownMenuItem>
+          {/* <DropdownMenuItem
+            className="flex cursor-pointer items-center gap-2 p-3 hover:!bg-primary-100"
+            onClick={() => navigate('/stats')}
+          >
+            <Icon name="monitoring" className="text-[#475467]" />
+            <p className="pb-1 text-md text-[#475467]">My Stats</p>
+          </DropdownMenuItem> */}
           <DropdownMenuItem
             className="flex cursor-pointer items-center gap-2 p-3 hover:!bg-primary-100"
             onClick={handleLogout}

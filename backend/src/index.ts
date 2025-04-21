@@ -7,6 +7,7 @@ import mcqRouter from '@Routes/mcqsRoutes';
 import userScoresRouter from '@Routes/leaderboardRoutes';
 import courseRouter from '@Routes/courseRoutes';
 import notificationRouter from '@Routes/notificationRoutes';
+import analyticsRouter from '@Routes/analyticsRoutes';
 
 const app = express();
 app.use(cors());
@@ -19,6 +20,7 @@ app.use('/api/mcq', mcqRouter);
 app.use('/api/courses', courseRouter);
 app.use('/api/leaderboard', userScoresRouter);
 app.use('/api/notification', notificationRouter);
+app.use('/api/analytics', analyticsRouter);
 
 sequelize.authenticate();
 

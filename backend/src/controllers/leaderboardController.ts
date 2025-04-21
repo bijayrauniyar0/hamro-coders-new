@@ -39,16 +39,28 @@ export class LeaderboardService {
     startDate,
     endDate = new Date(),
   }: ScoreFilter): Promise<UserScores[]> {
+    const whereClause: any = {
+      mode: 'ranked',
+    };
+
+    if (subjectIds && subjectIds.length > 0) {
+      whereClause.subject_id = subjectIds;
+    }
+    if (startDate !== 'all_time') {
+      whereClause.created_at = {
+        [Op.gte]: startDate,
+        [Op.lt]: endDate,
+      };
+    }
+    if (startDate === 'all_time' && endDate) {
+      whereClause.created_at = {
+        [Op.lt]: endDate,
+      };
+    }
+
     const userScores = await UserScores.findAll({
       attributes: ['user_id', 'score', 'created_at'],
-      where: {
-        subject_id: subjectIds,
-        mode: 'ranked',
-        created_at: {
-          [Op.gte]: startDate,
-          [Op.lt]: endDate,
-        },
-      },
+      where: whereClause,
       include: [{ model: User, attributes: ['id', 'name'] }],
     });
     return userScores;
@@ -62,7 +74,7 @@ export class LeaderboardService {
       if (!aggregated[userId]) {
         aggregated[userId] = {
           id: userId,
-          name: score.User?.name || 'Unknown',
+          name: score.User.name || 'Unknown',
           total_score: 0,
         };
       }
@@ -100,7 +112,7 @@ export class LeaderboardService {
     return ranks;
   }
 
-  getRanks = (scores: AggregatedScore[]): Rank[] => {
+  private getRanks = (scores: AggregatedScore[]): Rank[] => {
     const rankedScores = scores
       .sort((a, b) => b.total_score - a.total_score)
       .map((user, index) => ({
@@ -120,43 +132,6 @@ export class LeaderboardService {
     return this.getRanks(aggregatedScores);
   }
 
-  // async getRankedUsersByDate({
-  //   subjectIds,
-  //   endDate = new Date(),
-  // }: RankUserByDateProps) {
-  //   const scores = await this.getUserScores({
-  //     subjectIds,
-  //     startDate:
-  //       getStartOfMonth() > getStartOfWeek()
-  //         ? getStartOfMonth()
-  //         : getStartOfWeek(),
-  //     endDate: new Date(),
-  //   });
-  //   const userScoresDaily = filterUserByDate({
-  //     scores,
-  //     startDate: getStartOfDay(),
-  //     endDate,
-  //   });
-  //   const userScoresWeekly = filterUserByDate({
-  //     scores,
-  //     startDate: getStartOfWeek(),
-  //     endDate,
-  //   });
-  //   const userScoresMonthly = filterUserByDate({
-  //     scores,
-  //     startDate: getStartOfMonth(),
-  //     endDate,
-  //   });
-  //   const aggregatedDaily = this.aggregateScores(userScoresDaily);
-  //   const aggregatedWeekly = this.aggregateScores(userScoresWeekly);
-  //   const aggregatedMonthly = this.aggregateScores(userScoresMonthly);
-
-  //   return {
-  //     daily: this.getRanks(aggregatedDaily),
-  //     weekly: this.getRanks(aggregatedWeekly),
-  //     monthly: this.getRanks(aggregatedMonthly),
-  //   };
-  // }
   async getRankedUsersByDate({
     subjectIds,
     endDate = new Date(),
@@ -228,11 +203,7 @@ const compareAndNotify = async (
 export const createScoreEntry = async (req: Request, res: Response) => {
   try {
     const { subject_id, score, mode, elapsed_time } = req.body;
-    // const user = req.user;
-    const user = {
-      id: 18,
-      name: 'Anonymous',
-    };
+    const user = req.user;
     const leaderboardService = new LeaderboardService();
     const oldRanks = await leaderboardService.getRankedUsersByDate({
       subjectIds: [subject_id],
@@ -266,95 +237,8 @@ export const createScoreEntry = async (req: Request, res: Response) => {
   }
 };
 
-// export const createScoreEntry = async (req: Request, res: Response) => {
-//   try {
-//     const { subject_id, score, mode, elapsed_time } = req.body;
-//     const user = req.user;
-//     const leaderboardService = new LeaderboardService();
-//     const {
-//       daily: rankDaily,
-//       monthly: rankMonthly,
-//       weekly: rankWeekly,
-//     } = await leaderboardService.getRankedUsersByDate({
-//       subjectIds: [subject_id],
-//     });
-//     await UserScores.create({
-//       user_id: user?.id,
-//       score,
-//       subject_id,
-//       mode,
-//       elapsed_time,
-//     });
-//     const {
-//       daily: rankDailyAfterCreation,
-//       monthly: rankMonthlyAfterCreation,
-//       weekly: rankWeeklyAfterCreation,
-//     } = await leaderboardService.getRankedUsersByDate({
-//       subjectIds: [subject_id],
-//     });
-
-//     const userRankDaily = getUserRank(rankDaily, user?.id);
-//     const userRankWeekly = getUserRank(rankWeekly, user?.id);
-//     const userRankMonthly = getUserRank(rankMonthly, user?.id);
-//     const userRankDailyAfterCreation = getUserRank(
-//       rankDailyAfterCreation,
-//       user?.id,
-//     );
-//     const userRankWeeklyAfterCreation = getUserRank(
-//       rankWeeklyAfterCreation,
-//       user?.id,
-//     );
-//     const userRankMonthlyAfterCreation = getUserRank(
-//       rankMonthlyAfterCreation,
-//       user?.id,
-//     );
-//     const surpassedUsersDaily = rankDaily.filter(
-//       (rank: Rank) =>
-//         rank.rank > userRankDailyAfterCreation && rank.rank <= userRankDaily,
-//     );
-//     const surpassedUsersWeekly = rankWeekly.filter(
-//       (rank: Rank) =>
-//         rank.rank > userRankWeeklyAfterCreation && rank.rank <= userRankWeekly,
-//     );
-//     const surpassedUsersMonthly = rankMonthly.filter(
-//       (rank: Rank) =>
-//         rank.rank > userRankMonthlyAfterCreation &&
-//         rank.rank <= userRankMonthly,
-//     );
-
-//     const subject = await Subject.findByPk(subject_id);
-//     await Promise.all([
-//       leaderboardService.createSurpassedUserNotification(
-//         surpassedUsersDaily,
-//         subject?.title || 'Unknown',
-//         'daily',
-//         user?.name,
-//       ),
-//       leaderboardService.createSurpassedUserNotification(
-//         surpassedUsersWeekly,
-//         subject?.title || 'Unknown',
-//         'weekly',
-//         user?.name,
-//       ),
-//       leaderboardService.createSurpassedUserNotification(
-//         surpassedUsersMonthly,
-//         subject?.title || 'Unknown',
-//         'monthly',
-//         user?.name,
-//       ),
-//     ]);
-
-//     res.status(201).json({ message: 'Score added successfully' });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Internal server error', details: error });
-//   }
-// };
-
-export const getLeaderboard = async (
-  req: Request<null, null, null, LeaderboardQuery>,
-  res: Response,
-) => {
-  const { filter_by, course_id, subject_id } = req.query;
+export const getLeaderboard = async (req: Request, res: Response) => {
+  const { filter_by, course_id, subject_id } = req.query as LeaderboardQuery;
   const subjects = await Subject.findAll({
     where: { course_id },
     attributes: ['id'],

@@ -59,7 +59,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <BindContentContainer className="relative flex flex-col gap-4 pt-7">
+    <BindContentContainer className="relative flex flex-col gap-4">
       <FlexRow className="items-center justify-between">
         <BreadCrumb onBackClick={() => navigate(-1)} heading="Leaderboard" />
         <Button

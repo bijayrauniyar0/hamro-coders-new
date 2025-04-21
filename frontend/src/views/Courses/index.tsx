@@ -5,9 +5,7 @@ import generateRoutes from '@Routes/generateRoutes';
 const CoursesPage = () => {
   return (
     <BindContentContainer>
-      <div className="mt-7">
-        {generateRoutes({routes: courseRoutes})}
-      </div>
+      {generateRoutes({ routes: courseRoutes })}
     </BindContentContainer>
   );
 };

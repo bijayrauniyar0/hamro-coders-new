@@ -9,7 +9,9 @@ class UserScores extends Model {
   public user_id!: number;
   public score!: number;
   public subject_id!: string;
+  public subject!: { title: string; id: number };
   public mode!: 'practice' | 'ranked';
+  public elapsed_time!: number;
   public readonly created_at!: Date;
 }
 

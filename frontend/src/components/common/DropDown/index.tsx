@@ -1,4 +1,3 @@
- 
 import React, { useEffect, useRef } from 'react';
 
 import { Button } from '@Components/radix/Button';
@@ -144,7 +143,7 @@ function Dropdown({
                   ) : (
                     <p
                       className={cn(
-                        'body-sm line-clamp-1 text-start text-[#667085]',
+                        'text-sm line-clamp-1 text-start text-[#667085]',
                         placeholderClassName,
                       )}
                     >
@@ -155,7 +154,7 @@ function Dropdown({
               ) : (
                 <>
                   {value ? (
-                    <p className="body-sm line-clamp-1 text-start text-matt-200">
+                    <p className="text-sm font-medium line-clamp-1 text-start text-matt-200">
                       {options.find(
                         (option: IDropDownData) =>
                           option[choose as keyof IDropDownData] === value,
@@ -210,7 +209,7 @@ function Dropdown({
                     {!checkBox ? (
                       <Icon
                         name="done"
-                        className={`text-[20px] ${
+                        className={`flex items-center justify-center text-base md:text-[20px] ${
                           !multiple
                             ? value === option[choose as keyof IDropDownData]
                               ? 'opacity-100'
@@ -237,10 +236,12 @@ function Dropdown({
                               ? 'check_box'
                               : 'check_box_outline_blank'
                         }
-                        className="text-[20px]"
+                        className="flex items-center justify-center text-base md:text-[20px]"
                       />
                     )}
-                    <span>{option.label || '-'}</span>
+                    <span className="text-sm md:text-md">
+                      {option.label || '-'}
+                    </span>
                   </CommandItem>
                 ))
               ) : (

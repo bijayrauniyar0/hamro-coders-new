@@ -20,6 +20,7 @@ export const theme = {
     },
     colors: {
       primary: {
+        50: '#faf8fc', // Very light, almost white
         100: '#f3ecfa', // Very light, almost white
         200: '#e1d4f3', // Soft lavender
         300: '#cebceb', // Light purple
@@ -55,6 +56,8 @@ export const theme = {
       formshadow: '4px 0px 19px 0px rgba(58, 58, 58, 0.16)',
       custom: '0px 2px 6px 0px rgba(20, 86, 146, 0.12)',
       box: '2px 6px 6px rgba(16, 24, 40, 0.5)',
+      stats: '1.5px 1.5px 3px #bfa2e2',
+      statsCard: '0 4px 12px rgba(0, 0, 0, 0.07)'
     },
     animation: {
       loader: 'loader 0.6s infinite alternate',
