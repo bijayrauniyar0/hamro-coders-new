@@ -7,8 +7,8 @@ export interface LeaderboardQuery extends ParsedQs {
   subject_id?: string;
 }
 export interface ScoreFilter {
-  subjectIds: number[];
-  startDate: Date;
+  subjectIds?: number[];
+  startDate: Date | 'all_time';
   endDate?: Date;
 }
 
