@@ -35,4 +35,9 @@ export const navbarData: INavbarLinkData[] = [
     name: 'Leaderboard',
     link: '/leaderboard',
   },
+  {
+    id: 4,
+    name: 'Analytics',
+    link: '/analytics',
+  },
 ];
