@@ -39,3 +39,24 @@ export const getStartDate = (dateType: string) => {
   }
   return startDate;
 };
+
+export function getStartDateByTimePeriod(time_period: string) {
+  const startDate = new Date();
+  switch (time_period) {
+    case 'last_7_days':
+      startDate.setDate(startDate.getDate() - 7);
+      break;
+    case 'last_30_days':
+      startDate.setDate(startDate.getDate() - 30);
+      break;
+    case 'all_time':
+      return 'all_time';
+  }
+  return startDate;
+}
+
+export function formatToMinSec(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
