@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 import { format } from 'date-fns';
 
+import BindContentContainer from '@Components/common/BindContentContainer';
 import DataTable from '@Components/common/DataTable';
 import DropDown from '@Components/common/DropDown';
 import Icon from '@Components/common/Icon';
@@ -114,83 +115,93 @@ const MyStats = () => {
   });
 
   return (
-    <FlexColumn className="gap-8">
-      <FlexRow className="flex-wrap items-center justify-between gap-8 md:gap-4">
-        <div>
-          <p className="text-lg font-semibold text-primary-700 md:text-2xl">
-            Your Performance History
-          </p>
-          <p className="text-sm font-medium md:text-md">
-            Track your progress and analyze your performance trends over time
-          </p>
-        </div>
-        <div className="flex w-full flex-row items-center justify-between md:w-fit md:gap-4">
-          <div className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
-            <p className="text-sm font-medium text-gray-600 md:text-md">Mode</p>
-            <DropDown
-              options={modeDropDownOptions}
-              value={modeFilter}
-              onChange={setSelectedModeFilter}
-              choose="value"
-              className="w-[9rem] md:w-[7rem]"
-              enableSearchbar={false}
-            />
-          </div>
-          <div className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
-            <p className="text-sm font-medium text-gray-600 md:text-md">
-              Time Period
+    <>
+      <BindContentContainer>
+        <FlexRow className="sticky flex-wrap items-center justify-between gap-8 md:gap-4">
+          <div>
+            <p className="text-lg font-semibold text-primary-700 md:text-2xl">
+              Your Performance History
             </p>
-            <DropDown
-              options={timePeriodDropDownOptions}
-              value={timePeriodFilter}
-              onChange={setSelectedTimePeriodFilter}
-              choose="value"
-              className="w-[9rem]"
-              enableSearchbar={false}
-            />
+            <p className="text-sm font-medium md:text-md">
+              Track your progress and analyze your performance trends over time
+            </p>
           </div>
-        </div>
-      </FlexRow>
-      <FlexRow className="flex-wrap justify-between gap-4">
-        {statsData.map(({ value_key, ...stat }) => (
-          <StatsCard
-            {...stat}
-            key={stat.title}
-            value={userStats?.[value_key] || 'N/A'}
-          />
-        ))}
-      </FlexRow>
+          <div className="flex w-full flex-row items-center justify-between md:w-fit md:gap-4">
+            <div className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
+              <p className="text-sm font-medium text-gray-600 md:text-md">
+                Mode
+              </p>
+              <DropDown
+                options={modeDropDownOptions}
+                value={modeFilter}
+                onChange={setSelectedModeFilter}
+                choose="value"
+                className="w-[9rem] md:w-[7rem]"
+                enableSearchbar={false}
+              />
+            </div>
+            <div className="flex flex-col items-start gap-1 md:flex-row md:items-center md:gap-2">
+              <p className="text-sm font-medium text-gray-600 md:text-md">
+                Time Period
+              </p>
+              <DropDown
+                options={timePeriodDropDownOptions}
+                value={timePeriodFilter}
+                onChange={setSelectedTimePeriodFilter}
+                choose="value"
+                className="w-[9rem]"
+                enableSearchbar={false}
+              />
+            </div>
+          </div>
+        </FlexRow>
+      </BindContentContainer>
+      <div className="h-[calc(100vh-10rem)] w-full overflow-y-auto scrollbar">
+        <BindContentContainer>
+          <FlexColumn className="gap-8">
+            <FlexRow className="flex-wrap justify-between gap-4">
+              {statsData.map(({ value_key, ...stat }) => (
+                <StatsCard
+                  {...stat}
+                  key={stat.title}
+                  value={userStats?.[value_key] || 'N/A'}
+                />
+              ))}
+            </FlexRow>
 
-      <PerformanceTrend />
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Sessions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <FlexColumn className="gap-4">
-            {recentSessions?.map(({ id, ...session }) => (
-              <SessionsBox {...session} key={id} />
-            ))}
+            <PerformanceTrend />
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Sessions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FlexColumn className="gap-4">
+                  {recentSessions?.map(({ id, ...session }) => (
+                    <SessionsBox {...session} key={id} />
+                  ))}
+                </FlexColumn>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Sessions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DataTable
+                  queryFn={getPerformanceDetails}
+                  queryFnParams={{
+                    mode: modeFilter,
+                    time_period: timePeriodFilter,
+                  }}
+                  columns={performanceTableColumns}
+                  isSorting={false}
+                />
+              </CardContent>
+            </Card>
           </FlexColumn>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Sessions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable
-            queryFn={getPerformanceDetails}
-            queryFnParams={{
-              mode: modeFilter,
-              time_period: timePeriodFilter,
-            }}
-            columns={performanceTableColumns}
-            isSorting={false}
-          />
-        </CardContent>
-      </Card>
-    </FlexColumn>
+        </BindContentContainer>
+      </div>
+    </>
   );
 };
 
