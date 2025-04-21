@@ -2,13 +2,14 @@ import { format } from 'date-fns';
 
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import StatusChip from '@Components/common/StatusChip';
+import { capitalizeFirstLetter } from '@Utils/capitalizeFirstLetter';
 import { SessionsBoxProps } from '@Constants/Types/myStats';
 
 const SessionsBox = ({
   title,
   score,
   accuracy,
-  time_elapsed,
+  elapsed_time,
   mode,
   date_time,
 }: SessionsBoxProps) => {
@@ -23,18 +24,18 @@ const SessionsBox = ({
     },
     {
       title: 'Time Elapsed',
-      value: time_elapsed,
+      value: elapsed_time,
     },
   ];
 
-  const chipStatus = mode === 'Ranked' ? 'success' : 'info';
+  const chipStatus = mode === 'ranked' ? 'success' : 'info';
 
   return (
     <FlexColumn className="gap-6 rounded-lg border border-gray-200 px-4 py-4">
       <FlexRow className="items-center justify-between">
-        <p className="text-md font-semibold">{title}</p>
+        <p className="text-md font-semibold">{capitalizeFirstLetter(title)}</p>
         <p className="text-sm font-medium">
-          {format(new Date(date_time), 'MMMM dd, yyyy')}
+          {date_time ? format(new Date(date_time), 'MMMM dd, yyyy') : ''}
         </p>
       </FlexRow>
       <FlexRow className="items-center justify-between">
