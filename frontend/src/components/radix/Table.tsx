@@ -74,7 +74,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      `bg-gray-100 p-4 font-semibold text-primary-600 text-md [&:has([role=checkbox])]:pr-0`,
+      `bg-gray-100 py-4 px-4 font-semibold text-primary-600 text-md [&:has([role=checkbox])]:pr-0`,
       className,
     )}
     {...props}
@@ -89,7 +89,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      `first:group-hover:bg-primary-50 last:group-hover:bg-primary-50 p-1 capitalize text-grey-800 transition-colors xl:p-2 [&:has([role=checkbox])]:pr-0`,
+      `first:group-hover:bg-primary-50 last:group-hover:bg-primary-50 p-1 capitalize text-grey-800 transition-colors xl:py-2 px-4 [&:has([role=checkbox])]:pr-0`,
       className,
     )}
     {...props}
