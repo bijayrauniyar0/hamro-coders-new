@@ -39,16 +39,28 @@ export class LeaderboardService {
     startDate,
     endDate = new Date(),
   }: ScoreFilter): Promise<UserScores[]> {
+    const whereClause: any = {
+      mode: 'ranked',
+    };
+
+    if (subjectIds && subjectIds.length > 0) {
+      whereClause.subject_id = subjectIds;
+    }
+    if (startDate !== 'all_time') {
+      whereClause.created_at = {
+        [Op.gte]: startDate,
+        [Op.lt]: endDate,
+      };
+    }
+    if (startDate === 'all_time' && endDate) {
+      whereClause.created_at = {
+        [Op.lt]: endDate,
+      };
+    }
+
     const userScores = await UserScores.findAll({
       attributes: ['user_id', 'score', 'created_at'],
-      where: {
-        subject_id: subjectIds,
-        mode: 'ranked',
-        created_at: {
-          [Op.gte]: startDate,
-          [Op.lt]: endDate,
-        },
-      },
+      where: whereClause,
       include: [{ model: User, attributes: ['id', 'name'] }],
     });
     return userScores;
@@ -62,7 +74,7 @@ export class LeaderboardService {
       if (!aggregated[userId]) {
         aggregated[userId] = {
           id: userId,
-          name: score.User?.name || 'Unknown',
+          name: score.User.name || 'Unknown',
           total_score: 0,
         };
       }
@@ -100,7 +112,7 @@ export class LeaderboardService {
     return ranks;
   }
 
-  getRanks = (scores: AggregatedScore[]): Rank[] => {
+  private getRanks = (scores: AggregatedScore[]): Rank[] => {
     const rankedScores = scores
       .sort((a, b) => b.total_score - a.total_score)
       .map((user, index) => ({
@@ -120,43 +132,6 @@ export class LeaderboardService {
     return this.getRanks(aggregatedScores);
   }
 
-  // async getRankedUsersByDate({
-  //   subjectIds,
-  //   endDate = new Date(),
-  // }: RankUserByDateProps) {
-  //   const scores = await this.getUserScores({
-  //     subjectIds,
-  //     startDate:
-  //       getStartOfMonth() > getStartOfWeek()
-  //         ? getStartOfMonth()
-  //         : getStartOfWeek(),
-  //     endDate: new Date(),
-  //   });
-  //   const userScoresDaily = filterUserByDate({
-  //     scores,
-  //     startDate: getStartOfDay(),
-  //     endDate,
-  //   });
-  //   const userScoresWeekly = filterUserByDate({
-  //     scores,
-  //     startDate: getStartOfWeek(),
-  //     endDate,
-  //   });
-  //   const userScoresMonthly = filterUserByDate({
-  //     scores,
-  //     startDate: getStartOfMonth(),
-  //     endDate,
-  //   });
-  //   const aggregatedDaily = this.aggregateScores(userScoresDaily);
-  //   const aggregatedWeekly = this.aggregateScores(userScoresWeekly);
-  //   const aggregatedMonthly = this.aggregateScores(userScoresMonthly);
-
-  //   return {
-  //     daily: this.getRanks(aggregatedDaily),
-  //     weekly: this.getRanks(aggregatedWeekly),
-  //     monthly: this.getRanks(aggregatedMonthly),
-  //   };
-  // }
   async getRankedUsersByDate({
     subjectIds,
     endDate = new Date(),
@@ -228,11 +203,7 @@ const compareAndNotify = async (
 export const createScoreEntry = async (req: Request, res: Response) => {
   try {
     const { subject_id, score, mode, elapsed_time } = req.body;
-    // const user = req.user;
-    const user = {
-      id: 18,
-      name: 'Anonymous',
-    };
+    const user = req.user;
     const leaderboardService = new LeaderboardService();
     const oldRanks = await leaderboardService.getRankedUsersByDate({
       subjectIds: [subject_id],
