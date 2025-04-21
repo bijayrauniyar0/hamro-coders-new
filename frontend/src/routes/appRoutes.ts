@@ -35,8 +35,8 @@ const appRoutes: IRoute[] = [
     component: LeaderboardPage,
   },
   {
-    name: 'My Stats',
-    path: '/stats',
+    name: 'Analytics',
+    path: '/analytics',
     component: MyStatsPage,
   },
 ];
