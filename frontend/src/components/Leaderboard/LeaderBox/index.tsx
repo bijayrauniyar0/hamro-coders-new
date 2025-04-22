@@ -3,7 +3,7 @@ import React from 'react';
 import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import crown from '@Assets/images/crown.png';
-import { getFallBackImage } from '@Utils/index';
+import { getAvatar } from '@Constants/UserProfile';
 
 type LeaderBoxProps = {
   className?: string;
@@ -14,6 +14,7 @@ type LeaderBoxProps = {
   imageClassName?: string;
   outlineColor?: string;
   rankClassName?: string;
+  image?: string;
 };
 const LeaderBox = ({
   className,
@@ -24,6 +25,7 @@ const LeaderBox = ({
   imageClassName,
   outlineColor = 'outline-blue-400',
   rankClassName,
+  image,
 }: LeaderBoxProps) => {
   return (
     <FlexColumn className="w-fit gap-4">
@@ -39,7 +41,7 @@ const LeaderBox = ({
             />
           )}
           <img
-            src={getFallBackImage()}
+            src={getAvatar(image || 'bear')}
             alt=""
             className={`${imageClassName} rounded-full ${className}`}
           />

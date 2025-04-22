@@ -8,6 +8,8 @@ import { navbarData } from '@Constants/navbarData';
 
 import Icon from '../Icon';
 
+import Notification from './Notification';
+
 const Navbar = () => {
   const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -24,11 +26,10 @@ const Navbar = () => {
   useEffect(() => {
     const handleResize = () => {
       setWidth(window.innerWidth);
+      setBurgerMenuOpen(false);
     };
-
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -36,7 +37,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="shadow-custom sticky right-0 top-0 z-[11] flex w-full items-center justify-between bg-white px-4 py-1 xl:px-7">
+      <header className="sticky right-0 top-0 z-[11] flex w-full items-center justify-between bg-white px-4 py-1 shadow-custom xl:px-7">
         <div
           tabIndex={0}
           role="button"
@@ -45,7 +46,7 @@ const Navbar = () => {
         >
           <p className="text-xl font-semibold text-primary-700">Hamro Coders</p>
         </div>
-        {width > 1120 && (
+        {width > 768 && (
           <div className="flex items-center gap-x-9">
             {navbarData.map(navbarItem => (
               <NavLink
@@ -65,12 +66,12 @@ const Navbar = () => {
           </div>
         )}
         <FlexRow className="flex items-center gap-3 max-sm:gap-2">
-          {/* <Notification /> */}
+          <Notification />
           <AccountMenu />
-          {width <= 1120 && (
+          {width <= 768 && (
             <Icon
               name="menu"
-              className="flex cursor-pointer items-center justify-center"
+              className="flex cursor-pointer items-center justify-center !text-2xl"
               onClick={() => setBurgerMenuOpen(true)}
             />
           )}
@@ -93,7 +94,11 @@ const Navbar = () => {
                     Hamro Coders
                   </p>
                 </div>
-                <Icon name="close" onClick={closeBurgerMenu} />
+                <Icon
+                  name="close"
+                  className="!text-2xl"
+                  onClick={closeBurgerMenu}
+                />
               </FlexRow>
               <FlexColumn className="w-full gap-1 p-4">
                 {navbarData.map((navbarItem): React.ReactNode | null => {
@@ -101,9 +106,9 @@ const Navbar = () => {
                     <NavLink
                       key={navbarItem.id}
                       className={({ isActive }) =>
-                        `text-md px-3 py-4 ${
+                        `rounded-lg px-3 py-4 text-md transition-all duration-300 ease-in-out hover:bg-primary-200 ${
                           isActive
-                            ? 'rounded-lg bg-[#e5e2f7] font-medium text-primary-700'
+                            ? 'bg-primary-200 font-medium text-primary-700'
                             : 'font-normal text-black hover:no-underline'
                         }`
                       }

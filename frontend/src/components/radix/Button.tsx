@@ -15,6 +15,7 @@ const buttonVariants = cva(
           'bg-white text-primary-500 border border-primary-500 hover:bg-primary-100 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
 
         link: 'text-primary-600 hover:text-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
 
         dropDown:
           'bg-white text-grey-900 border border-grey-600 focus:border-primary-500 rounded-lg',
@@ -46,14 +47,7 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    {
-      className,
-      variant,
-      size,
-      asChild = false,
-      isLoading = false,
-      ...props
-    },
+    { className, variant, size, asChild = false, isLoading = false, ...props },
     ref,
   ) => {
     const Comp = asChild ? Slot : 'button';

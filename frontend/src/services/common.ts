@@ -34,3 +34,17 @@ export const changePassword = (payload: IChangePasswordPayload) => {
 export const login = (payload: Record<string, any>) => {
   return api.post('/api/user/login/', { ...payload });
 };
+
+export const getNotificationCount = () => {
+  return authenticated(api).get('/api/notification/unread-count/');
+};
+
+export const getNotifications = () => {
+  return authenticated(api).get('/api/notification/');
+};
+export const markNotificationAsRead = (notificationId: string) => {
+  return authenticated(api).post(`/api/notification/${notificationId}/`);
+};
+export const markAllNotificationsAsRead = () => {
+  return authenticated(api).post('/api/notification/');
+};
