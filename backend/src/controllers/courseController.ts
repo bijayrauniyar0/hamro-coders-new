@@ -35,3 +35,16 @@ export const getSubjectsByCourse = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const getSubjectsMetaData = async (
+  req: Request<{ subject_id: number }, unknown, unknown, unknown>,
+  res: Response,
+) => {
+  const { subject_id } = req.params;
+  try {
+    const subjects = await Subject.findByPk(subject_id);
+    res.status(200).json(subjects);
+  } catch {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

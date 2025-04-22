@@ -7,7 +7,12 @@ class Subject extends Model {
   public course_id!: number;
   public title!: string;
   public marks!: number;
-  public duration!: number;
+  public duration_in_minutes!: number;
+  public questions_count!: number;
+  public marks_per_question!: number;
+  public negative_marking!: number;
+  public total_marks!: number;
+  public time_limit!: number;
 }
 
 Subject.init(
@@ -29,7 +34,19 @@ Subject.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    duration_in_minutes: {
+    questions_count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    negative_marking: {
+      allowNull: false,
+      type: DataTypes.FLOAT,
+    },
+    total_marks: {
+      allowNull: false,
+      type: DataTypes.FLOAT,
+    },
+    time_limit: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -54,5 +71,6 @@ Subject.belongsTo(Course, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
+
 
 export default Subject;

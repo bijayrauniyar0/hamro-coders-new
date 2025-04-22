@@ -1,18 +1,26 @@
 import MCQ from '@Models/mcqModels';
+import Subject from '@Models/subjectsModels';
 import { Request, Response } from 'express';
 import sequelize from 'src/config/database';
 
 export const getMCQs = async (req: Request, res: Response) => {
   const { subject_id } = req.params;
+  const { question_count } = req.query;
   try {
+    if (!subject_id || !question_count) {
+      res
+        .status(400)
+        .json({ message: 'subject_id and question_count are required' });
+      return;
+    }
+
     const mcqQuestions = await MCQ.findAll({
-      attributes: {
-        exclude: ['subject_id'], // Excludes the 'answer' column
-      },
       order: sequelize.random(),
-      limit: 3,
-      where: { subject_id, },
+      limit: +question_count,
+      where: { subject_id },
+      include: [{ model: Subject }],
     });
+
     const mcqQuestionsArray = mcqQuestions.map(mcq => {
       return {
         question: mcq.question,
@@ -20,7 +28,6 @@ export const getMCQs = async (req: Request, res: Response) => {
           return { id: Number(key), value };
         }),
         id: mcq.id,
-        answer: Number(mcq.answer),
       };
     });
     res.status(200).json(mcqQuestionsArray);
@@ -28,6 +35,7 @@ export const getMCQs = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 export const getMCQsAnswers = async (req: Request, res: Response) => {
   const { subject_id } = req.params;
   const { questions } = req.query;
