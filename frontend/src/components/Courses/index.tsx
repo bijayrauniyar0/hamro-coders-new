@@ -49,7 +49,9 @@ const Courses = () => {
           ))}
         </div>
       ) : isEmpty(courses) ? (
-        <NoDataAvailable />
+        <div className="flex h-[calc(100vh-20rem)] items-center justify-center">
+          <NoDataAvailable />
+        </div>
       ) : (
         <FlexColumn className="gap-4">
           <motion.div
@@ -63,7 +65,7 @@ const Courses = () => {
                 <motion.button
                   variants={cardVariants}
                   key={course.id}
-                  className="flex cursor-pointer reset-button flex-col gap-8 rounded-lg border bg-white px-6 py-8 shadow-box hover:shadow-lg disabled:cursor-not-allowed disabled:bg-gray-100 disabled:hover:shadow-box"
+                  className="reset-button flex cursor-pointer flex-col gap-8 rounded-lg border bg-white px-6 py-8 shadow-box hover:shadow-lg disabled:cursor-not-allowed disabled:bg-gray-100 disabled:hover:shadow-box"
                   onClick={() => navigate(`${course.id}`)}
                   disabled={course?.subjects_count === 0}
                 >

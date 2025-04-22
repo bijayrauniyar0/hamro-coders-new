@@ -90,7 +90,9 @@ const Leaderboard = () => {
               </FlexColumn>
             </FlexColumn>
           ) : isEmpty(leaderboardData) ? (
-            <NoDataAvailable />
+            <div className="flex h-[calc(100vh-25rem)] items-center justify-center">
+              <NoDataAvailable />
+            </div>
           ) : (
             <FlexColumn className="w-full gap-4">
               <FlexRow className="w-full items-end justify-center gap-4">
@@ -124,7 +126,7 @@ const Leaderboard = () => {
                   rankClassName="bg-green-400"
                 />
               </FlexRow>
-              <FlexColumn className="scrollbar h-[calc(100vh-19.5rem)] w-full gap-2 overflow-y-auto md:max-h-[calc(100vh-22.5rem)]">
+              <FlexColumn className="scrollbar h-[calc(100dvh-23.5rem)] w-full gap-2 overflow-y-auto md:max-h-[calc(100vh-22.5rem)]">
                 {leaderboardData?.map(
                   ({ rank, name, total_score, previous_rank }) => {
                     if (rank <= 3) return null;

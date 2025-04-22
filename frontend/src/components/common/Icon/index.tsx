@@ -19,7 +19,7 @@ export default function Icon({
       onKeyUp={() => {}}
       onClick={onClick}
     >
-      <i className={`${type} text-sm lg:text-lg ${className}`}>
+      <i className={`${type} text-base lg:text-lg ${className}`}>
         {name}
       </i>
     </span>
