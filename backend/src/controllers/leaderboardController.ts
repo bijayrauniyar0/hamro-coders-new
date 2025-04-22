@@ -264,11 +264,21 @@ export const getLeaderboard = async (req: Request, res: Response) => {
       startDate,
       endDate: fiveMinutesAgo,
     });
+    const userIds = userRanks.map((user: any) => user.id);
+    const users = await User.findAll({
+      where: {
+        id: {
+          [Op.in]: userIds,
+        },
+      },
+      attributes: ['id', 'avatar'],
+    });
     const rankedUserScores = userRanks.map((user: any) => ({
       ...user,
       previous_rank:
         previousUserRanks.find(previousRank => previousRank.id === user.id)
           ?.rank || userRanks.length + 1,
+      avatar: users.find(u => u.id === user.id)?.avatar,
     }));
 
     res.status(200).json(rankedUserScores);

@@ -11,6 +11,7 @@ import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
 import { setIsFiltersOpen } from '@Store/actions/leaderboard';
 import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import { getAvatar } from '@Constants/UserProfile';
 import { getLeaderboard } from '@Services/leaderboard';
 
 import Filters from './Filters';
@@ -23,6 +24,7 @@ type UserRank = {
   total_score: number;
   rank: number;
   previous_rank: number;
+  avatar: string;
 };
 
 const Leaderboard = () => {
@@ -55,6 +57,7 @@ const Leaderboard = () => {
       name: rankDetails.name,
       total_score: rankDetails.total_score,
       previous_rank: rankDetails.previous_rank,
+      avatar: rankDetails.avatar,
     };
   };
 
@@ -104,6 +107,7 @@ const Leaderboard = () => {
                   imageClassName="w-12 h-12 md:w-20 md:h-20"
                   outlineColor="outline-blue-400"
                   rankClassName="bg-blue-400"
+                  image={findRankDetails(2)?.avatar}
                 />
                 <div className="pb-4">
                   <LeaderBox
@@ -114,6 +118,7 @@ const Leaderboard = () => {
                     imageClassName="w-16 h-16 md:w-24 md:h-24"
                     outlineColor="outline-primary-400"
                     rankClassName="bg-primary-400"
+                    image={findRankDetails(1)?.avatar}
                   />
                 </div>
                 <LeaderBox
@@ -124,11 +129,12 @@ const Leaderboard = () => {
                   imageClassName="w-12 h-12 md:w-20 md:h-20"
                   outlineColor="outline-green-400"
                   rankClassName="bg-green-400"
+                  image={findRankDetails(2)?.avatar}
                 />
               </FlexRow>
               <FlexColumn className="scrollbar h-[calc(100dvh-23.5rem)] w-full gap-2 overflow-y-auto md:max-h-[calc(100vh-22.5rem)]">
                 {leaderboardData?.map(
-                  ({ rank, name, total_score, previous_rank }) => {
+                  ({ rank, name, total_score, previous_rank, avatar }) => {
                     if (rank <= 3) return null;
                     return (
                       <ScoreRow
@@ -136,7 +142,7 @@ const Leaderboard = () => {
                         rank={rank}
                         name={name}
                         score={total_score}
-                        image=""
+                        image={getAvatar(avatar)}
                         previous_rank={previous_rank}
                       />
                     );
