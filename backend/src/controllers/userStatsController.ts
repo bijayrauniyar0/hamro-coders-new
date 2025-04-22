@@ -13,34 +13,34 @@ import {
 import Subject from '@Models/subjectsModels';
 import { subDays, subWeeks, subMonths } from 'date-fns';
 
-// export async function seedUserScores(count: number = 100) {
-//   const startDate = new Date('2025-01-05');
-//   const endDate = new Date('2025-04-20');
+export async function seedUserScores(count: number = 100) {
+  const startDate = new Date('2025-04-22');
+  const endDate = new Date('2025-04-22');
 
-//   const getRandomDate = () => {
-//     const diff = endDate.getTime() - startDate.getTime();
-//     return new Date(startDate.getTime() + Math.random() * diff);
-//   };
+  const getRandomDate = () => {
+    const diff = endDate.getTime() - startDate.getTime();
+    return new Date(startDate.getTime() + Math.random() * diff);
+  };
 
-//   const getRandomInt = (min: number, max: number) =>
-//     Math.floor(Math.random() * (max - min + 1)) + min;
+  const getRandomInt = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
-//   const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
+  const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
 
-//   const records = Array.from({ length: count }).map(() => {
-//     const user_id = getRandomInt(1, 21);
-//     return {
-//       user_id: user_id,
-//       score: getRandomInt(6, 10),
-//       created_at: getRandomDate(),
-//       elapsed_time: getRandomInt(200, 600),
-//       mode: getRandomMode(),
-//       subject_id: getRandomInt(1, 5),
-//     };
-//   });
+  const records = Array.from({ length: count }).map(() => {
+    const user_id = getRandomInt(5, 21);
+    return {
+      user_id: user_id,
+      score: getRandomInt(6, 10),
+      created_at: getRandomDate(),
+      elapsed_time: getRandomInt(200, 600),
+      mode: getRandomMode(),
+      subject_id: getRandomInt(1, 5),
+    };
+  });
 
-//   await UserScores.bulkCreate(records);
-// }
+  await UserScores.bulkCreate(records);
+}
 
 export class UserStatsService {
   private user_id: number;
@@ -203,7 +203,7 @@ export const getPerformanceDetails = async (
 ) => {
   const { time_period } = req.query;
   const { user } = req;
-  // await seedUserScores(2000);
+  // await seedUserScores(20);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(

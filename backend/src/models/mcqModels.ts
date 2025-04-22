@@ -8,6 +8,7 @@ class MCQ extends Model {
   public subject_id!: string;
   public options!: JSON;
   public answer!: string;
+  public Subject?: Subject;
 }
 
 MCQ.init(

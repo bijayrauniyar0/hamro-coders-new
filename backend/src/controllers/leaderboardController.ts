@@ -251,8 +251,8 @@ export const getLeaderboard = async (req: Request, res: Response) => {
 
   const startDate = getStartDate(filter_by);
 
-  const fiveMinutesAgo = new Date();
-  fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - 5);
+  const twelveHoursAgo = new Date();
+  twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
   try {
     const userRanks = await leaderboardService.getRankedUsers({
       subjectIds,
@@ -262,7 +262,7 @@ export const getLeaderboard = async (req: Request, res: Response) => {
     const previousUserRanks = await leaderboardService.getRankedUsers({
       subjectIds,
       startDate,
-      endDate: fiveMinutesAgo,
+      endDate: twelveHoursAgo,
     });
     const userIds = userRanks.map((user: any) => user.id);
     const users = await User.findAll({
