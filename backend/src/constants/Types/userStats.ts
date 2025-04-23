@@ -13,6 +13,8 @@ export type UserScoresArgsType = {
 export interface IGetUserStatsParamType extends ParsedQs {
   mode: UserScoresArgsType['mode'];
   time_period: 'last_1_month' | 'last_7_days' | 'all_time';
+  sort_by?: keyof IPerformanceDetails;
+  sort_order?: 'asc' | 'desc';
 }
 
 export type UserScoresType = InferAttributes<UserScores>;
