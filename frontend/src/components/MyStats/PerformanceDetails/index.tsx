@@ -82,6 +82,12 @@ const PerformanceDetails = ({ modeFilter, timePeriodFilter }: IFilters) => {
               mode: modeFilter,
               time_period: timePeriodFilter,
             }}
+            initialState={{
+              paginationState: {
+                pageIndex: 0,
+                pageSize: 5,
+              },
+            }}
             queryKey="performanceDetails"
             searchInput=""
             columns={performanceTableColumns}
