@@ -1,20 +1,19 @@
 /* eslint-disable no-unused-vars */
-import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   ColumnDef,
-  ColumnSort,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getSortedRowModel,
-  TableOptions,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { AxiosResponse } from 'axios';
 
 import Icon from '@Components/common/Icon';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import Skeleton from '@Components/radix/Skeleton';
 import {
   Table,
@@ -24,148 +23,199 @@ import {
   TableHeader,
   TableRow,
 } from '@Components/radix/Table';
+import { getDisplayedRowCount } from '@Utils/index';
+import isEmpty from '@Utils/isEmpty';
 import prepareQueryParam from '@Utils/prepareQueryParam';
-import { useTypedDispatch } from '@Store/hooks';
-import useDebounceListener from '@Hooks/useDebounceListener';
+import useIntersectionObserver from '@Hooks/useIntersectionObserver';
+import useSortingConfig from '@Hooks/useSortingConfig';
 
-export interface ColumnData {
+import { FlexColumn, FlexRow } from '../Layouts';
+
+import TableSkeleton from './TableSkeleton';
+
+interface ColumnData {
+  [x: string]: any;
+  component_budget: any;
+  component_name: any;
+  component_id: any;
+  component?: any;
   header: string;
   accessorKey: string;
   cell?: any;
-  enableColumnSort?: boolean;
 }
 
 interface DataTableProps {
   columns: ColumnDef<ColumnData>[];
-  queryKey?: string;
-  queryFn?: (params: any) => Promise<AxiosResponse<any, any>>;
-  queryFnParams?: Record<string, any>;
-  searchInput?: string;
-  wrapperStyle?: CSSProperties;
-  sortingKeyMap?: Record<string, any>;
-  tableOptions?: Partial<TableOptions<ColumnData>>;
-  useQueryOptions?: Record<string, any>;
-  data?: Record<string, any>[];
-  loading?: boolean;
-  isSorting?: boolean;
-  onRowClick?: (data: any) => void;
+  queryKey: string;
+  queryFn: (params: any) => Promise<any> | void;
+  queryFnParams?: Record<string, any> | any;
+  searchInput: string;
   className?: string;
+  demoData?: any;
+  onRowClick?: any;
+  isPaginated?: boolean;
+  needSorting?: boolean;
+  cellClassName?: string;
+  tableStyle?: any;
+  showDataCount?: boolean;
+  dataCountCategory?: string;
+  exportMode?: boolean;
+  sortByKey?: boolean;
 }
-
-const ignoreSortingColumns = ['icon', 'icons', 'serial'];
 
 export default function DataTable({
   columns,
   queryKey,
   queryFn,
   searchInput,
-  queryFnParams,
-  wrapperStyle,
-  sortingKeyMap,
-  tableOptions = { manualSorting: true },
-  useQueryOptions,
-  data,
-  loading,
-  isSorting = true,
-  onRowClick,
+  queryFnParams, // data,
   className,
+  demoData,
+  onRowClick,
+  isPaginated = true,
+  needSorting = true,
+  cellClassName,
+  tableStyle,
+  showDataCount = false,
+  dataCountCategory,
+  exportMode = false,
+  sortByKey = false,
 }: DataTableProps) {
-  const dispatch = useTypedDispatch();
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const defaultData = React.useMemo(() => [], []);
+  const [isIntersecting, _, viewRef] = useIntersectionObserver();
+  const { pathname } = useLocation();
 
-  const [sorting, setSorting] = useState<ColumnSort[]>([]);
-  const debouncedValue = useDebounceListener(searchInput?.trim() || '', 800);
+  const { sortOrderKey, sortDir, sortBy } = useSortingConfig(
+    sorting[0]?.id,
+    sorting[0]?.desc,
+    sortByKey,
+  );
 
-  const {
-    data: queryData,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: [queryKey, debouncedValue, queryFnParams, sorting],
-    queryFn: () =>
-      queryFn?.({
-        search: debouncedValue,
-        ...(queryFnParams ? prepareQueryParam(queryFnParams) : {}),
-        ordering: sorting
-          .map(item => {
-            const transformedId = item.id.includes('attr_data')
-              ? item.id.replace('attr_data', 'attr_data_')
-              : item.id;
-            const sortingKey = sortingKeyMap?.[transformedId] || transformedId;
-            return item.desc ? `-${sortingKey}` : sortingKey;
-          })
-          .join(', '),
-      }) || null,
-    select: (res: any) => res?.data,
-    enabled: !data, // do not fetch data when there are props data
-    ...useQueryOptions,
-  });
-
-  // handle data from outside or queryData
-  const dataList = useMemo(() => data || queryData || [], [queryData, data]);
+  const { data, isLoading, fetchNextPage, isError, error, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: [queryKey, searchInput, queryFnParams, sortOrderKey, sortDir],
+      queryFn: async ({ pageParam = 1 }) => {
+        const res = await queryFn({
+          page: pageParam,
+          search: searchInput,
+          sort_by: sortBy,
+          [sortOrderKey]: sortDir,
+          page_size: 15,
+          ...(queryFnParams ? prepareQueryParam(queryFnParams) : {}),
+        });
+        return res?.data;
+      },
+      initialPageParam: 1,
+      getNextPageParam: lastPage => {
+        return lastPage?.next_page ?? undefined;
+      },
+    });
 
   const table = useReactTable({
-    data: Array.isArray(dataList) ? dataList : (dataList?.results ?? []),
+    data: data
+      ? isPaginated
+        ? data?.pages?.reduce(
+            (acc: Record<string, any>[], page: Record<string, any>) => {
+              return [...acc, ...(page.results || page)];
+            },
+            [],
+          )
+        : (data?.pages[0] ?? demoData ?? defaultData)
+      : [],
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      globalFilter: searchInput,
-      ...(tableOptions?.manualSorting ? { sorting } : {}),
+      sorting,
+      // globalFilter: searchInput,
     },
-    manualSorting: true,
-    manualFiltering: true,
+    onSortingChange: setSorting,
+    manualSorting: false,
+    manualPagination: true,
     debugTable: true,
-    ...(tableOptions?.manualSorting ? { onSortingChange: setSorting } : {}),
-    ...tableOptions,
   });
 
-  function getErrorMsg(err: any): string {
-    if (err && err.response && err.response.data && err.response.data.message) {
-      return err.response.data.message;
+  useEffect(() => {
+    if (isIntersecting && hasNextPage) {
+      fetchNextPage();
     }
-    return 'An unexpected error occurred.';
-  }
+  }, [isIntersecting, fetchNextPage, hasNextPage]);
 
   if (isError) {
-    return (
-      <div>
-        <span>Error: {getErrorMsg(error)}</span>
-      </div>
-    );
+    // @ts-ignore
+    const caughtError = error?.response?.data?.detail;
+    toast.error(caughtError || (error as Error).message);
+  }
+  if (isLoading) {
+    return <TableSkeleton />;
   }
 
   return (
-    <FlexColumn gap={3} style={wrapperStyle} className={className}>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map(headerGroup => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
-                const isSortingDisabled =
-                  // @ts-ignore
-                  header.column.columnDef.enableColumnSort === false ||
-                  ignoreSortingColumns.includes(header.column.id) ||
-                  !isSorting;
+    <FlexColumn className="h-full gap-2">
+      {data?.pages && showDataCount && (
+        <div className="data-count mb-1 flex items-center gap-1 px-4 font-semibold text-[#0B2E62]">
+          <p className="">{getDisplayedRowCount(data?.pages)}</p>
+          <span>of</span>
+          <p>{data?.pages?.[0]?.count || 0}</p>
+          <p className="capitalize">{dataCountCategory}</p>
+        </div>
+      )}
 
+      <Table className={`w-full ${className}`} style={tableStyle}>
+        <TableHeader className="thead !h-[3rem]">
+          {table.getHeaderGroups().map(headerGroup => (
+            <TableRow key={headerGroup.id} className="table-head-row-tr">
+              {headerGroup.headers.map(header => {
                 return (
                   <TableHead
-                    key={`${header.id}-${header.index}`}
-                    onClick={
-                      isSortingDisabled
-                        ? undefined
-                        : header.column.getToggleSortingHandler()
-                    }
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    className="table-head-th !bg-grey-100"
+                    style={{
+                      width: `${header?.getSize()}px`,
+                    }}
                   >
                     {!header.isPlaceholder && (
-                      <FlexRow gap={3} className="cursor-pointer items-center">
+                      <FlexRow
+                        className={`hover:text-secondary-500 group cursor-pointer items-center justify-start gap-1 px-3 py-0 xl:px-6 ${
+                          header.column.getIsSorted() !== false
+                            ? 'text-secondary-500'
+                            : 'text-matt-100'
+                        } ${exportMode ? '!text-xs' : ''}`}
+                      >
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
-                        {!isSortingDisabled && (
-                          <Icon name="unfold_more" className="!text-icon-sm" />
+
+                        {needSorting && (
+                          <div
+                            className={`flex flex-col items-center justify-center gap-1 ${header.id === 'pdfIcon' ? 'hidden' : 'block'} ${needSorting ? 'block' : 'hidden'}`}
+                          >
+                            {(header.column.getIsSorted() === 'asc' ||
+                              header.column.getIsSorted() === false) && (
+                              <Icon
+                                name="expand_less"
+                                className={`group-hover:text-secondary-500 !flex !h-[6px] !items-center !justify-start !text-base ${
+                                  header.column.getIsSorted() !== false
+                                    ? 'text-secondary-500'
+                                    : 'text-matt-100'
+                                }`}
+                              />
+                            )}
+                            {(header.column.getIsSorted() === 'desc' ||
+                              header.column.getIsSorted() === false) && (
+                              <Icon
+                                name="expand_more"
+                                className={`!text-icon-sm group-hover:text-secondary-500 !flex !h-[6px] !items-center !justify-start !text-base ${
+                                  header.column.getIsSorted() !== false
+                                    ? 'text-secondary-500'
+                                    : 'text-matt-100'
+                                }`}
+                              />
+                            )}
+                          </div>
                         )}
                       </FlexRow>
                     )}
@@ -177,47 +227,34 @@ export default function DataTable({
         </TableHeader>
 
         <TableBody>
-          {loading || (!data && isLoading) ? (
-            Array.from({ length: !data && isLoading ? 12 : 5 }).map(
-              (_, idx) => (
-                <TableRow key={idx}>
-                  {columns.map((cell, index) => {
-                    return (
-                      <TableCell
-                        key={index}
-                        className={cell.header === '' ? 'w-[130px]' : ''}
-                      >
-                        <Skeleton className="my-1.5 h-4 w-8/12 bg-grey-400" />
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ),
-            )
-          ) : table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map(row => (
+          {table.getRowModel()?.rows?.length ? (
+            table.getRowModel()?.rows.map(row => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                onClick={() => onRowClick(row) || null}
+                className="table-body-row w-full cursor-pointer"
               >
-                {row.getVisibleCells().map(cell => (
-                  <TableCell
-                    key={cell.id}
-                    onClick={() => {
-                      onRowClick?.(row.original);
-                    }}
-                    style={
-                      onRowClick ? { cursor: 'pointer' } : { cursor: 'default' }
-                    }
-                  >
-                    {cell.getValue() !== '' && cell.getValue() !== null
-                      ? flexRender(
+                {row.getVisibleCells().map(cell => {
+                  return (
+                    <TableCell
+                      key={cell.id}
+                      className={`${cellClassName} ${cell.column.id === 'S.N' ? '!w-[5%]' : ''} table-body-row-child`}
+                      style={{
+                        width: `${cell.column.getSize()}px`,
+                      }}
+                    >
+                      <div
+                        className={`flex justify-start bg-center text-sm md:text-md !font-medium !tracking- text-matt-200 leading-normal`}
+                      >
+                        {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
-                        )
-                      : '-'}
-                  </TableCell>
-                ))}
+                        )}
+                      </div>
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))
           ) : (
@@ -227,8 +264,29 @@ export default function DataTable({
               </TableCell>
             </TableRow>
           )}
+          {isPaginated &&
+            hasNextPage &&
+            Array.from({ length: 3 }).map((__, rowindex: number) => (
+              <TableRow
+                className="flex"
+                ref={viewRef}
+                key={`${rowindex.toString()}_loaderrows`}
+              >
+                {Array.from({ length: columns?.length || 7 }).map(
+                  (___, index: number) => (
+                    <TableCell
+                      key={`${index.toString()}_loadercolumn`}
+                      className="last:!pr-6 last:text-right"
+                    >
+                      <Skeleton className="h-5 w-14" />
+                    </TableCell>
+                  ),
+                )}
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
+      {/* {showPagination && <DataTablePagination table={table} />} */}
     </FlexColumn>
   );
 }
