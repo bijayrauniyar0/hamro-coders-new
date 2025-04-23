@@ -1,7 +1,5 @@
 /* eslint-disable no-unused-vars */
-
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import {
@@ -24,7 +22,6 @@ import {
   TableRow,
 } from '@Components/radix/Table';
 import { getDisplayedRowCount } from '@Utils/index';
-import isEmpty from '@Utils/isEmpty';
 import prepareQueryParam from '@Utils/prepareQueryParam';
 import useIntersectionObserver from '@Hooks/useIntersectionObserver';
 import useSortingConfig from '@Hooks/useSortingConfig';
@@ -35,9 +32,6 @@ import TableSkeleton from './TableSkeleton';
 
 interface ColumnData {
   [x: string]: any;
-  component_budget: any;
-  component_name: any;
-  component_id: any;
   component?: any;
   header: string;
   accessorKey: string;
@@ -53,6 +47,7 @@ interface DataTableProps {
   className?: string;
   demoData?: any;
   onRowClick?: any;
+  initialState?: any;
   isPaginated?: boolean;
   needSorting?: boolean;
   cellClassName?: string;
@@ -72,6 +67,7 @@ export default function DataTable({
   className,
   demoData,
   onRowClick,
+  initialState,
   isPaginated = true,
   needSorting = true,
   cellClassName,
@@ -84,7 +80,6 @@ export default function DataTable({
   const [sorting, setSorting] = useState<SortingState>([]);
   const defaultData = React.useMemo(() => [], []);
   const [isIntersecting, _, viewRef] = useIntersectionObserver();
-  const { pathname } = useLocation();
 
   const { sortOrderKey, sortDir, sortBy } = useSortingConfig(
     sorting[0]?.id,
@@ -101,7 +96,7 @@ export default function DataTable({
           search: searchInput,
           sort_by: sortBy,
           [sortOrderKey]: sortDir,
-          page_size: 15,
+          page_size: initialState?.paginationState?.pageSize,
           ...(queryFnParams ? prepareQueryParam(queryFnParams) : {}),
         });
         return res?.data;
@@ -170,7 +165,11 @@ export default function DataTable({
                 return (
                   <TableHead
                     key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
+                    onClick={
+                      header.column.columnDef.sortingFn
+                        ? header.column.getToggleSortingHandler()
+                        : undefined
+                    }
                     className="table-head-th !bg-grey-100"
                     style={{
                       width: `${header?.getSize()}px`,
@@ -189,7 +188,7 @@ export default function DataTable({
                           header.getContext(),
                         )}
 
-                        {needSorting && (
+                        {header.column.columnDef.sortingFn && needSorting && (
                           <div
                             className={`flex flex-col items-center justify-center gap-1 ${header.id === 'pdfIcon' ? 'hidden' : 'block'} ${needSorting ? 'block' : 'hidden'}`}
                           >
@@ -245,7 +244,7 @@ export default function DataTable({
                       }}
                     >
                       <div
-                        className={`flex justify-start bg-center text-sm md:text-md !font-medium !tracking- text-matt-200 leading-normal`}
+                        className={`!tracking- flex justify-start bg-center text-sm !font-medium leading-normal text-matt-200 md:text-md`}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -268,17 +267,14 @@ export default function DataTable({
             hasNextPage &&
             Array.from({ length: 3 }).map((__, rowindex: number) => (
               <TableRow
-                className="flex"
+                className="w-full !bg-red-200"
                 ref={viewRef}
-                key={`${rowindex.toString()}_loaderrows`}
+                key={`${rowindex.toString()}_loader_rows`}
               >
                 {Array.from({ length: columns?.length || 7 }).map(
                   (___, index: number) => (
-                    <TableCell
-                      key={`${index.toString()}_loadercolumn`}
-                      className="last:!pr-6 last:text-right"
-                    >
-                      <Skeleton className="h-5 w-14" />
+                    <TableCell key={`${index.toString()}_loader_column`}>
+                      <Skeleton className="h-9" />
                     </TableCell>
                   ),
                 )}

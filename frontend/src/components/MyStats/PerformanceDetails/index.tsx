@@ -17,14 +17,20 @@ const performanceTableColumns = [
   {
     header: 'Date',
     accessorKey: 'created_at',
+    size: 10,
     cell: ({ row }: any) => {
       const date = new Date(row?.original?.created_at);
-      return date ? format(date, 'MMMM dd, yyyy') : 'N/A';
+      return (
+        <p className="text-nowrap">
+          {date ? format(date, 'MMMM dd, yyyy') : 'N/A'}
+        </p>
+      );
     },
   },
   {
     header: 'Mode',
     accessorKey: 'mode',
+    sortingFn: undefined,
     cell: ({ row }: any) => {
       const mode = row?.original?.mode;
       return (
@@ -75,7 +81,7 @@ const PerformanceDetails = ({ modeFilter, timePeriodFilter }: IFilters) => {
         <CardTitle>Performance Details</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[45rem]">
+        <div className="h-[28rem]">
           <DataTable
             queryFn={getPerformanceDetails}
             queryFnParams={{
@@ -85,7 +91,7 @@ const PerformanceDetails = ({ modeFilter, timePeriodFilter }: IFilters) => {
             initialState={{
               paginationState: {
                 pageIndex: 0,
-                pageSize: 5,
+                pageSize: 15,
               },
             }}
             queryKey="performanceDetails"

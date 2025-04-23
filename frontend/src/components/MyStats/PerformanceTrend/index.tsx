@@ -176,12 +176,12 @@ export default function PerformanceTrend() {
           className="w-[12rem]"
         />
       </CardHeader>
-      {chartData ? (
+      {!chartData ? (
         <NoDataAvailable />
       ) : (
         <CardContent className="!py-4 px-4 md:px-6">
           <Grid className="w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {!chartDataIsLoading ? (
+            {chartDataIsLoading ? (
               <PerformanceTrendSkeleton />
             ) : (
               chartKeysData.map(option => (

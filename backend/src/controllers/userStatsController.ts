@@ -99,22 +99,56 @@ export class UserStatsService {
     });
     return scores;
   }
-
   async getUserPerformanceDetails({
     time_period,
-  }: Pick<IGetUserStatsParamType, 'time_period'>): Promise<
-    IPerformanceDetails[]
-  > {
+    page = 1,
+    page_size = 15,
+    sort_by = 'created_at',
+    sort_order = 'desc',
+  }: Pick<IGetUserStatsParamType, 'time_period'> & {
+    page?: number;
+    page_size?: number;
+    sort_by?: keyof IPerformanceDetails;
+    sort_order?: 'asc' | 'desc';
+  }): Promise<{
+    results: IPerformanceDetails[];
+    total: number;
+    page: number;
+    next_page: number | null;
+  }> {
     const leaderboardService = new LeaderboardService();
-    const scoresData = await this.getUserScores({
-      startDate: getStartDateByTimePeriod(time_period),
+
+    const startDate = getStartDateByTimePeriod(time_period);
+    const allScoresData = await this.getUserScores({
+      startDate,
       mode: 'ranked',
     });
+
+    const total = allScoresData.length;
+    const offset = (page - 1) * page_size;
+
+    // Sort
+    const validSortFields = ['elapsed_time', 'score', 'created_at'] as const;
+    const sortField = validSortFields.includes(sort_by as any)
+      ? sort_by
+      : 'created_at';
+
+    const sortedScores = allScoresData.sort((a, b) => {
+      const aVal = a.get?.()[sortField];
+      const bVal = b.get?.()[sortField];
+
+      if (aVal == null || bVal == null) return 0;
+      return sort_order === 'asc' ? aVal - bVal : bVal - aVal;
+    });
+
+    const scoresData = sortedScores.slice(offset, offset + page_size);
+
     const userScoresStack: IPerformanceDetails[] = [];
+
     const performanceDetails = await Promise.all(
       scoresData.map(async (scoreModel, index) => {
         const { Subject, ...score } = scoreModel.get();
-        const response = {
+        const response: IPerformanceDetails = {
           ...score,
           subject: Subject.title,
           date: score.created_at,
@@ -123,29 +157,40 @@ export class UserStatsService {
           accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
           rank_change: 'N/A',
         };
+
         if (score.mode !== 'practice') {
           const userRank = await leaderboardService.getRankedUsers({
-            startDate: getStartDateByTimePeriod(time_period),
+            startDate,
             endDate: new Date(
               new Date(score.created_at).getTime() - 24 * 60 * 60 * 1000,
             ),
           });
+
           const userScoreDetail = userRank.find(
             (user: any) => user.id === this.user_id,
           );
+
           const updatedResponse = {
             ...response,
             rank_change:
               (userScoreDetail?.rank ?? 0) -
               Number(userScoresStack[index - 1]?.rank_change ?? 0),
           };
+
           userScoresStack.push(updatedResponse);
           return updatedResponse;
         }
+
         return response;
       }),
     );
-    return performanceDetails;
+
+    return {
+      results: performanceDetails,
+      total,
+      page,
+      next_page: offset + page_size < total ? page + 1 : null,
+    };
   }
 }
 
@@ -201,14 +246,27 @@ export const getPerformanceDetails = async (
   req: Request<unknown, unknown, unknown, IGetUserStatsParamType>,
   res: Response,
 ) => {
-  const { time_period } = req.query;
+  const {
+    time_period,
+    page = 1,
+    page_size = 15,
+    sort_by,
+    sort_order,
+  } = req.query;
   const { user } = req;
+  const pageNum = parseInt(page as string, 10) || 1;
+  const pageSize = parseInt(page_size as string, 10) || 15;
+
   // await seedUserScores(20);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(
       {
         time_period,
+        page: pageNum,
+        page_size: pageSize,
+        sort_by,
+        sort_order,
       },
     );
     res.status(200).json(performanceDetails);
