@@ -1,37 +1,95 @@
 import React from 'react';
+import { format } from 'date-fns';
 
-import { PerformanceDetailsProps } from '@Constants/Types/myStats';
+import DataTable from '@Components/common/DataTable';
+import Icon from '@Components/common/Icon';
+import StatusChip from '@Components/common/StatusChip';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@Components/radix/card';
+import { IFilters } from '@Constants/Types/myStats';
+import { getPerformanceDetails } from '@Services/userStats';
 
-const PerformanceDetails = (tableData: PerformanceDetailsProps[]) => {
-  const tableHeaders = [
-    'Date',
-    'Mode',
-    'Score',
-    'Accuracy',
-    'Time',
-    'Rank Change',
-  ];
+const performanceTableColumns = [
+  {
+    header: 'Date',
+    accessorKey: 'created_at',
+    cell: ({ row }: any) => {
+      const date = new Date(row?.original?.created_at);
+      return date ? format(date, 'MMMM dd, yyyy') : 'N/A';
+    },
+  },
+  {
+    header: 'Mode',
+    accessorKey: 'mode',
+    cell: ({ row }: any) => {
+      const mode = row?.original?.mode;
+      return (
+        <StatusChip
+          status={mode === 'Ranked' ? 'success' : 'info'}
+          label={mode}
+        />
+      );
+    },
+  },
+  { header: 'Score', accessorKey: 'score' },
+  { header: 'Accuracy', accessorKey: 'accuracy' },
+  { header: 'Time', accessorKey: 'elapsed_time' },
+  {
+    header: 'Rank Change',
+    accessorKey: 'rank_change',
+    cell: ({ row }: any) => {
+      const rowData = row?.original;
+      const rank_change_color =
+        rowData.mode === 'practice' || rowData.rank_change === 0
+          ? 'text-gray-600'
+          : rowData.rank_change > 0
+            ? 'text-green-600'
+            : 'text-red-600';
+      return (
+        <div className="flex w-[2rem] items-center justify-center py-2">
+          <p className={`text-sm font-semibold ${rank_change_color}`}>
+            {row?.original?.rank_change}
+          </p>
+          {rowData.mode === 'ranked' && (
+            <Icon
+              name={
+                rowData.rank_change > 0 ? ' arrow_drop_up' : 'arrow_drop_down'
+              }
+              className={`!text-2xl ${rank_change_color} flex items-center justify-center`}
+            />
+          )}
+        </div>
+      );
+    },
+  },
+];
+
+const PerformanceDetails = ({ modeFilter, timePeriodFilter }: IFilters) => {
   return (
-    <table className="w-full border-collapse">
-      <thead className="border-b border-b-gray-200">
-        <tr>
-          {tableHeaders.map(header => (
-            <th className="p-4 text-left" key={header}>
-              {header}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          {tableData.map((data, index) => (
-            <td key={index} className="p-4">
-              {data.date_time}
-            </td>
-          ))}
-        </tr>
-      </tbody>
-    </table>
+    <Card>
+      <CardHeader>
+        <CardTitle>Performance Details</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[45rem]">
+          <DataTable
+            queryFn={getPerformanceDetails}
+            queryFnParams={{
+              mode: modeFilter,
+              time_period: timePeriodFilter,
+            }}
+            queryKey="performanceDetails"
+            searchInput=""
+            columns={performanceTableColumns}
+            needSorting={true}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
