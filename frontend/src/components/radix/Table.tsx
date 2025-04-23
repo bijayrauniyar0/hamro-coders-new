@@ -6,7 +6,12 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="scrollbar h-full w-full overflow-auto rounded-t-lg">
+  <div
+    className={cn(
+      'scrollbar h-fit max-h-[calc(100vh-10rem)] w-full overflow-x-auto rounded-xl border border-[#EAECF0]',
+      className,
+    )}
+  >
     <table
       ref={ref}
       className={cn('relative w-full caption-bottom text-sm', className)}
@@ -22,7 +27,10 @@ const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn('text-sm sticky top-0 z-10 [&_tr]:border-b ', className)}
+    className={cn(
+      'body-sm sticky top-0 z-10 truncate [&_tr]:border-b',
+      className,
+    )}
     {...props}
   />
 ));
@@ -46,7 +54,10 @@ const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn('bg-primary-600 font-medium', className)}
+    className={cn(
+      'text-primary-foreground bg-primary-600 font-medium',
+      className,
+    )}
     {...props}
   />
 ));
@@ -59,7 +70,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      `hover:bg-primary-50 group border-b transition-colors even:bg-grey-100`,
+      'data-[state=selected]:bg-muted border-b  border-[#EAECF0] transition-colors first:!border-b-[1px] last:border-b-[0px] hover:bg-blue-50',
       className,
     )}
     {...props}
@@ -74,7 +85,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      `bg-gray-100 py-4 px-4 font-semibold text-primary-600 text-md [&:has([role=checkbox])]:pr-0`,
+      'table-head bg-white py-3 pl-0 font-semibold [&:has([role=checkbox])]:pr-0',
       className,
     )}
     {...props}
@@ -89,12 +100,15 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      `first:group-hover:bg-primary-50 last:group-hover:bg-primary-50 p-1 capitalize text-grey-800 transition-colors xl:py-2 px-4 [&:has([role=checkbox])]:pr-0`,
+      'table-body bg-white pl-3 py-2 capitalize xl:pl-6 [&:has([role=checkbox])]:pr-0',
       className,
     )}
     {...props}
-  />
+  >
+    {props.children}
+  </td>
 ));
+
 TableCell.displayName = 'TableCell';
 
 const TableCaption = React.forwardRef<

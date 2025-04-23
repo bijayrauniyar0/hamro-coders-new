@@ -21,3 +21,8 @@ export interface PerformanceDetailsProps
 export interface IPerformanceTrendProps {
   time_period: 'all_time' | 'last_30_days' | 'last_7_days';
 }
+
+export interface IFilters {
+  modeFilter: string;
+  timePeriodFilter: string;
+}

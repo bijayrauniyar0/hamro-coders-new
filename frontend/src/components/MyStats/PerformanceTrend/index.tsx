@@ -29,6 +29,11 @@ const chartConfig = {
 
 import { BarChart as BarChartIcon, Target, Timer, Trophy } from 'lucide-react';
 
+import NoDataAvailable from '@Components/common/NoDataAvailable';
+import Skeleton from '@Components/radix/Skeleton';
+
+import { PerformanceTrendSkeleton } from '../MyStatsSkeleton';
+
 export const chartTooltipMeta: Record<
   string,
   { title: string; icon: (color: string) => JSX.Element }
@@ -105,7 +110,7 @@ const ChartTooltipContent = ({
 export default function PerformanceTrend() {
   const [filterBy, setFilterBy] = useState('last_3_months');
 
-  const { data: chartData } = useQuery({
+  const { data: chartData, isLoading: chartDataIsLoading } = useQuery({
     queryKey: ['performanceTrend', filterBy],
     queryFn: () => getPerformanceTrend({ filter_by: filterBy }),
     select: ({ data }) => {
@@ -172,53 +177,61 @@ export default function PerformanceTrend() {
         />
       </CardHeader>
       {!chartData ? (
-        <p>hey</p>
+        <NoDataAvailable />
       ) : (
         <CardContent className="!py-4 px-4 md:px-6">
           <Grid className="w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {chartKeysData.map(option => (
-              <Card key={option.value} className="w-full !p-0">
-                <CardHeader>
-                  <CardTitle className="!text-md tracking-normal">
-                    {option.label}
-                  </CardTitle>
-                </CardHeader>
-                <ChartContainer config={chartConfig}>
-                  <BarChart
-                    accessibilityLayer
-                    data={chartData}
-                    margin={{ top: 15, right: 10, bottom: 10, left: 0 }}
-                  >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="label"
-                      tickLine={false}
-                      tickMargin={10}
-                      axisLine={false}
-                    />
-                    <YAxis />
-                    <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent />}
-                    />
-                    <Bar
-                      dataKey={option.value}
-                      fill={option.color}
-                      radius={4}
-                      barSize={56}
-                    />
-                  </BarChart>
-                </ChartContainer>
-              </Card>
-            ))}
+            {chartDataIsLoading ? (
+              <PerformanceTrendSkeleton />
+            ) : (
+              chartKeysData.map(option => (
+                <Card key={option.value} className="w-full !p-0">
+                  <CardHeader>
+                    <CardTitle className="!text-md tracking-normal">
+                      {option.label}
+                    </CardTitle>
+                  </CardHeader>
+                  <ChartContainer config={chartConfig}>
+                    <BarChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{ top: 15, right: 10, bottom: 10, left: 0 }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="label"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                      />
+                      <YAxis />
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent />}
+                      />
+                      <Bar
+                        dataKey={option.value}
+                        fill={option.color}
+                        radius={4}
+                        barSize={56}
+                      />
+                    </BarChart>
+                  </ChartContainer>
+                </Card>
+              ))
+            )}
           </Grid>
         </CardContent>
       )}
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="text-muted-foreground leading-none">
-          Showing Analytics Data for the {' '}
-          {filterByOptions?.find(o => o.value === filterBy)?.label}
-        </div>
+        {chartDataIsLoading ? (
+          <Skeleton className="h-[1.5rem] w-full md:w-4/5 lg:w-1/2" />
+        ) : (
+          <div className="text-muted-foreground leading-none">
+            Showing Analytics Data for the{' '}
+            {filterByOptions?.find(o => o.value === filterBy)?.label}
+          </div>
+        )}
       </CardFooter>
     </Card>
   );

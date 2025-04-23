@@ -1,4 +1,4 @@
-import { type ClassValue,clsx } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -87,3 +87,11 @@ export const getPercentageColor = (value: number, total: number) => {
       return 'text-gray-500';
   }
 };
+
+export function getDisplayedRowCount(data: any): number {
+  let allData: any[] = [];
+  data?.forEach((element: Record<string, any>) => {
+    allData = [...(element?.results || []), ...allData];
+  });
+  return allData.length;
+}
