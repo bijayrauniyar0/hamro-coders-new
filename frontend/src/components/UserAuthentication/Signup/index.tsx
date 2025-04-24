@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -14,6 +14,8 @@ import InputLabel from '@Components/common/FormUI/InputLabel';
 import IconButton from '@Components/common/IconButton';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
+import { setUserProfile } from '@Store/actions/common';
+import { useTypedDispatch } from '@Store/hooks';
 import { createNewUser } from '@Services/common';
 import {
   signupSchemaStepOne,
@@ -34,6 +36,7 @@ const initialState = {
 
 export default function Signup() {
   const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -43,8 +46,12 @@ export default function Signup() {
   const { mutate, isPending } = useMutation<any, any, any, unknown>({
     mutationFn: (payload: Record<string, any>) => createNewUser(payload),
     onSuccess: () => {
-      toast.success('Signup Successful. Please Login to Continue');
-      navigate('/login');
+      dispatch(
+        setUserProfile({
+          email: watch('email'),
+        }),
+      );
+      navigate('/verify-email');
     },
     onError: (error: any) => {
       const caughtError = error?.response?.data?.message;
@@ -73,6 +80,18 @@ export default function Signup() {
     const { confirmPassword, ...values } = watch();
     mutate(values);
   };
+
+  useEffect(() => {
+    const listener = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', listener);
+
+    return () => {
+      window.removeEventListener('beforeunload', listener);
+    };
+  }, []);
 
   function getContentAccordingToStep() {
     switch (formStep) {
@@ -166,9 +185,9 @@ export default function Signup() {
     }
   }
   return (
-    <div className="login-form-wrapper h-full bg-white">
+    <div className="login-form-wrapper h-full">
       <div className="login-inner grid h-full place-items-center">
-        <div className="login-form w-full space-y-14 overflow-hidden bg-white p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
+        <div className="login-form w-full space-y-14 overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
           {/* ------ icon ------ */}
 
           <p className="select-none text-5xl font-semibold text-primary-700">
@@ -183,7 +202,7 @@ export default function Signup() {
                 {formStep !== 1 && (
                   <IconButton
                     className="w-[4rem] rounded-lg border p-3 text-primary-700 shadow-sm"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isPending}
                     name="chevron_left"
                     onClick={() => {
                       const values = watch();
@@ -194,9 +213,12 @@ export default function Signup() {
                 )}
                 <Button
                   className="w-full p-3 ease-in-out"
-                  disabled={(formStep === 2 && !isTermsChecked) || isSubmitting}
-                  isLoading={isSubmitting}
-                  //   type={formStep === 1 ? 'button' : 'submit'}
+                  disabled={
+                    (formStep === 2 && !isTermsChecked) ||
+                    isSubmitting ||
+                    isPending
+                  }
+                  isLoading={isSubmitting || isPending}
                 >
                   {formStep === 1 ? 'Next' : 'Sign Up'}
                 </Button>
@@ -208,7 +230,7 @@ export default function Signup() {
                   className="font-semibold text-primary-700 hover:underline"
                 >
                   Login Here
-                </NavLink>{' '}
+                </NavLink>
               </p>
             </FlexColumn>
           </form>

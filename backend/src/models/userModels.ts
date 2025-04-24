@@ -10,6 +10,7 @@ class User extends Model {
   public password!: string;
   public number!: string;
   public avatar!: string;
+  public verified!: boolean;
 }
 
 User.init(
@@ -41,6 +42,11 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'bear',
+    },
+    verified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
   },
   {

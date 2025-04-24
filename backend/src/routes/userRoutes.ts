@@ -8,6 +8,7 @@ import {
   loginController,
   checkLogin,
   getUserProfile,
+  verifyEmail,
 } from '../controllers/userController';
 import { authenticate } from 'src/middlewares/authenticate';
 
@@ -21,5 +22,7 @@ userRouter.get('/', authenticate, getAllUsers);
 userRouter.patch('/update/profile/', authenticate, updateUser);
 userRouter.patch('/change-password/', authenticate, updateUser);
 userRouter.delete('/:id/', authenticate, deleteUser);
+// @ts-ignore
+userRouter.get('/verify-email', verifyEmail);
 
 export default userRouter;

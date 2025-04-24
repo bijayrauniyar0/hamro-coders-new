@@ -39,7 +39,10 @@ const setSelectedMode = (state: CommonState, action: PayloadAction<string>) => {
   state.selectedMode = payload;
 };
 
-const setUserProfile = (state: CommonState, action: PayloadAction<User>) => {
+const setUserProfile = (
+  state: CommonState,
+  action: PayloadAction<Partial<User>>,
+) => {
   const { payload } = action;
   state.userProfile = payload;
 };
