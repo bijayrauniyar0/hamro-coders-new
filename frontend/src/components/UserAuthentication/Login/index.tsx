@@ -10,6 +10,8 @@ import Checkbox from '@Components/common/FormUI/CheckBox';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { FlexColumn } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
+import { setUserProfile } from '@Store/actions/common';
+import { useTypedDispatch } from '@Store/hooks';
 import { login } from '@Services/common';
 
 import FormControl from '../../common/FormUI/FormControl';
@@ -23,7 +25,17 @@ const initialState = {
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting, errors },
+  } = useForm({
+    defaultValues: initialState,
+  });
 
   const { mutate } = useMutation<any, any, any, unknown>({
     mutationFn: (payload: Record<string, any>) => login(payload),
@@ -33,17 +45,16 @@ export default function Login() {
       navigate('/courses');
     },
     onError: ({ response }: any) => {
+      if (response?.status === 401 && response?.data?.verified === false) {
+        toast.error(
+          'User not verified. Please check your email for verification.',
+        );
+        dispatch(setUserProfile({ email: watch('email') }));
+        navigate('/verify-email');
+      }
       const caughtError = response?.data?.message || 'Something went wrong.';
       toast.error(caughtError || 'Login Failed Something Went Wrong');
     },
-  });
-
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-  } = useForm({
-    defaultValues: initialState,
   });
 
   const onSubmit = (data: Record<string, any>) => {
@@ -51,9 +62,9 @@ export default function Login() {
   };
 
   return (
-    <div className="login-form-wrapper h-full bg-white">
+    <div className="login-form-wrapper h-full">
       <div className="login-inner grid h-full place-items-center">
-        <div className="login-form w-full space-y-14 overflow-hidden bg-white p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
+        <div className="login-form w-full space-y-14 overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
           {/* ------ icon ------ */}
 
           <p className="select-none text-5xl font-semibold text-primary-700">

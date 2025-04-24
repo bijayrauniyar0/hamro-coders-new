@@ -1,18 +1,21 @@
 import jwt from 'jsonwebtoken';
 
-const secret = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Generate JWT
-export const generateToken = (user: Record<string, any>) => {
-  if (!secret) return null;
-  return jwt.sign(user, secret, { expiresIn: '300h' });
+export const generateToken = (
+  user: Record<string, any>,
+  expiresIn: number | string = 60,
+) => {
+  if (!JWT_SECRET) return null;
+  return jwt.sign(user, JWT_SECRET, { expiresIn: expiresIn });
 };
 
 // Verify JWT
 export const verifyToken = (token: string) => {
   try {
-    if (!secret) return null;
-    return jwt.verify(token, secret);
+    if (!JWT_SECRET) return null;
+    return jwt.verify(token, JWT_SECRET);
   } catch {
     return null;
   }

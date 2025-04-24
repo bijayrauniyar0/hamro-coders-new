@@ -39,6 +39,11 @@ const appRoutes: IRoute[] = [
     path: '/analytics',
     component: MyStatsPage,
   },
+  {
+    name: 'Verify Email',
+    path: '/verify-email',
+    component: AuthenticationComponent,
+  },
 ];
 
 export default appRoutes;
