@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Hash, TrendingUp } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
-import DropDown from '@Components/common/DropDown';
 import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
 import { Card, CardHeader, CardTitle } from '@Components/radix/card';
 import {
@@ -21,11 +20,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+import { DateRange } from 'react-day-picker';
 import { BarChart as BarChartIcon, Target, Timer, Trophy } from 'lucide-react';
 
+import { DatePickerWithRange } from '@Components/common/DateRangePicker';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
-import SwitchTab from '@Components/common/SwitchTab';
-import Skeleton from '@Components/radix/Skeleton';
 
 import { PerformanceTrendSkeleton } from '../MyStatsSkeleton';
 
@@ -103,15 +102,28 @@ const ChartTooltipContent = ({
 };
 
 export default function PerformanceTrend() {
-  const [filterBy, setFilterBy] = useState('last_3_months');
+  // const [filterBy, setFilterBy] = useState('last_3_months');
+  const [filterDateRange, setFilterDateRange] = useState<DateRange | undefined>(
+    {
+      from: new Date(new Date().setDate(new Date().getDate() - 15)),
+      to: new Date(),
+    },
+  );
 
   const { data: chartData, isLoading: chartDataIsLoading } = useQuery({
-    queryKey: ['performanceTrend', filterBy],
-    queryFn: () => getPerformanceTrend({ filter_by: filterBy }),
-    select: ({ data }) => {
-      return data;
+    queryKey: ['performanceTrend', filterDateRange],
+    queryFn: () => {
+      if (!filterDateRange?.from || !filterDateRange?.to) return;
+      return getPerformanceTrend({
+        start_date: filterDateRange?.from || new Date(),
+        end_date: filterDateRange?.to || new Date(),
+      });
+    },
+    select: res => {
+      return res?.data;
     },
   });
+
 
   const chartKeysData = [
     // {
@@ -141,35 +153,41 @@ export default function PerformanceTrend() {
     // },
   ];
 
-  const filterByOptions = [
-    {
-      label: 'Last 3 Months',
-      value: 'last_3_months',
-    },
-    {
-      label: 'Last 3 Weeks',
-      value: 'last_3_weeks',
-    },
-    {
-      label: 'Last 3 days',
-      value: 'last_3_days',
-    },
-  ];
-  const layout = [
-    { i: 'chart1', x: 0, y: 0, w: 4, h: 2 },
-    { i: 'chart2', x: 4, y: 0, w: 4, h: 2 },
-  ];
+  // const filterByOptions = [
+  //   {
+  //     label: 'Last 3 Months',
+  //     value: 'last_3_months',
+  //   },
+  //   {
+  //     label: 'Last 3 Weeks',
+  //     value: 'last_3_weeks',
+  //   },
+  //   {
+  //     label: 'Last 3 days',
+  //     value: 'last_3_days',
+  //   },
+  // ];
+  // const layout = [
+  //   { i: 'chart1', x: 0, y: 0, w: 4, h: 2 },
+  //   { i: 'chart2', x: 4, y: 0, w: 4, h: 2 },
+  // ];
   return (
     <FlexColumn className="gap-4">
       <FlexRow className="items-center justify-between">
         <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
           Performance Trend
         </p>
-        <SwitchTab
+        <DatePickerWithRange
+          date={filterDateRange}
+          handleDate={val => {
+            setFilterDateRange(val);
+          }}
+        />
+        {/* <SwitchTab
           options={filterByOptions}
           activeValue={filterBy}
           onChange={setFilterBy}
-        />
+        /> */}
       </FlexRow>
       {!chartData ? (
         <NoDataAvailable />

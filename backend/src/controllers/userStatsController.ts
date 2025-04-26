@@ -276,37 +276,62 @@ export const getPerformanceDetails = async (
 };
 
 export const getUserDailyScores = async (
-  req: Request<unknown, unknown, unknown, { filter_by: string }>,
+  req: Request<
+    unknown,
+    unknown,
+    unknown,
+    { start_date: string; end_date: string }
+  >,
   res: Response,
 ) => {
-  const { filter_by = 'last_3_days' } = req.query;
+  const { start_date, end_date } = req.query;
   const { user } = req;
 
   try {
-    const now = new Date();
+    const startDate = new Date(start_date);
+    const endDate = new Date(end_date);
+    const diffTime = endDate.getTime() - startDate.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24); // milliseconds -> days
 
-    let getStartDate: (date: Date, amount: number) => Date;
-    let rangeLabelFormat: Intl.DateTimeFormatOptions;
+    let rangeStarts: Date[];
 
-    switch (filter_by) {
-      case 'last_3_weeks':
-        getStartDate = (date, amount) => subWeeks(date, amount);
-        rangeLabelFormat = { month: 'short', day: 'numeric' };
-        break;
-      case 'last_3_months':
-        getStartDate = (date, amount) => subMonths(date, amount);
-        rangeLabelFormat = { year: 'numeric', month: 'short' };
-        break;
-      default:
-        getStartDate = (date, amount) => subDays(date, amount);
-        rangeLabelFormat = { month: 'short', day: 'numeric' };
+    if (diffDays < 3) {
+      // Less than 3 days: just keep start and end
+      rangeStarts = [startDate, endDate];
+    } else {
+      // 3 or more days: split into 3 dates
+      const totalMs = endDate.getTime() - startDate.getTime();
+      const intervalMs = totalMs / 2;
+
+      const middle = new Date(startDate.getTime() + intervalMs);
+
+      rangeStarts = [startDate, middle, endDate];
     }
+    // let getStartDate: (date: Date, amount: number) => Date;
+    const rangeLabelFormat: Intl.DateTimeFormatOptions = {
+      month: 'short',
+      day: 'numeric',
+    };
 
-    const rangeStarts = [
-      getStartDate(now, 3),
-      getStartDate(now, 2),
-      getStartDate(now, 1),
-    ];
+    // switch (filter_by) {
+    //   case 'last_3_weeks':
+    //     getStartDate = (date, amount) => subWeeks(date, amount);
+    //     rangeLabelFormat = { month: 'short', day: 'numeric' };
+    //     break;
+    //   case 'last_3_months':
+    //     getStartDate = (date, amount) => subMonths(date, amount);
+    //     rangeLabelFormat = { year: 'numeric', month: 'short' };
+    //     break;
+    //   default:
+    //     getStartDate = (date, amount) => subDays(date, amount);
+    //     rangeLabelFormat = { month: 'short', day: 'numeric' };
+    // }
+
+    // const rangeStarts = [
+    //   getStartDate(now, 3),
+    //   getStartDate(now, 2),
+    //   getStartDate(now, 1),
+    // ];
 
     const scores = await UserScores.findAll({
       where: {
@@ -373,7 +398,7 @@ export const getUserDailyScores = async (
     const results = [
       formatStats(stats[0], rangeStarts[0], rangeStarts[1]),
       formatStats(stats[1], rangeStarts[1], rangeStarts[2]),
-      formatStats(stats[2], rangeStarts[2], now),
+      formatStats(stats[2], rangeStarts[2], new Date()),
     ];
 
     res.status(200).json(results);
