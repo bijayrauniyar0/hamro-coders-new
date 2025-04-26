@@ -3,13 +3,8 @@ import { format } from 'date-fns';
 
 import DataTable from '@Components/common/DataTable';
 import Icon from '@Components/common/Icon';
+import { FlexColumn } from '@Components/common/Layouts';
 import StatusChip from '@Components/common/StatusChip';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@Components/radix/card';
 import { IFilters } from '@Constants/Types/myStats';
 import { getPerformanceDetails } from '@Services/userStats';
 
@@ -76,32 +71,30 @@ const performanceTableColumns = [
 
 const PerformanceDetails = ({ modeFilter, timePeriodFilter }: IFilters) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Performance Details</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[28rem]">
-          <DataTable
-            queryFn={getPerformanceDetails}
-            queryFnParams={{
-              mode: modeFilter,
-              time_period: timePeriodFilter,
-            }}
-            initialState={{
-              paginationState: {
-                pageIndex: 0,
-                pageSize: 15,
-              },
-            }}
-            queryKey="performanceDetails"
-            searchInput=""
-            columns={performanceTableColumns}
-            needSorting={true}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <FlexColumn className="gap-6">
+      <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
+        Performance Details
+      </p>
+      {/* <div className="h-[28rem]"> */}
+      <DataTable
+        queryFn={getPerformanceDetails}
+        queryFnParams={{
+          mode: modeFilter,
+          time_period: timePeriodFilter,
+        }}
+        initialState={{
+          paginationState: {
+            pageIndex: 0,
+            pageSize: 15,
+          },
+        }}
+        queryKey="performanceDetails"
+        searchInput=""
+        columns={performanceTableColumns}
+        needSorting={true}
+      />
+      {/* </div> */}
+    </FlexColumn>
   );
 };
 

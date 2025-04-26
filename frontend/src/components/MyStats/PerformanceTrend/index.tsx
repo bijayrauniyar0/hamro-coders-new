@@ -5,14 +5,8 @@ import { Hash, TrendingUp } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import DropDown from '@Components/common/DropDown';
-import { FlexRow, Grid } from '@Components/common/Layouts';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@Components/radix/card';
+import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
+import { Card, CardHeader, CardTitle } from '@Components/radix/card';
 import {
   ChartConfig,
   ChartContainer,
@@ -30,6 +24,7 @@ const chartConfig = {
 import { BarChart as BarChartIcon, Target, Timer, Trophy } from 'lucide-react';
 
 import NoDataAvailable from '@Components/common/NoDataAvailable';
+import SwitchTab from '@Components/common/SwitchTab';
 import Skeleton from '@Components/radix/Skeleton';
 
 import { PerformanceTrendSkeleton } from '../MyStatsSkeleton';
@@ -119,11 +114,11 @@ export default function PerformanceTrend() {
   });
 
   const chartKeysData = [
-    {
-      label: 'Total Score',
-      value: 'total_score',
-      color: '#1e3a8a', // Dark Blue
-    },
+    // {
+    //   label: 'Total Score',
+    //   value: 'total_score',
+    //   color: '#1e3a8a', // Dark Blue
+    // },
     {
       label: 'Avg Score',
       value: 'avg_score',
@@ -134,16 +129,16 @@ export default function PerformanceTrend() {
       value: 'avg_elapsed_time',
       color: '#1e3a8a', // Dark Blue
     },
-    {
-      label: 'Avg Accuracy (in %)',
-      value: 'avg_accuracy',
-      color: '#3b82f6', // Medium Blue
-    },
-    {
-      label: 'Avg Count',
-      value: 'avg_count',
-      color: '#1e3a8a', // Dark Blue
-    },
+    // {
+    //   label: 'Avg Accuracy (in %)',
+    //   value: 'avg_accuracy',
+    //   color: '#3b82f6', // Medium Blue
+    // },
+    // {
+    //   label: 'Avg Count',
+    //   value: 'avg_count',
+    //   color: '#1e3a8a', // Dark Blue
+    // },
   ];
 
   const filterByOptions = [
@@ -165,74 +160,62 @@ export default function PerformanceTrend() {
     { i: 'chart2', x: 4, y: 0, w: 4, h: 2 },
   ];
   return (
-    <Card>
-      <CardHeader className="w-full flex-row items-center justify-between !py-1 md:!py-2">
-        <CardTitle>Performance Trend</CardTitle>
-        <DropDown
+    <FlexColumn className="gap-4">
+      <FlexRow className="items-center justify-between">
+        <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
+          Performance Trend
+        </p>
+        <SwitchTab
           options={filterByOptions}
-          value={filterBy}
+          activeValue={filterBy}
           onChange={setFilterBy}
-          choose="value"
-          className="w-[12rem]"
         />
-      </CardHeader>
+      </FlexRow>
       {!chartData ? (
         <NoDataAvailable />
       ) : (
-        <CardContent className="!py-4 px-4 md:px-6">
-          <Grid className="w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {chartDataIsLoading ? (
-              <PerformanceTrendSkeleton />
-            ) : (
-              chartKeysData.map(option => (
-                <Card key={option.value} className="w-full !p-0">
-                  <CardHeader>
-                    <CardTitle className="!text-md tracking-normal">
-                      {option.label}
-                    </CardTitle>
-                  </CardHeader>
-                  <ChartContainer config={chartConfig}>
-                    <BarChart
-                      accessibilityLayer
-                      data={chartData}
-                      margin={{ top: 15, right: 10, bottom: 10, left: 0 }}
-                    >
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey="label"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                      />
-                      <YAxis />
-                      <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent />}
-                      />
-                      <Bar
-                        dataKey={option.value}
-                        fill={option.color}
-                        radius={4}
-                        barSize={56}
-                      />
-                    </BarChart>
-                  </ChartContainer>
-                </Card>
-              ))
-            )}
-          </Grid>
-        </CardContent>
+        <Grid className="w-full grid-cols-1 gap-4 md:grid-cols-2">
+          {chartDataIsLoading ? (
+            <PerformanceTrendSkeleton />
+          ) : (
+            chartKeysData.map(option => (
+              <Card key={option.value} className="w-full !p-0">
+                <CardHeader>
+                  <CardTitle className="!text-md tracking-normal">
+                    {option.label}
+                  </CardTitle>
+                </CardHeader>
+                <ChartContainer config={chartConfig}>
+                  <BarChart
+                    accessibilityLayer
+                    data={chartData}
+                    margin={{ top: 15, right: 10, bottom: 10, left: 0 }}
+                  >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="label"
+                      tickLine={false}
+                      tickMargin={10}
+                      axisLine={false}
+                    />
+                    <YAxis />
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent />}
+                    />
+                    <Bar
+                      dataKey={option.value}
+                      fill={option.color}
+                      radius={4}
+                      barSize={56}
+                    />
+                  </BarChart>
+                </ChartContainer>
+              </Card>
+            ))
+          )}
+        </Grid>
       )}
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        {chartDataIsLoading ? (
-          <Skeleton className="h-[1.5rem] w-full md:w-4/5 lg:w-1/2" />
-        ) : (
-          <div className="text-muted-foreground leading-none">
-            Showing Analytics Data for the{' '}
-            {filterByOptions?.find(o => o.value === filterBy)?.label}
-          </div>
-        )}
-      </CardFooter>
-    </Card>
+    </FlexColumn>
   );
 }

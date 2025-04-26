@@ -14,8 +14,8 @@ import Subject from '@Models/subjectsModels';
 import { subDays, subWeeks, subMonths } from 'date-fns';
 
 export async function seedUserScores(count: number = 100) {
-  const startDate = new Date('2025-04-22');
-  const endDate = new Date('2025-04-22');
+  const startDate = new Date('2025-01-01');
+  const endDate = new Date('2025-04-26');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -28,7 +28,7 @@ export async function seedUserScores(count: number = 100) {
   const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
 
   const records = Array.from({ length: count }).map(() => {
-    const user_id = getRandomInt(5, 21);
+    const user_id = getRandomInt(1, 4);
     return {
       user_id: user_id,
       score: getRandomInt(6, 10),
@@ -77,12 +77,12 @@ export class UserStatsService {
     return userScores;
   }
 
-  async getRecentSessions(): Promise<IRecentSessions[]> {
+  async getRecentSessions(dataLimit: number = 5): Promise<IRecentSessions[]> {
     const userScores = await this.getUserScores({
       startDate: 'all_time',
       mode: 'all',
       otherFilterOptions: {
-        limit: 5,
+        limit: dataLimit,
         raw: false,
       },
     });
@@ -235,7 +235,7 @@ export const getRecentSessions = async (req: Request, res: Response) => {
 
   const userStatsService = new UserStatsService(user.id);
   try {
-    const scoresData = await userStatsService.getRecentSessions();
+    const scoresData = await userStatsService.getRecentSessions(3);
     res.status(200).json(scoresData);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
@@ -257,7 +257,7 @@ export const getPerformanceDetails = async (
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
 
-  // await seedUserScores(20);
+  // await seedUserScores(300);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(

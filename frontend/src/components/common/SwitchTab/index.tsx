@@ -48,7 +48,7 @@ const SwitchTab = ({
             className={`cursor-pointer select-none text-nowrap rounded-lg px-3 py-[0.38rem] text-sm leading-5 ${
               activeTab === value
                 ? cn(
-                    'bg-primary-700 text-white shadow-[0px_0px_5px_0px_rgba(0,0,0,0.16)]',
+                    'bg-primary-600 text-white shadow-[0px_0px_5px_0px_rgba(0,0,0,0.16)]',
                     activeClassName,
                   )
                 : 'hover:text-primary'

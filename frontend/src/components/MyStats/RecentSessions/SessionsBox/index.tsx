@@ -11,7 +11,7 @@ const SessionsBox = ({
   accuracy,
   elapsed_time,
   mode,
-  date_time,
+  created_at,
 }: SessionsBoxProps) => {
   const sessionBoxStatsKeys = [
     {
@@ -31,11 +31,11 @@ const SessionsBox = ({
   const chipStatus = mode === 'ranked' ? 'success' : 'info';
 
   return (
-    <FlexColumn className="gap-6 rounded-lg border border-gray-200 px-4 py-4">
+    <FlexColumn className="gap-4 rounded-lg border border-gray-200 bg-white px-4 py-4 shadow-md">
       <FlexRow className="items-center justify-between">
         <p className="text-md font-semibold">{capitalizeFirstLetter(title)}</p>
         <p className="text-sm font-medium">
-          {date_time ? format(new Date(date_time), 'MMMM dd, yyyy') : ''}
+          {created_at ? format(new Date(created_at), 'MMMM dd, yyyy') : ''}
         </p>
       </FlexRow>
       <FlexRow className="items-center justify-between">

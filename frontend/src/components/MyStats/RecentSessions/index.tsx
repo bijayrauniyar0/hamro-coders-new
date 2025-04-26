@@ -3,12 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
 
 import { FlexColumn } from '@Components/common/Layouts';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@Components/radix/card';
 import { SessionsBoxProps } from '@Constants/Types/myStats';
 import { getRecentSessions } from '@Services/userStats';
 
@@ -29,22 +23,20 @@ const RecentSessions = () => {
     select: ({ data }) => data,
   });
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Sessions</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <FlexColumn className="gap-4">
-          {recentSessionsIsLoading ? (
-            <RecentSessionsSkeleton />
-          ) : (
-            recentSessions?.map(({ id, ...session }) => (
-              <SessionsBox {...session} key={id} />
-            ))
-          )}
-        </FlexColumn>
-      </CardContent>
-    </Card>
+    <FlexColumn className="gap-6">
+      <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
+        Recent Sessions
+      </p>
+      <FlexColumn className="gap-3">
+        {recentSessionsIsLoading ? (
+          <RecentSessionsSkeleton />
+        ) : (
+          recentSessions?.map(({ id, ...session }) => (
+            <SessionsBox {...session} key={id} />
+          ))
+        )}
+      </FlexColumn>
+    </FlexColumn>
   );
 };
 

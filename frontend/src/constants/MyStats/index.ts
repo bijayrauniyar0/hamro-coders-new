@@ -7,7 +7,7 @@ export const modeDropDownOptions = [
   },
   {
     label: 'Ranked',
-    value: 'Ranked',
+    value: 'ranked',
   },
   {
     label: 'Practice',
@@ -59,7 +59,7 @@ export const sessionsData: SessionsBoxProps[] = [
     accuracy: '94.5%',
     elapsed_time: 120,
     mode: 'Practice',
-    date_time: '2025-04-18T14:30:00Z',
+    created_at: '2025-04-18T14:30:00Z',
   },
   {
     title: 'Code Challenge',
@@ -67,7 +67,7 @@ export const sessionsData: SessionsBoxProps[] = [
     accuracy: '88.0%',
     elapsed_time: 180,
     mode: 'Ranked',
-    date_time: '2025-04-17T19:15:00Z',
+    created_at: '2025-04-17T19:15:00Z',
   },
   {
     title: 'Memory Test',
@@ -75,7 +75,7 @@ export const sessionsData: SessionsBoxProps[] = [
     accuracy: '97.2%',
     elapsed_time: 150,
     mode: 'Practice',
-    date_time: '2025-04-16T11:00:00Z',
+    created_at: '2025-04-16T11:00:00Z',
   },
   {
     title: 'Reflex Drill',
@@ -83,7 +83,7 @@ export const sessionsData: SessionsBoxProps[] = [
     accuracy: '76.3%',
     elapsed_time: 60,
     mode: 'Ranked',
-    date_time: '2025-04-15T17:45:00Z',
+    created_at: '2025-04-15T17:45:00Z',
   },
   {
     title: 'Focus Mode',
@@ -91,7 +91,7 @@ export const sessionsData: SessionsBoxProps[] = [
     accuracy: '99.1%',
     elapsed_time: 300,
     mode: 'Practice',
-    date_time: '2025-04-14T08:20:00Z',
+    created_at: '2025-04-14T08:20:00Z',
   },
 ];
 
