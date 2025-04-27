@@ -54,11 +54,6 @@ UserScores.init(
   },
 );
 
-Subject.hasMany(UserScores, {
-  foreignKey: 'subject_id',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-});
 
 UserScores.belongsTo(Subject, {
   foreignKey: 'subject_id',

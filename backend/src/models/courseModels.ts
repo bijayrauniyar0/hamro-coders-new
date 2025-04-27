@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
+import Subject from './subjectsModels';
 
 class Course extends Model {
   public id!: number;
@@ -24,5 +25,12 @@ Course.init(
     timestamps: false,
   },
 );
+
+Course.hasMany(Subject, {
+  foreignKey: 'course_id',
+  sourceKey: 'id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
 
 export default Course;

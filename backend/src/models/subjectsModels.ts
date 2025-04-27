@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import Course from './courseModels';
+import UserScores from './userScoresModels';
 
 class Subject extends Model {
   public id!: number;
@@ -58,12 +59,12 @@ Subject.init(
   },
 );
 
-Course.hasMany(Subject, {
-  foreignKey: 'course_id',
-  sourceKey: 'id',
+Subject.hasMany(UserScores, {
+  foreignKey: 'subject_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
+
 
 Subject.belongsTo(Course, {
   foreignKey: 'course_id',
@@ -71,6 +72,5 @@ Subject.belongsTo(Course, {
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
-
 
 export default Subject;
