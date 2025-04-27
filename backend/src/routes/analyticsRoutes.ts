@@ -1,7 +1,7 @@
 import {
   getPerformanceDetails,
+  getPerformanceTrend,
   getRecentSessions,
-  getUserDailyScores,
   getUserStats,
 } from '@Controllers/userStatsController';
 import express from 'express';
@@ -16,6 +16,6 @@ analyticsRouter.get(
   authenticate,
   getPerformanceDetails,
 );
-analyticsRouter.get('/performance-trend/', authenticate, getUserDailyScores);
+analyticsRouter.get('/performance-trend/', authenticate, getPerformanceTrend);
 
 export default analyticsRouter;

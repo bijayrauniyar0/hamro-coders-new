@@ -149,3 +149,31 @@ export const chartConfig = {
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig;
+
+export const chartKeysData = [
+  {
+    label: 'Avg Score',
+    value: 'avg_score',
+    color: '#3b82f6', // Medium Blue
+  },
+  {
+    label: 'Avg Elapsed Time (in Minutes)',
+    value: 'avg_elapsed_time',
+    color: '#1e3a8a', // Dark Blue
+  },
+];
+
+export const filterByOptions = [
+  {
+    label: 'Last 3 days',
+    value: 'last_3_days',
+  },
+  {
+    label: 'Last 3 Weeks',
+    value: 'last_3_weeks',
+  },
+  {
+    label: 'Last 3 Months',
+    value: 'last_3_months',
+  },
+];

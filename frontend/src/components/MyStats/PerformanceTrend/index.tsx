@@ -1,28 +1,13 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useMemo, useState } from 'react';
-import { DateRange } from 'react-day-picker';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Hash, LineChart, TrendingUp } from 'lucide-react';
-import { BarChart as BarChartIcon, Target, Timer, Trophy } from 'lucide-react';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { BarChartIcon, LineChart, Timer } from 'lucide-react';
 
-import { DatePickerWithRange } from '@Components/common/DateRangePicker';
 import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
+import SwitchTab from '@Components/common/SwitchTab';
 import { Card, CardHeader, CardTitle } from '@Components/radix/card';
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-} from '@Components/radix/chart';
-import { chartConfig } from '@Constants/MyStats';
+import { chartKeysData, filterByOptions } from '@Constants/MyStats';
 import useScreenWidth from '@Hooks/useScreenWidth';
 import { getPerformanceTrend } from '@Services/userStats';
 
@@ -55,14 +40,14 @@ export const chartTooltipMeta: Record<
   },
 };
 
-const chartsTypeData = [
+export const chartsTypeData = [
   {
     type: 'bar',
-    icon: <BarChartIcon />,
+    icon: <BarChartIcon className='md:h-6 md:w-6 w-5 h-5' />,
   },
   {
     type: 'line',
-    icon: <LineChart />,
+    icon: <LineChart className='md:h-6 md:w-6 w-5 h-5' />,
   },
 ];
 
@@ -91,34 +76,6 @@ const ChartTooltipContent = ({
   );
 };
 
-const chartKeysData = [
-  // {
-  //   label: 'Total Score',
-  //   value: 'total_score',
-  //   color: '#1e3a8a', // Dark Blue
-  // },
-  {
-    label: 'Avg Score',
-    value: 'avg_score',
-    color: '#3b82f6', // Medium Blue
-  },
-  {
-    label: 'Avg Elapsed Time (in Minutes)',
-    value: 'avg_elapsed_time',
-    color: '#1e3a8a', // Dark Blue
-  },
-  // {
-  //   label: 'Avg Accuracy (in %)',
-  //   value: 'avg_accuracy',
-  //   color: '#3b82f6', // Medium Blue
-  // },
-  // {
-  //   label: 'Avg Count',
-  //   value: 'avg_count',
-  //   color: '#1e3a8a', // Dark Blue
-  // },
-];
-
 export default function PerformanceTrend() {
   const screenWidth = useScreenWidth();
   const [selectedChartType, setSelectedChartType] = useState<
@@ -133,20 +90,13 @@ export default function PerformanceTrend() {
     ),
   );
 
-  const [filterDateRange, setFilterDateRange] = useState<DateRange | undefined>(
-    {
-      from: new Date(new Date().setDate(new Date().getDate() - 15)),
-      to: new Date(),
-    },
-  );
+  const [filterBy, setFilterBy] = useState<string>('last_3_weeks');
 
   const { data: chartData, isLoading: chartDataIsLoading } = useQuery({
-    queryKey: ['performanceTrend', filterDateRange],
+    queryKey: ['performanceTrend', filterBy],
     queryFn: () => {
-      if (!filterDateRange?.from || !filterDateRange?.to) return;
       return getPerformanceTrend({
-        start_date: filterDateRange?.from || new Date(),
-        end_date: filterDateRange?.to || new Date(),
+        filter_by: filterBy,
       });
     },
     select: res => {
@@ -154,45 +104,17 @@ export default function PerformanceTrend() {
     },
   });
 
-  // const chartComponents: { [key: string]: React.ReactNode } = {
-  //   'bar': <PerformanceTrendBarChart dataKey=''/>
-  // };
-  // const filterByOptions = [
-  //   {
-  //     label: 'Last 3 Months',
-  //     value: 'last_3_months',
-  //   },
-  //   {
-  //     label: 'Last 3 Weeks',
-  //     value: 'last_3_weeks',
-  //   },
-  //   {
-  //     label: 'Last 3 days',
-  //     value: 'last_3_days',
-  //   },
-  // ];
-  // const layout = [
-  //   { i: 'chart1', x: 0, y: 0, w: 4, h: 2 },
-  //   { i: 'chart2', x: 4, y: 0, w: 4, h: 2 },
-  // ];
   return (
     <FlexColumn className="gap-4">
       <FlexRow className="items-center justify-between max-md:gap-2">
         <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
           Performance Trend
         </p>
-        <DatePickerWithRange
-          date={filterDateRange}
-          handleDate={val => {
-            setFilterDateRange(val);
-          }}
-          placeHolderClassName="max-md:hidden"
-        />
-        {/* <SwitchTab
+        <SwitchTab
           options={filterByOptions}
+          onChange={val => setFilterBy(val)}
           activeValue={filterBy}
-          onChange={setFilterBy}
-        /> */}
+        />
       </FlexRow>
       {!chartData ? (
         <NoDataAvailable />
@@ -226,29 +148,28 @@ export default function PerformanceTrend() {
                     </FlexRow>
                   </CardTitle>
                 </CardHeader>
-                <ResponsiveContainer className="!h-[300px]">
-                  {/* <ChartContainer config={chartConfig}> */}
-                  {selectedChartType[option.value] === 'line' ? (
-                    <PerformanceTrendLineChart
-                      dataKey={option.value}
-                      chartData={chartData}
-                      fill={option.color}
-                      tooltip={ChartTooltipContent}
-                    />
-                  ) : (
-                    <PerformanceTrendBarChart
-                      dataKey={option.value}
-                      chartData={chartData}
-                      fill={option.color}
-                      tooltip={ChartTooltipContent}
-                    />
-                  )}
-                  {/* <PerformanceTrendBarChart
+                {/* <ChartContainer config={chartConfig}> */}
+                {selectedChartType[option.value] === 'line' ? (
+                  <PerformanceTrendLineChart
+                    dataKey={option.value}
+                    chartData={chartData}
+                    fill={option.color}
+                    tooltip={ChartTooltipContent}
+                  />
+                ) : (
+                  <PerformanceTrendBarChart
+                    dataKey={option.value}
+                    chartData={chartData}
+                    fill={option.color}
+                    tooltip={ChartTooltipContent}
+                  />
+                )}
+                {/* <PerformanceTrendBarChart
                     dataKey={option.value}
                     chartData={chartData}
                     fill={option.color}
                   /> */}
-                  {/* <BarChart
+                {/* <BarChart
                       accessibilityLayer
                       data={chartData}
                       margin={{ top: 15, right: 10, bottom: 10, left: -18 }}
@@ -272,8 +193,7 @@ export default function PerformanceTrend() {
                         barSize={barSize}
                       />
                     </BarChart> */}
-                  {/* </ChartContainer> */}
-                </ResponsiveContainer>
+                {/* </ChartContainer> */}
               </Card>
             ))
           )}

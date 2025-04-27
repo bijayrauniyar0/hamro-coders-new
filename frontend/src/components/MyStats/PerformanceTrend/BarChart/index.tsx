@@ -1,12 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import { ChartContainer, ChartTooltip } from '@Components/radix/chart';
 import { chartConfig } from '@Constants/MyStats';
@@ -38,27 +31,27 @@ const PerformanceTrendBarChart = ({
     return barWidth;
   }, [screenWidth]);
   return (
-    <ResponsiveContainer>
-      <ChartContainer config={chartConfig}>
-        <BarChart
-          accessibilityLayer
-          data={chartData}
-          margin={{ top: 15, right: 10, bottom: 10, left: -18 }}
-          className="z-50 h-[45rem] w-[45rem]"
-        >
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="label"
-            tickLine={false}
-            tickMargin={10}
-            axisLine={false}
-          />
-          <YAxis domain={[0, 'dataMax + 2']} />
-          <ChartTooltip cursor={false} content={tooltip} />
-          <Bar dataKey={dataKey} fill={fill} radius={4} barSize={barSize} />
-        </BarChart>
-      </ChartContainer>
-    </ResponsiveContainer>
+    <ChartContainer config={chartConfig}>
+      <BarChart
+        accessibilityLayer
+        data={chartData}
+        margin={{ top: 15, right: 10, bottom: 10, left: -18 }}
+        className="z-50 h-[45rem] w-[45rem]"
+      >
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey="label"
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+        />
+        <YAxis
+        // domain={[() => 0, (dataMax: number) => (dataMax * 1.25).toFixed(0)]}
+        />
+        <ChartTooltip cursor={false} content={tooltip} />
+        <Bar dataKey={dataKey} fill={fill} radius={4} barSize={barSize} />
+      </BarChart>
+    </ChartContainer>
   );
 };
 
