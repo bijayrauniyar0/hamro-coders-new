@@ -28,7 +28,7 @@ sequelize
     return sequelize.sync({ force: false });
   })
   .then(() => {
-    app.listen(Number(PORT) || 9000, () => {});
+    app.listen(Number(PORT) || 9000, '0.0.0.0', () => {});
   })
   .catch(err => {
     // eslint-disable-next-line no-console

@@ -15,7 +15,7 @@ COPY . .
 
 
 # Expose the application port
-EXPOSE 9000
+# EXPOSE 9000
 
 # Define environment variables for PostgreSQL (optional; can also be in Docker Compose)
 ENV DB_USER=hamrocoders
