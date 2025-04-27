@@ -10,6 +10,11 @@ COPY package.json yarn.lock ./
 # Install dependencies
 RUN yarn install --frozen-lockfile
 
+ENV PORT=9000
+
+# EXPOSE is just documentation, but good to keep consistent with PORT
+EXPOSE 9000
+
 # Copy the rest of the application code
 COPY . .
 
