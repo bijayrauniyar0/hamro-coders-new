@@ -68,7 +68,7 @@ export class UserStatsService {
     const userScores = await UserScores.findAll({
       where: whereClause,
       attributes: {
-        exclude: ['user_id'],
+        exclude: ['user_id', 'subject_id'],
       },
       include: [{ model: Subject, attributes: ['title'] }],
       order: [['created_at', 'DESC']],
@@ -92,8 +92,8 @@ export class UserStatsService {
         ...scoreData,
         date: scoreData.created_at,
         elapsed_time: formatToMinSec(scoreData.elapsed_time),
-        title: `${scoreData.mode} #${scoreData.id}`,
-        accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
+        title: `${Subject.title}`,
+        // accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
         subject: Subject.title,
       };
     });
@@ -296,10 +296,8 @@ export const getUserDailyScores = async (
     let rangeStarts: Date[];
 
     if (diffDays < 3) {
-      // Less than 3 days: just keep start and end
       rangeStarts = [startDate, endDate];
     } else {
-      // 3 or more days: split into 3 dates
       const totalMs = endDate.getTime() - startDate.getTime();
       const intervalMs = totalMs / 2;
 
@@ -307,7 +305,6 @@ export const getUserDailyScores = async (
 
       rangeStarts = [startDate, middle, endDate];
     }
-    // let getStartDate: (date: Date, amount: number) => Date;
     const rangeLabelFormat: Intl.DateTimeFormatOptions = {
       month: 'short',
       day: 'numeric',

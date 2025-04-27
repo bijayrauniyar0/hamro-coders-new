@@ -8,7 +8,7 @@ export type StatsCardProps = {
 export interface SessionsBoxProps {
   title: string;
   score: number;
-  accuracy: string;
+  // accuracy: string;
   elapsed_time: number;
   mode: string;
   created_at: string;

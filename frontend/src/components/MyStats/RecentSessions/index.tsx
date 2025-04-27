@@ -27,7 +27,7 @@ const RecentSessions = () => {
       <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
         Recent Sessions
       </p>
-      <FlexColumn className="gap-3">
+      <FlexColumn className="bg-white border border-gray-200 shadow-sm rounded-lg">
         {recentSessionsIsLoading ? (
           <RecentSessionsSkeleton />
         ) : (
