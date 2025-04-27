@@ -106,7 +106,7 @@ function Dropdown({
       <PopoverTrigger asChild ref={triggerRef}>
         <Button
           id={id}
-          variant="dropDown"
+          variant="outline"
           size={dropDownSize}
           role="combobox"
           disabled={disabled}
@@ -143,7 +143,7 @@ function Dropdown({
                   ) : (
                     <p
                       className={cn(
-                        'text-sm line-clamp-1 text-start text-[#667085]',
+                        'line-clamp-1 text-start text-sm text-[#667085]',
                         placeholderClassName,
                       )}
                     >
@@ -154,7 +154,7 @@ function Dropdown({
               ) : (
                 <>
                   {value ? (
-                    <p className="text-sm font-medium line-clamp-1 text-start text-matt-200">
+                    <p className="line-clamp-1 text-start text-sm font-medium text-matt-200">
                       {options.find(
                         (option: IDropDownData) =>
                           option[choose as keyof IDropDownData] === value,

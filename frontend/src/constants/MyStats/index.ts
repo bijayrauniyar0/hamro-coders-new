@@ -1,3 +1,4 @@
+import { ChartConfig } from '@Components/radix/chart';
 import { SessionsBoxProps } from '@Constants/Types/myStats';
 
 export const modeDropDownOptions = [
@@ -7,7 +8,7 @@ export const modeDropDownOptions = [
   },
   {
     label: 'Ranked',
-    value: 'Ranked',
+    value: 'ranked',
   },
   {
     label: 'Practice',
@@ -49,6 +50,7 @@ export const statsData = [
     title: 'Current Rank',
     value_key: 'current_rank',
     icon: 'trophy',
+    tooltipMessage: 'Rank is only based on ranked sessions',
   },
 ];
 
@@ -56,42 +58,37 @@ export const sessionsData: SessionsBoxProps[] = [
   {
     title: 'Speed Typing',
     score: 85,
-    accuracy: '94.5%',
     elapsed_time: 120,
     mode: 'Practice',
-    date_time: '2025-04-18T14:30:00Z',
+    created_at: '2025-04-18T14:30:00Z',
   },
   {
     title: 'Code Challenge',
     score: 72,
-    accuracy: '88.0%',
     elapsed_time: 180,
     mode: 'Ranked',
-    date_time: '2025-04-17T19:15:00Z',
+    created_at: '2025-04-17T19:15:00Z',
   },
   {
     title: 'Memory Test',
     score: 90,
-    accuracy: '97.2%',
     elapsed_time: 150,
     mode: 'Practice',
-    date_time: '2025-04-16T11:00:00Z',
+    created_at: '2025-04-16T11:00:00Z',
   },
   {
     title: 'Reflex Drill',
     score: 64,
-    accuracy: '76.3%',
     elapsed_time: 60,
     mode: 'Ranked',
-    date_time: '2025-04-15T17:45:00Z',
+    created_at: '2025-04-15T17:45:00Z',
   },
   {
     title: 'Focus Mode',
     score: 95,
-    accuracy: '99.1%',
     elapsed_time: 300,
     mode: 'Practice',
-    date_time: '2025-04-14T08:20:00Z',
+    created_at: '2025-04-14T08:20:00Z',
   },
 ];
 
@@ -143,5 +140,40 @@ export const tableData = [
     accuracy: '93%',
     time: '13m 25s',
     rank_change: 2,
+  },
+];
+
+export const chartConfig = {
+  currentData: {
+    label: 'Total Score',
+    color: 'hsl(var(--chart-1))',
+  },
+} satisfies ChartConfig;
+
+export const chartKeysData = [
+  {
+    label: 'Avg Score',
+    value: 'avg_score',
+    color: '#3b82f6', // Medium Blue
+  },
+  {
+    label: 'Avg Elapsed Time (in Minutes)',
+    value: 'avg_elapsed_time',
+    color: '#1e3a8a', // Dark Blue
+  },
+];
+
+export const filterByOptions = [
+  {
+    label: 'Last 3 days',
+    value: 'last_3_days',
+  },
+  {
+    label: 'Last 3 Weeks',
+    value: 'last_3_weeks',
+  },
+  {
+    label: 'Last 3 Months',
+    value: 'last_3_months',
   },
 ];

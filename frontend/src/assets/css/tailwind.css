@@ -198,10 +198,6 @@
   @apply text-[24px];
 }
 
-tr:nth-child(even) {
-  background-color: #e6e6e6;
-}
-
 .searchbar-dropdown {
   border: none;
   border-bottom: 1px solid #d0d5dd !important;

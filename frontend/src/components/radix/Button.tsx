@@ -17,7 +17,7 @@ const buttonVariants = cva(
         link: 'text-primary-600 hover:text-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
 
-        dropDown:
+        outline:
           'bg-white text-grey-900 border border-grey-600 focus:border-primary-500 rounded-lg',
       },
       size: {

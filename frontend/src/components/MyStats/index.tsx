@@ -16,7 +16,7 @@ import Stats from './Stats';
 
 const MyStats = () => {
   const [modeFilter, setSelectedModeFilter] = useState('all');
-  const [timePeriodFilter, setSelectedTimePeriodFilter] =
+  const [timePeriodFilter, setTimePeriodFilter] =
     useState<IPerformanceTrendProps['time_period']>('last_7_days');
 
   return (
@@ -42,7 +42,10 @@ const MyStats = () => {
                   <DropDown
                     options={modeDropDownOptions}
                     value={modeFilter}
-                    onChange={setSelectedModeFilter}
+                    onChange={mode => {
+                      if (!mode) return;
+                      setSelectedModeFilter(mode);
+                    }}
                     choose="value"
                     className="w-[9rem] md:w-[7rem]"
                     enableSearchbar={false}
@@ -55,7 +58,10 @@ const MyStats = () => {
                   <DropDown
                     options={timePeriodDropDownOptions}
                     value={timePeriodFilter}
-                    onChange={setSelectedTimePeriodFilter}
+                    onChange={timePeriod => {
+                      if (!timePeriod) return;
+                      setTimePeriodFilter(timePeriod);
+                    }}
                     choose="value"
                     className="w-[9rem]"
                     enableSearchbar={false}

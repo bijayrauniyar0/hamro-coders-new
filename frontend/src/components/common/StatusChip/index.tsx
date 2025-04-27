@@ -22,14 +22,14 @@ const StatusChip: React.FC<StatusChipProps> = ({
   status = 'default',
 }) => {
   return (
-    <span
+    <div
       className={cn(
-        'inline-block w-fit rounded-full px-3 py-1 text-xs font-medium capitalize md:text-sm',
+        'flex items-center justify-center rounded-full px-3 py-1',
         statusColors[status],
       )}
     >
-      {label}
-    </span>
+      <p className="text-xs font-medium capitalize md:text-sm">{label}</p>
+    </div>
   );
 };
 

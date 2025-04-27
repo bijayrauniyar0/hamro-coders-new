@@ -170,7 +170,7 @@ export default function DataTable({
                         ? header.column.getToggleSortingHandler()
                         : undefined
                     }
-                    className="table-head-th !bg-grey-100"
+                    className="table-head-th"
                     style={{
                       width: `${header?.getSize()}px`,
                     }}
@@ -179,8 +179,8 @@ export default function DataTable({
                       <FlexRow
                         className={`hover:text-secondary-500 group cursor-pointer items-center justify-start gap-1 px-3 py-0 xl:px-6 ${
                           header.column.getIsSorted() !== false
-                            ? 'text-secondary-500'
-                            : 'text-matt-100'
+                            ? 'text-[#E0D4FD]'
+                            : 'text-white'
                         } ${exportMode ? '!text-xs' : ''}`}
                       >
                         {flexRender(
@@ -196,10 +196,10 @@ export default function DataTable({
                               header.column.getIsSorted() === false) && (
                               <Icon
                                 name="expand_less"
-                                className={`group-hover:text-secondary-500 !flex !h-[6px] !items-center !justify-start !text-base ${
+                                className={`!flex !h-[6px] !items-center !justify-start !text-base group-hover:text-[#E0D4FD] ${
                                   header.column.getIsSorted() !== false
-                                    ? 'text-secondary-500'
-                                    : 'text-matt-100'
+                                    ? 'text-[#E0D4FD]'
+                                    : 'text-white'
                                 }`}
                               />
                             )}
@@ -207,10 +207,10 @@ export default function DataTable({
                               header.column.getIsSorted() === false) && (
                               <Icon
                                 name="expand_more"
-                                className={`!text-icon-sm group-hover:text-secondary-500 !flex !h-[6px] !items-center !justify-start !text-base ${
+                                className={`!text-icon-sm !flex !h-[6px] !items-center !justify-start !text-base group-hover:text-[#E0D4FD] ${
                                   header.column.getIsSorted() !== false
-                                    ? 'text-secondary-500'
-                                    : 'text-matt-100'
+                                    ? 'text-[#E0D4FD]'
+                                    : 'text-white'
                                 }`}
                               />
                             )}

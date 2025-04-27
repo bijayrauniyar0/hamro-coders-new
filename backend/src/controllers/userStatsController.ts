@@ -11,11 +11,17 @@ import {
   UserScoresArgsType,
 } from '@Constants/Types/userStats';
 import Subject from '@Models/subjectsModels';
-import { subDays, subWeeks, subMonths } from 'date-fns';
+import {
+  subDays,
+  subWeeks,
+  subMonths,
+  startOfWeek,
+  startOfMonth,
+} from 'date-fns';
 
 export async function seedUserScores(count: number = 100) {
-  const startDate = new Date('2025-04-22');
-  const endDate = new Date('2025-04-22');
+  const startDate = new Date('2025-01-01');
+  const endDate = new Date('2025-04-26');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -28,7 +34,7 @@ export async function seedUserScores(count: number = 100) {
   const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
 
   const records = Array.from({ length: count }).map(() => {
-    const user_id = getRandomInt(5, 21);
+    const user_id = getRandomInt(1, 4);
     return {
       user_id: user_id,
       score: getRandomInt(6, 10),
@@ -68,7 +74,7 @@ export class UserStatsService {
     const userScores = await UserScores.findAll({
       where: whereClause,
       attributes: {
-        exclude: ['user_id'],
+        exclude: ['user_id', 'subject_id'],
       },
       include: [{ model: Subject, attributes: ['title'] }],
       order: [['created_at', 'DESC']],
@@ -77,12 +83,12 @@ export class UserStatsService {
     return userScores;
   }
 
-  async getRecentSessions(): Promise<IRecentSessions[]> {
+  async getRecentSessions(dataLimit: number = 5): Promise<IRecentSessions[]> {
     const userScores = await this.getUserScores({
       startDate: 'all_time',
       mode: 'all',
       otherFilterOptions: {
-        limit: 5,
+        limit: dataLimit,
         raw: false,
       },
     });
@@ -92,8 +98,8 @@ export class UserStatsService {
         ...scoreData,
         date: scoreData.created_at,
         elapsed_time: formatToMinSec(scoreData.elapsed_time),
-        title: `${scoreData.mode} #${scoreData.id}`,
-        accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
+        title: `${Subject.title}`,
+        // accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
         subject: Subject.title,
       };
     });
@@ -235,7 +241,7 @@ export const getRecentSessions = async (req: Request, res: Response) => {
 
   const userStatsService = new UserStatsService(user.id);
   try {
-    const scoresData = await userStatsService.getRecentSessions();
+    const scoresData = await userStatsService.getRecentSessions(3);
     res.status(200).json(scoresData);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
@@ -257,7 +263,7 @@ export const getPerformanceDetails = async (
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
 
-  // await seedUserScores(20);
+  // await seedUserScores(300);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(
@@ -275,39 +281,37 @@ export const getPerformanceDetails = async (
   }
 };
 
-export const getUserDailyScores = async (
+export const getPerformanceTrend = async (
   req: Request<unknown, unknown, unknown, { filter_by: string }>,
   res: Response,
 ) => {
-  const { filter_by = 'last_3_days' } = req.query;
+  const { filter_by } = req.query;
   const { user } = req;
 
   try {
     const now = new Date();
 
-    let getStartDate: (date: Date, amount: number) => Date;
+    let getStartDate: (amount: number) => Date;
     let rangeLabelFormat: Intl.DateTimeFormatOptions;
-
+    const startOfCurrentWeek = startOfWeek(now, { weekStartsOn: 0 }); // Week starts on Sunday (0) or Monday (1)
+    const startOfCurrentMonth = startOfMonth(now); // Start of the current month
     switch (filter_by) {
       case 'last_3_weeks':
-        getStartDate = (date, amount) => subWeeks(date, amount);
+        getStartDate = amount => subWeeks(startOfCurrentWeek, amount);
         rangeLabelFormat = { month: 'short', day: 'numeric' };
         break;
       case 'last_3_months':
-        getStartDate = (date, amount) => subMonths(date, amount);
-        rangeLabelFormat = { year: 'numeric', month: 'short' };
+        getStartDate = amount => subMonths(startOfCurrentMonth, amount);
+        rangeLabelFormat = { month: 'short' };
         break;
       default:
-        getStartDate = (date, amount) => subDays(date, amount);
+        getStartDate = amount => subDays(new Date(), amount);
         rangeLabelFormat = { month: 'short', day: 'numeric' };
     }
 
-    const rangeStarts = [
-      getStartDate(now, 3),
-      getStartDate(now, 2),
-      getStartDate(now, 1),
-    ];
+    const rangeStarts = [getStartDate(3), getStartDate(2), getStartDate(1)];
 
+    // console.log(rangeStarts, '000000-----------------------');
     const scores = await UserScores.findAll({
       where: {
         user_id: user.id,
@@ -328,52 +332,46 @@ export const getUserDailyScores = async (
 
     for (const score of scores) {
       const createdAt = new Date(score.created_at);
-      const accuracy = (score.score / 10) * 100;
 
       if (createdAt >= rangeStarts[2]) {
         Object.assign(stats[2], {
           total_score: stats[2].total_score + score.score,
-          total_accuracy: stats[2].total_accuracy + accuracy,
           total_time: stats[2].total_time + score.elapsed_time,
           count: stats[2].count + 1,
         });
       } else if (createdAt >= rangeStarts[1]) {
         Object.assign(stats[1], {
           total_score: stats[1].total_score + score.score,
-          total_accuracy: stats[1].total_accuracy + accuracy,
           total_time: stats[1].total_time + score.elapsed_time,
           count: stats[1].count + 1,
         });
       } else {
         Object.assign(stats[0], {
           total_score: stats[0].total_score + score.score,
-          total_accuracy: stats[0].total_accuracy + accuracy,
           total_time: stats[0].total_time + score.elapsed_time,
           count: stats[0].count + 1,
         });
       }
     }
 
-    const formatStats = (data: (typeof stats)[0], start: Date, end: Date) => ({
-      label: `${start.toLocaleDateString(
-        undefined,
-        rangeLabelFormat,
-      )} - ${end.toLocaleDateString(undefined, rangeLabelFormat)}`,
-      total_score: data.total_score,
-      avg_score: data.count ? +(data.total_score / data.count).toFixed(2) : 0,
-      avg_accuracy: data.count
-        ? +(data.total_accuracy / data.count).toFixed(2)
-        : 0,
-      avg_elapsed_time: data.count
-        ? +(data.total_time / data.count / 60).toFixed(2)
-        : 0,
-      avg_count: data.count,
-    });
+    const formatStats = (data: (typeof stats)[0], start: Date, end: Date) => {
+      return {
+        label: `${start.toLocaleDateString(undefined, rangeLabelFormat)} ${
+          filter_by === 'last_3_months'
+            ? ''
+            : `- ${end.toLocaleDateString(undefined, rangeLabelFormat)}`
+        }`,
+        avg_score: data.count ? +(data.total_score / data.count).toFixed(2) : 0,
+        avg_elapsed_time: data.count
+          ? +(data.total_time / data.count / 60).toFixed(2)
+          : 0,
+      };
+    };
 
     const results = [
       formatStats(stats[0], rangeStarts[0], rangeStarts[1]),
       formatStats(stats[1], rangeStarts[1], rangeStarts[2]),
-      formatStats(stats[2], rangeStarts[2], now),
+      formatStats(stats[2], rangeStarts[2], new Date()),
     ];
 
     res.status(200).json(results);
