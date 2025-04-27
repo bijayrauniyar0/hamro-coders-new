@@ -1,4 +1,10 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for the project",
+  "engines": {
+    "node": "21.7.3"
+  },
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
