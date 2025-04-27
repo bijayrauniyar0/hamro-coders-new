@@ -1,3 +1,4 @@
+import { ChartConfig } from '@Components/radix/chart';
 import { SessionsBoxProps } from '@Constants/Types/myStats';
 
 export const modeDropDownOptions = [
@@ -57,7 +58,6 @@ export const sessionsData: SessionsBoxProps[] = [
   {
     title: 'Speed Typing',
     score: 85,
-    accuracy: '94.5%',
     elapsed_time: 120,
     mode: 'Practice',
     created_at: '2025-04-18T14:30:00Z',
@@ -65,7 +65,6 @@ export const sessionsData: SessionsBoxProps[] = [
   {
     title: 'Code Challenge',
     score: 72,
-    accuracy: '88.0%',
     elapsed_time: 180,
     mode: 'Ranked',
     created_at: '2025-04-17T19:15:00Z',
@@ -73,7 +72,6 @@ export const sessionsData: SessionsBoxProps[] = [
   {
     title: 'Memory Test',
     score: 90,
-    accuracy: '97.2%',
     elapsed_time: 150,
     mode: 'Practice',
     created_at: '2025-04-16T11:00:00Z',
@@ -81,7 +79,6 @@ export const sessionsData: SessionsBoxProps[] = [
   {
     title: 'Reflex Drill',
     score: 64,
-    accuracy: '76.3%',
     elapsed_time: 60,
     mode: 'Ranked',
     created_at: '2025-04-15T17:45:00Z',
@@ -89,7 +86,6 @@ export const sessionsData: SessionsBoxProps[] = [
   {
     title: 'Focus Mode',
     score: 95,
-    accuracy: '99.1%',
     elapsed_time: 300,
     mode: 'Practice',
     created_at: '2025-04-14T08:20:00Z',
@@ -146,3 +142,10 @@ export const tableData = [
     rank_change: 2,
   },
 ];
+
+export const chartConfig = {
+  currentData: {
+    label: 'Total Score',
+    color: 'hsl(var(--chart-1))',
+  },
+} satisfies ChartConfig;

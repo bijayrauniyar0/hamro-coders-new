@@ -1,59 +1,44 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { useQuery } from '@tanstack/react-query';
-import { Hash, TrendingUp } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Hash, LineChart, TrendingUp } from 'lucide-react';
+import { BarChart as BarChartIcon, Target, Timer, Trophy } from 'lucide-react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
+import { DatePickerWithRange } from '@Components/common/DateRangePicker';
 import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
+import NoDataAvailable from '@Components/common/NoDataAvailable';
 import { Card, CardHeader, CardTitle } from '@Components/radix/card';
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
 } from '@Components/radix/chart';
+import { chartConfig } from '@Constants/MyStats';
+import useScreenWidth from '@Hooks/useScreenWidth';
 import { getPerformanceTrend } from '@Services/userStats';
 
-const chartConfig = {
-  currentData: {
-    label: 'Total Score',
-    color: 'hsl(var(--chart-1))',
-  },
-} satisfies ChartConfig;
-
-import { DateRange } from 'react-day-picker';
-import { BarChart as BarChartIcon, Target, Timer, Trophy } from 'lucide-react';
-
-import { DatePickerWithRange } from '@Components/common/DateRangePicker';
-import NoDataAvailable from '@Components/common/NoDataAvailable';
-
 import { PerformanceTrendSkeleton } from '../MyStatsSkeleton';
+
+import PerformanceTrendBarChart from './BarChart';
+import PerformanceTrendLineChart from './LineChart';
 
 export const chartTooltipMeta: Record<
   string,
   { title: string; icon: (color: string) => JSX.Element }
 > = {
-  total_score: {
-    title: 'Total Score',
-    icon: color => (
-      <Trophy
-        color={color}
-        className="flex h-4 w-4 items-center md:h-5 md:w-5"
-      />
-    ),
-  },
   avg_score: {
     title: 'Avg Score',
     icon: color => (
       <BarChartIcon
-        color={color}
-        className="flex h-4 w-4 items-center md:h-5 md:w-5"
-      />
-    ),
-  },
-  avg_accuracy: {
-    title: 'Avg Accuracy (in %)',
-    icon: color => (
-      <Target
         color={color}
         className="flex h-4 w-4 items-center md:h-5 md:w-5"
       />
@@ -68,13 +53,18 @@ export const chartTooltipMeta: Record<
       />
     ),
   },
-  avg_count: {
-    title: 'Avg Count',
-    icon: color => (
-      <Hash color={color} className="flex h-4 w-4 items-center md:h-5 md:w-5" />
-    ),
-  },
 };
+
+const chartsTypeData = [
+  {
+    type: 'bar',
+    icon: <BarChartIcon />,
+  },
+  {
+    type: 'line',
+    icon: <LineChart />,
+  },
+];
 
 const ChartTooltipContent = ({
   active,
@@ -101,8 +91,48 @@ const ChartTooltipContent = ({
   );
 };
 
+const chartKeysData = [
+  // {
+  //   label: 'Total Score',
+  //   value: 'total_score',
+  //   color: '#1e3a8a', // Dark Blue
+  // },
+  {
+    label: 'Avg Score',
+    value: 'avg_score',
+    color: '#3b82f6', // Medium Blue
+  },
+  {
+    label: 'Avg Elapsed Time (in Minutes)',
+    value: 'avg_elapsed_time',
+    color: '#1e3a8a', // Dark Blue
+  },
+  // {
+  //   label: 'Avg Accuracy (in %)',
+  //   value: 'avg_accuracy',
+  //   color: '#3b82f6', // Medium Blue
+  // },
+  // {
+  //   label: 'Avg Count',
+  //   value: 'avg_count',
+  //   color: '#1e3a8a', // Dark Blue
+  // },
+];
+
 export default function PerformanceTrend() {
-  // const [filterBy, setFilterBy] = useState('last_3_months');
+  const screenWidth = useScreenWidth();
+  const [selectedChartType, setSelectedChartType] = useState<
+    Record<string, string>
+  >(
+    chartKeysData.reduce(
+      (acc, item) => {
+        acc[item.value] = 'bar';
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
+  );
+
   const [filterDateRange, setFilterDateRange] = useState<DateRange | undefined>(
     {
       from: new Date(new Date().setDate(new Date().getDate() - 15)),
@@ -124,35 +154,9 @@ export default function PerformanceTrend() {
     },
   });
 
-
-  const chartKeysData = [
-    // {
-    //   label: 'Total Score',
-    //   value: 'total_score',
-    //   color: '#1e3a8a', // Dark Blue
-    // },
-    {
-      label: 'Avg Score',
-      value: 'avg_score',
-      color: '#3b82f6', // Medium Blue
-    },
-    {
-      label: 'Avg Elapsed Time (in Minutes)',
-      value: 'avg_elapsed_time',
-      color: '#1e3a8a', // Dark Blue
-    },
-    // {
-    //   label: 'Avg Accuracy (in %)',
-    //   value: 'avg_accuracy',
-    //   color: '#3b82f6', // Medium Blue
-    // },
-    // {
-    //   label: 'Avg Count',
-    //   value: 'avg_count',
-    //   color: '#1e3a8a', // Dark Blue
-    // },
-  ];
-
+  // const chartComponents: { [key: string]: React.ReactNode } = {
+  //   'bar': <PerformanceTrendBarChart dataKey=''/>
+  // };
   // const filterByOptions = [
   //   {
   //     label: 'Last 3 Months',
@@ -182,7 +186,7 @@ export default function PerformanceTrend() {
           handleDate={val => {
             setFilterDateRange(val);
           }}
-          placeHolderClassName='max-md:hidden'
+          placeHolderClassName="max-md:hidden"
         />
         {/* <SwitchTab
           options={filterByOptions}
@@ -200,36 +204,76 @@ export default function PerformanceTrend() {
             chartKeysData.map(option => (
               <Card key={option.value} className="w-full !p-0">
                 <CardHeader>
-                  <CardTitle className="!text-md tracking-normal">
+                  <CardTitle className="flex items-center justify-between !text-md tracking-normal">
                     {option.label}
+                    <FlexRow className="gap-2">
+                      {chartsTypeData.map(chart => (
+                        <button
+                          key={chart.type}
+                          onClick={() => {
+                            setSelectedChartType(prevData => {
+                              return {
+                                ...prevData,
+                                [option.value]: chart.type,
+                              };
+                            });
+                          }}
+                          className={`rounded-lg border border-gray-200 p-1 shadow-sm ${selectedChartType?.[option.value] === chart.type ? 'bg-primary-500 text-white' : 'bg-white'}`}
+                        >
+                          {chart.icon}
+                        </button>
+                      ))}
+                    </FlexRow>
                   </CardTitle>
                 </CardHeader>
-                <ChartContainer config={chartConfig}>
-                  <BarChart
-                    accessibilityLayer
-                    data={chartData}
-                    margin={{ top: 15, right: 10, bottom: 10, left: 0 }}
-                  >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="label"
-                      tickLine={false}
-                      tickMargin={10}
-                      axisLine={false}
-                    />
-                    <YAxis />
-                    <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent />}
-                    />
-                    <Bar
+                <ResponsiveContainer className="!h-[300px]">
+                  {/* <ChartContainer config={chartConfig}> */}
+                  {selectedChartType[option.value] === 'line' ? (
+                    <PerformanceTrendLineChart
                       dataKey={option.value}
+                      chartData={chartData}
                       fill={option.color}
-                      radius={4}
-                      barSize={56}
+                      tooltip={ChartTooltipContent}
                     />
-                  </BarChart>
-                </ChartContainer>
+                  ) : (
+                    <PerformanceTrendBarChart
+                      dataKey={option.value}
+                      chartData={chartData}
+                      fill={option.color}
+                      tooltip={ChartTooltipContent}
+                    />
+                  )}
+                  {/* <PerformanceTrendBarChart
+                    dataKey={option.value}
+                    chartData={chartData}
+                    fill={option.color}
+                  /> */}
+                  {/* <BarChart
+                      accessibilityLayer
+                      data={chartData}
+                      margin={{ top: 15, right: 10, bottom: 10, left: -18 }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="label"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                      />
+                      <YAxis domain={[0, 'dataMax + 2']} />
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent />}
+                      />
+                      <Bar
+                        dataKey={option.value}
+                        fill={option.color}
+                        radius={4}
+                        barSize={barSize}
+                      />
+                    </BarChart> */}
+                  {/* </ChartContainer> */}
+                </ResponsiveContainer>
               </Card>
             ))
           )}

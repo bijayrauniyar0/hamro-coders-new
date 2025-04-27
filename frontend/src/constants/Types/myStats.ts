@@ -1,3 +1,9 @@
+import {
+  NameType,
+  ValueType,
+} from 'recharts/types/component/DefaultTooltipContent';
+import { ContentType } from 'recharts/types/component/Tooltip';
+
 export type StatsCardProps = {
   title: string;
   value: number | string;
@@ -26,4 +32,11 @@ export interface IPerformanceTrendProps {
 export interface IFilters {
   modeFilter: string;
   timePeriodFilter: string;
+}
+
+export interface IChartProps {
+  chartData: Record<string, any>[];
+  dataKey: string;
+  fill: string;
+  tooltip: ContentType<ValueType, NameType>;
 }
