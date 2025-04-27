@@ -9,6 +9,8 @@ import courseRouter from '@Routes/courseRoutes';
 import notificationRouter from '@Routes/notificationRoutes';
 import analyticsRouter from '@Routes/analyticsRoutes';
 
+const PORT = process.env.PORT || 9000;
+
 const app = express();
 app.use(cors());
 app.use(express.json()); // Middleware to parse JSON requests
@@ -20,8 +22,15 @@ app.use('/api/leaderboard', userScoresRouter);
 app.use('/api/notification', notificationRouter);
 app.use('/api/analytics', analyticsRouter);
 
-sequelize.authenticate();
-
-sequelize.sync({ force: false }).then(() => {
-  app.listen(process.env.PORT || 9000);
-});
+sequelize
+  .authenticate()
+  .then(() => {
+    return sequelize.sync({ force: false });
+  })
+  .then(() => {
+    app.listen(+PORT, '0.0.0.0', () => {});
+  })
+  .catch(err => {
+    // eslint-disable-next-line no-console
+    console.error('Unable to connect to the database:', err);
+  });
