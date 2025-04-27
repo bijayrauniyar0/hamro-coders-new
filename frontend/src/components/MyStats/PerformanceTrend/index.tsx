@@ -173,7 +173,7 @@ export default function PerformanceTrend() {
   // ];
   return (
     <FlexColumn className="gap-4">
-      <FlexRow className="items-center justify-between">
+      <FlexRow className="items-center justify-between max-md:gap-2">
         <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
           Performance Trend
         </p>
@@ -182,6 +182,7 @@ export default function PerformanceTrend() {
           handleDate={val => {
             setFilterDateRange(val);
           }}
+          placeHolderClassName='max-md:hidden'
         />
         {/* <SwitchTab
           options={filterByOptions}

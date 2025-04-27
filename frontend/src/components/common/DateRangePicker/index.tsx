@@ -2,16 +2,16 @@
 
 import * as React from 'react';
 import { DateRange } from 'react-day-picker';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@radix-ui/react-popover';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 
 import { Button } from '@Components/radix/Button';
 import { Calendar } from '@Components/radix/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@Components/radix/Popover';
 import { cn } from '@Utils/index';
 
 interface IDatePickerWithRangeProps
@@ -19,11 +19,13 @@ interface IDatePickerWithRangeProps
   date: DateRange | undefined;
   // eslint-disable-next-line no-unused-vars
   handleDate: (date: DateRange | undefined) => void;
+  placeHolderClassName?: string;
 }
 export function DatePickerWithRange({
   className,
   date,
   handleDate,
+  placeHolderClassName,
 }: IDatePickerWithRangeProps) {
   return (
     <div className={cn('grid gap-2', className)}>
@@ -33,26 +35,31 @@ export function DatePickerWithRange({
             id="date"
             variant={'outline'}
             className={cn(
-              'w-[15rem] justify-start text-left font-normal',
+              'w-fit max-w-[15rem] justify-start text-left font-normal max-md:px-2 max-md:!text-xs',
               !date && 'text-muted-foreground',
             )}
           >
-            <CalendarIcon />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, 'LLL dd, y')} -{' '}
-                  {format(date.to, 'LLL dd, y')}
-                </>
+            <CalendarIcon className="max-md:h-5 max-md:w-5" />
+            <p className={`max-md:text-xs ${placeHolderClassName}`}>
+              {date?.from ? (
+                date.to ? (
+                  <>
+                    {format(date.from, 'LLL dd, y')} -{' '}
+                    {format(date.to, 'LLL dd, y')}
+                  </>
+                ) : (
+                  format(date.from, 'LLL dd, y')
+                )
               ) : (
-                format(date.from, 'LLL dd, y')
-              )
-            ) : (
-              <span>Pick a date</span>
-            )}
+                <span>Pick a date</span>
+              )}
+            </p>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="z-[111] w-auto !bg-white p-0 border border-gray-300 shadow-sm rounded-lg mt-2" align="end">
+        <PopoverContent
+          className="z-[111] mt-2 w-auto rounded-lg border border-gray-300 !bg-white p-0 shadow-sm"
+          align="end"
+        >
           <Calendar
             initialFocus
             mode="range"
