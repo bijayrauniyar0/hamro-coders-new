@@ -2,6 +2,7 @@ export type StatsCardProps = {
   title: string;
   value: number | string;
   icon: string;
+  tooltipMessage?: string;
 };
 
 export interface SessionsBoxProps {

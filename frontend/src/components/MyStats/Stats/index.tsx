@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { FlexRow } from '@Components/common/Layouts';
+import { Grid } from '@Components/common/Layouts';
 import { statsData } from '@Constants/MyStats';
 import { IFilters } from '@Constants/Types/myStats';
 import { getUserStats } from '@Services/userStats';
@@ -19,7 +19,7 @@ const Stats = ({ modeFilter, timePeriodFilter }: IFilters) => {
     enabled: !!modeFilter && !!timePeriodFilter,
   });
   return (
-    <FlexRow className="flex-wrap justify-between gap-4">
+    <Grid className="w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {userStatsIsLoading ? (
         <MyStatsSkeleton />
       ) : (
@@ -31,7 +31,7 @@ const Stats = ({ modeFilter, timePeriodFilter }: IFilters) => {
           />
         ))
       )}
-    </FlexRow>
+    </Grid>
   );
 };
 
