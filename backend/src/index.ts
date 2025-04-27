@@ -13,8 +13,6 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // Middleware to parse JSON requests
 
-const port = 9000;
-
 app.use('/api/user', userRoutes);
 app.use('/api/mcq', mcqRouter);
 app.use('/api/courses', courseRouter);
@@ -25,5 +23,5 @@ app.use('/api/analytics', analyticsRouter);
 sequelize.authenticate();
 
 sequelize.sync({ force: false }).then(() => {
-  app.listen(port);
+  app.listen(process.env.PORT || 9000);
 });
