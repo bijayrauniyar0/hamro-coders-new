@@ -1,17 +1,8 @@
-import Label from './Label';
-import Input from './Input';
-import Select from './Select';
-import FormGroup from './FormGroup';
 import FormControl from './FormControl';
-import { DatePicker } from './DatePicker';
+import FormGroup from './FormGroup';
+import Input from './Input';
+import Label from './InputLabel';
 import RadioButton from './Radio';
+import Select from './Select';
 
-export {
-  Label,
-  Input,
-  Select,
-  FormControl,
-  FormGroup,
-  DatePicker,
-  RadioButton,
-};
+export { Label, Input, Select, FormControl, FormGroup, RadioButton };

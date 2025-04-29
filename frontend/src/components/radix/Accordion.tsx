@@ -1,5 +1,6 @@
 import React from 'react';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
+
 import { cn } from '@Utils/index';
 
 const Accordion = AccordionPrimitive.Root;

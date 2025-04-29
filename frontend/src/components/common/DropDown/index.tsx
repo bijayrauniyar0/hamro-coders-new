@@ -1,7 +1,5 @@
-/* eslint-disable no-nested-ternary */
 import React, { useEffect, useRef } from 'react';
-import { cn } from '@Utils/index';
-import { IComboBoxProps, IDropDownData } from '@Constants/interface';
+
 import { Button } from '@Components/radix/Button';
 import { Command, CommandGroup, CommandItem } from '@Components/radix/Command';
 import {
@@ -9,9 +7,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@Components/radix/Popover';
+import { cn } from '@Utils/index';
+import { IComboBoxProps, IDropDownData } from '@Constants/interface';
 import useDebouncedInput from '@Hooks/useDebouncedInput';
-import Icon from '../Icon';
+
 import hasErrorBoundary from '../hasErrorBoundary';
+import Icon from '../Icon';
 import Searchbar from '../SearchBar';
 
 function Dropdown({
@@ -105,13 +106,13 @@ function Dropdown({
       <PopoverTrigger asChild ref={triggerRef}>
         <Button
           id={id}
-          variant="dropDown"
+          variant="outline"
           size={dropDownSize}
           role="combobox"
           disabled={disabled}
           aria-expanded={open}
           className={cn(
-            'group flex items-center justify-between gap-2 bg-white hover:border-secondary-500 disabled:!cursor-not-allowed',
+            'group flex items-center justify-between gap-2 bg-white hover:border-primary-500 disabled:!cursor-not-allowed',
             className,
           )}
           onClick={() => setOpen(true)}
@@ -121,7 +122,7 @@ function Dropdown({
               {hasLeftIcon && (
                 <Icon
                   name={leftIconName ?? ''}
-                  className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-secondary-500"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-primary-500"
                 />
               )}
               {multiple ? (
@@ -142,7 +143,7 @@ function Dropdown({
                   ) : (
                     <p
                       className={cn(
-                        'body-sm line-clamp-1 text-start text-[#667085]',
+                        'line-clamp-1 text-start text-sm text-[#667085]',
                         placeholderClassName,
                       )}
                     >
@@ -153,7 +154,7 @@ function Dropdown({
               ) : (
                 <>
                   {value ? (
-                    <p className="body-sm line-clamp-1 text-start text-matt-200">
+                    <p className="line-clamp-1 text-start text-sm font-medium text-matt-200">
                       {options.find(
                         (option: IDropDownData) =>
                           option[choose as keyof IDropDownData] === value,
@@ -174,7 +175,7 @@ function Dropdown({
             </div>
             <Icon
               name="expand_more"
-              className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-secondary-500"
+              className="flex h-6 w-6 shrink-0 items-center justify-center text-[24px] font-light leading-6 text-matt-200 duration-200 group-hover:text-primary-500"
             />
           </>
         </Button>
@@ -208,7 +209,7 @@ function Dropdown({
                     {!checkBox ? (
                       <Icon
                         name="done"
-                        className={`text-[20px] ${
+                        className={`flex items-center justify-center text-base md:text-[20px] ${
                           !multiple
                             ? value === option[choose as keyof IDropDownData]
                               ? 'opacity-100'
@@ -235,10 +236,12 @@ function Dropdown({
                               ? 'check_box'
                               : 'check_box_outline_blank'
                         }
-                        className="text-[20px]"
+                        className="flex items-center justify-center text-base md:text-[20px]"
                       />
                     )}
-                    <span>{option.label || '-'}</span>
+                    <span className="text-sm md:text-md">
+                      {option.label || '-'}
+                    </span>
                   </CommandItem>
                 ))
               ) : (

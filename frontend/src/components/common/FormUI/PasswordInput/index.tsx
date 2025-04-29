@@ -3,7 +3,6 @@ import * as React from 'react';
 
 import Icon from '@Components/common/Icon';
 import { cn } from '@Utils/index';
-import FormControl from '../FormControl';
 
 export interface IInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
@@ -13,7 +12,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, IInputProps>(
     const [showPassword, setShowPassword] = React.useState(false);
 
     return (
-      <FormControl className="relative">
+      <div className="relative">
         <input
           ref={ref}
           type={showPassword ? 'text' : 'password'}
@@ -26,7 +25,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, IInputProps>(
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-2 top-2/4 -translate-y-2/4 text-xl"
         />
-      </FormControl>
+      </div>
     );
   },
 );

@@ -1,8 +1,11 @@
-import AcademicsPage from '@Views/Academics';
+// import ModesPage from '@Views/Modes';
+import AuthenticationComponent from '@Components/UserAuthentication';
+import CoursesPage from '@Views/Courses';
+import DashboardPage from '@Views/Dashboard';
+import LeaderboardPage from '@Views/LeaderboardPage';
+import MyStatsPage from '@Views/MyStatsPage';
+
 import { IRoute } from './type';
-import DashboardPage from '@Views/Dashbaord';
-import ModesPage from '@Views/Modes';
-import MCQBox from '@Components/Academics/MCQSection';
 
 const appRoutes: IRoute[] = [
   {
@@ -11,24 +14,35 @@ const appRoutes: IRoute[] = [
     component: DashboardPage,
   },
   {
-    name: 'Academics',
-    path: '/academics/:courseName',
-    component: AcademicsPage,
+    name: 'Login',
+    path: '/login',
+    component: AuthenticationComponent,
   },
   {
-    name: 'Academics',
-    path: '/:courseName/:subjectCode',
-    component: ModesPage,
+    name: 'Login',
+    path: '/signup',
+    component: AuthenticationComponent,
   },
   {
-    name: 'Coding',
-    path: '/coding',
-    component: MCQBox,
+    name: 'Courses',
+    path: '/courses/*',
+    component: CoursesPage,
+    authenticated: true,
   },
   {
-    name: 'MCQ',
-    path: '/mcq',
-    component: MCQBox,
+    name: 'Leaderboard',
+    path: '/leaderboard',
+    component: LeaderboardPage,
+  },
+  {
+    name: 'Analytics',
+    path: '/analytics',
+    component: MyStatsPage,
+  },
+  {
+    name: 'Verify Email',
+    path: '/verify-email',
+    component: AuthenticationComponent,
   },
 ];
 

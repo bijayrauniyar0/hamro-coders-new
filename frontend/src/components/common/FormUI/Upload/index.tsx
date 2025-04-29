@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ChangeEvent, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { format } from 'date-fns';
-import useCustomUpload from '@Hooks/useCustomUpload';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import Icon from '@Components/common/Icon';
-import Image from '@Components/radix/Image';
-import { UseFormPropsType } from '@Constants/Types/type';
-import { convertFileUrlToFileArray } from '@Utils/index';
 import { toast } from 'react-toastify';
+import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
+
+import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import { convertFileUrlToFileArray } from '@Utils/index';
+import { UseFormPropsType } from '@Constants/Types/type';
+import useCustomUpload from '@Hooks/useCustomUpload';
+
 import Input from '../Input';
 
 type FileType = File & {
@@ -63,7 +63,7 @@ export default function FileUpload({
   // register form element to useForm
   useEffect(() => {
     register(name);
-    // eslint-disable-next-line no-unused-expressions
+
     // setValue(name, []);
   }, [register, name, setValue]);
 
@@ -115,7 +115,7 @@ export default function FileUpload({
   return (
     <FlexColumn gap={5}>
       <FlexColumn
-        className="cursor-pointer items-center justify-center rounded-lg border border-dashed border-[#E6E6E6] bg-[#FAFAFA] px-5 py-3 duration-200 hover:border-secondary-500"
+        className="cursor-pointer items-center justify-center rounded-lg border border-dashed border-[#E6E6E6] bg-[#FAFAFA] px-5 py-3 duration-200 hover:border-primary-500"
         //   @ts-ignore
         onClick={onFileUpload}
       >
@@ -134,7 +134,7 @@ export default function FileUpload({
       </FlexColumn>
       {multiple && (
         <FlexRow
-          className="group w-full items-center justify-center rounded-md border border-dashed p-3 duration-200 hover:border-secondary-500 hover:bg-[#FAFAFA]"
+          className="group w-full items-center justify-center rounded-md border border-dashed p-3 duration-200 hover:border-primary-500 hover:bg-[#FAFAFA]"
           role="button"
           tabIndex={0}
           //   @ts-ignore
@@ -170,7 +170,7 @@ export default function FileUpload({
                     />
                   </div>
                 ) : (
-                  <Image src={previewURL} alt="" />
+                  <img className='h-8 w-8 object-cover aspect-square' src={previewURL} alt="" />
                 )}
               </div>
               <FlexColumn className="w-[85%]">
@@ -188,7 +188,7 @@ export default function FileUpload({
             <FlexRow gap={2} className="!w-[20%] justify-end">
               <Icon
                 name="download"
-                className="text-grey-400 duration-200 hover:text-secondary-500"
+                className="text-grey-400 duration-200 hover:text-primary-500"
                 onClick={() => downloadBlob(previewURL, file?.name)}
               />
               <Icon

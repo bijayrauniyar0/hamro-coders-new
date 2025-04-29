@@ -18,16 +18,3 @@ export interface UseFormPropsType {
   // resolver: Resolver;
   // onSubmit: (data: FieldValues) => void;
 }
-export interface IFormState {
-  errors: FieldErrors<FieldValues>;
-  isSubmitting: boolean;
-  isValid: boolean;
-  isSuccess: boolean;
-  isSubmitted: boolean;
-}
-
-export type MultiStepType = {
-  id: number;
-  value: number;
-  text: string;
-};

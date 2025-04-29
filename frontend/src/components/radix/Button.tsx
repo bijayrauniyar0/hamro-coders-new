@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import { VariantProps, cva } from 'class-variance-authority';
+import { cva, VariantProps } from 'class-variance-authority';
 
 import { cn } from '@Utils/index';
 
@@ -10,13 +10,14 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-secondary-500 text-white hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+          'bg-primary-700 text-white hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
         secondary:
-          'bg-white text-secondary-500 border border-secondary-500 hover:bg-secondary-100 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+          'bg-white text-primary-500 border border-primary-500 hover:bg-primary-100 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
 
-        link: 'text-secondary-500 hover:text-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+        link: 'text-primary-600 hover:text-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
 
-        dropDown:
+        outline:
           'bg-white text-grey-900 border border-grey-600 focus:border-primary-500 rounded-lg',
       },
       size: {
@@ -57,7 +58,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {props.children}
-        {isLoading ? <div className="spinner ml-2" /> : ''}
+        {isLoading ? (
+          <div
+            className={`spinner ml-2 ${props?.disabled ? '!border-t-primary-500' : ''}`}
+          />
+        ) : (
+          ''
+        )}
       </Comp>
     );
   },

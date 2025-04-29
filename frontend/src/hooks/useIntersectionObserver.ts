@@ -9,7 +9,6 @@ function useIntersectionObserver(): [boolean, any, any] {
     rootMargin: '0px',
     threshold: 0,
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const observer = new IntersectionObserver(
     ([entry]) => setIsIntersecting(entry.isIntersecting),
     options,

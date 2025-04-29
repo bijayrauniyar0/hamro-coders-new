@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 export interface IRoute {
   id?: number;
   path: string;
@@ -8,4 +8,5 @@ export interface IRoute {
     | React.LazyExoticComponent<React.ComponentType<any>>;
   children?: IRoute[];
   icon?: string;
+  authenticated?:boolean;
 }

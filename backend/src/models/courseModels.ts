@@ -1,0 +1,36 @@
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../config/database';
+import Subject from './subjectsModels';
+
+class Course extends Model {
+  public id!: number;
+  public course_name!: string;
+}
+
+Course.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    course_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: 'courses',
+    sequelize,
+    timestamps: false,
+  },
+);
+
+Course.hasMany(Subject, {
+  foreignKey: 'course_id',
+  sourceKey: 'id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+export default Course;

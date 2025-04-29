@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { useRef, useEffect } from 'react';
-import SearchIcon from '@Assets/icons/searchIcon.svg';
+import { useEffect,useRef } from 'react';
+
+import SearchIcon from '@Assets/images/icons/searchIcon.svg';
 
 interface ISearchbarProps {
   className?: string;
@@ -52,7 +53,6 @@ export default function Searchbar({
           <img src={SearchIcon} alt="Search Icon" className="h-5 w-5" />
         </div>
         {value && (
-          // eslint-disable-next-line jsx-a11y/click-events-have-key-events
           <div
             className={`absolute right-2 ${
               isSmall ? 'top-1.5' : 'top-[0.563rem]'

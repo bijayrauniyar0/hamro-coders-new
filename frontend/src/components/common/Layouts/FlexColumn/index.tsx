@@ -1,5 +1,6 @@
-/* eslint-disable react/jsx-props-no-spreading */
+ 
 import { cn } from '@Utils/index';
+
 import { IFlexContainerProps } from '../types';
 
 export default function FlexColumn({

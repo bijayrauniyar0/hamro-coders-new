@@ -1,6 +1,8 @@
-import { clsx, type ClassValue } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { v4 as uuidv4 } from 'uuid';
+
+import fallBack2 from '@Assets/images/fallBack2.jpeg';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -38,4 +40,58 @@ export function removeObjectAtIndex<T>(array: T[], index: number): T[] {
   const newArray = [...array.slice(0, index), ...array.slice(index + 1)];
 
   return newArray;
+}
+
+export function rearrangeByRank(arr: any[]) {
+  const rankOrder = [2, 1, 3];
+
+  // Default object template
+  const defaultObj = (rank: number) => ({
+    user_id: null,
+    name: 'N/A',
+    total_score: 0,
+    rank,
+    previous_rank: null,
+  });
+
+  // Create a map of available ranks
+  const rankMap = new Map(arr.map(item => [item.rank, item]));
+
+  // Ensure the order is always 2 → 1 → 3, filling missing ranks
+  return rankOrder.map(rank => rankMap.get(rank) || defaultObj(rank));
+}
+
+export const getFallBackImage = () => {
+  return fallBack2;
+};
+
+export const calculatePercentage = (value: number, total: number) => {
+  if (total === 0) return 0;
+  return Math.round((value / total) * 100);
+};
+
+export const getPercentageColor = (value: number, total: number) => {
+  const percentage = calculatePercentage(value, total);
+  switch (true) {
+    case percentage === 0:
+      return 'text-red-500';
+    case percentage <= 25:
+      return 'text-orange-500';
+    case percentage <= 50:
+      return 'text-yellow-500';
+    case percentage <= 75:
+      return 'text-green-500';
+    case percentage <= 100:
+      return 'text-green-700';
+    default:
+      return 'text-gray-500';
+  }
+};
+
+export function getDisplayedRowCount(data: any): number {
+  let allData: any[] = [];
+  data?.forEach((element: Record<string, any>) => {
+    allData = [...(element?.results || []), ...allData];
+  });
+  return allData.length;
 }

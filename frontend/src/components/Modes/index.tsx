@@ -1,21 +1,25 @@
 import React, { useEffect } from 'react';
-import ModesBox from './ModesBox';
-import { LeftCustomArrow, modesData, RightCustomArrow } from '@Constants/modes';
-import Portal from '@Components/common/Layouts/Portal';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import { motion } from 'framer-motion';
-import { cardVariants, containerVariants } from '@Animations/index';
 import Slider, { Settings } from 'react-slick';
-import useScreenWidth from '@Hooks/useScreenWidth';
-import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
-import { setIsModesOpen, setSelectedMode } from '@Store/actions/common';
+import { cardVariants, containerVariants } from '@Animations/index';
+import { motion } from 'framer-motion';
+
 import Icon from '@Components/common/Icon';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import Portal from '@Components/common/Layouts/Portal';
 import { Button } from '@Components/radix/Button';
+import { setSelectedMode } from '@Store/actions/common';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import { LeftCustomArrow, modesData, RightCustomArrow } from '@Constants/modes';
+import useScreenWidth from '@Hooks/useScreenWidth';
+
+import ModesBox from './ModesBox';
 
 type ModesProps = {
   handleNextClick: () => void;
+  onClose: () => void;
 };
-const Modes = ({ handleNextClick }: ModesProps) => {
+
+const Modes = ({ handleNextClick, onClose }: ModesProps) => {
   const dispatch = useTypedDispatch();
   const selectedMode = useTypedSelector(
     state => state.commonSlice.selectedMode,
@@ -24,7 +28,7 @@ const Modes = ({ handleNextClick }: ModesProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        dispatch(setIsModesOpen(false));
+        onClose();
       }
     };
 
@@ -65,7 +69,7 @@ const Modes = ({ handleNextClick }: ModesProps) => {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="mx-auto grid h-[80%] grid-cols-3 gap-8"
+            className="mx-auto flex h-[80%] items-center justify-center gap-8"
           >
             {modesData.map(mode => (
               <motion.div variants={cardVariants} key={mode.id}>
@@ -100,7 +104,7 @@ const Modes = ({ handleNextClick }: ModesProps) => {
       <Icon
         name="close"
         className="absolute right-8 top-6 z-50 cursor-pointer text-[2rem] text-white"
-        onClick={() => dispatch(setIsModesOpen(false))}
+        onClick={onClose}
       />
       <div className="absolute flex h-full w-full items-start justify-start bg-[#23043d66]">
         <FlexColumn className="mx-auto mt-[2rem] w-11/12 gap-[3rem] md:mt-0 md:gap-[5rem]">
@@ -150,7 +154,7 @@ const Modes = ({ handleNextClick }: ModesProps) => {
                 className="mx-auto w-[4rem] bg-[#8e1bedb5]"
                 onClick={() => {
                   handleNextClick();
-                  dispatch(setIsModesOpen(false));
+                  onClose();
                 }}
                 disabled={!selectedMode}
               >

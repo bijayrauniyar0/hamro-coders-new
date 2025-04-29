@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, RefObject } from 'react';
+import { RefObject,useCallback, useEffect, useRef, useState } from 'react';
 
 type clickType = 'single' | 'multiple';
 

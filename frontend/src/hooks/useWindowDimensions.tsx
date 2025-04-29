@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect,useState } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function debounce(func: Function, timeout = 300) {
   let timer: any;
   return (arg: any) => {

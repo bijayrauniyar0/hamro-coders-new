@@ -31,17 +31,46 @@
   p {
     @apply text;
   }
-  /* span {
-    @apply text-body-sm;
-  } */
   a {
     @apply cursor-pointer select-none text-[13px];
+  }
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 44%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    /* Blue Shades */
+    --chart-1: 210 80% 30%; /* Deep Blue */
+    --chart-2: 210 75% 40%; /* Royal Blue */
+
+    /* Orange Shades */
+    --chart-3: 30 90% 50%; /* Vivid Orange */
+    --chart-4: 30 85% 35%; /* Dark Orange */
+
+    /* Green Shades */
+    --chart-5: 120 70% 40%; /* Forest Green */
+    --chart-6: 120 60% 55%; /* Light Green */
   }
 }
 
 @layer components {
   .input {
-    @apply block h-[40px] w-full gap-2 rounded-lg border border-solid border-grey-600 bg-white bg-clip-padding p-3 font-normal text-matt-200 transition ease-in-out placeholder:font-normal placeholder:text-grey-500 hover:border hover:border-secondary-500 focus:border focus:border-secondary-500 focus:outline-none;
+    @apply block h-[40px] w-full gap-2 rounded-lg border border-solid border-grey-600 bg-white bg-clip-padding p-3 font-normal text-matt-200 transition ease-in-out placeholder:font-normal placeholder:text-grey-500 hover:border hover:border-primary-600 focus:border focus:border-primary-600 focus:outline-none;
   }
   .label {
     @apply flex text-[14px] font-medium leading-4 text-matt-100;
@@ -167,10 +196,6 @@
 
 .icon-md {
   @apply text-[24px];
-}
-
-tr:nth-child(even) {
-  background-color: #e6e6e6;
 }
 
 .searchbar-dropdown {

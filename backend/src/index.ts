@@ -1,35 +1,36 @@
+// src/server.ts
 import express from 'express';
-import { Pool } from 'pg';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
+import userRoutes from '@Routes/userRoutes';
+import sequelize from './config/database';
+import cors from 'cors';
+import mcqRouter from '@Routes/mcqsRoutes';
+import userScoresRouter from '@Routes/leaderboardRoutes';
+import courseRouter from '@Routes/courseRoutes';
+import notificationRouter from '@Routes/notificationRoutes';
+import analyticsRouter from '@Routes/analyticsRoutes';
 
-dotenv.config();
+const PORT = process.env.PORT || 9000;
 
 const app = express();
-const port = 9000;
+app.use(cors());
+app.use(express.json()); // Middleware to parse JSON requests
 
-// PostgreSQL connection setup using environment variables
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || '8080'),
-});
+app.use('/api/user', userRoutes);
+app.use('/api/mcq', mcqRouter);
+app.use('/api/courses', courseRouter);
+app.use('/api/leaderboard', userScoresRouter);
+app.use('/api/notification', notificationRouter);
+app.use('/api/analytics', analyticsRouter);
 
-app.use(bodyParser.json());
-
-// Sample route to test DB connection
-app.get('/', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT NOW()');
-    res.send(result.rows[0]);
-  } catch (err) {
-    console.error('Database query error', err);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+sequelize
+  .authenticate()
+  .then(() => {
+    return sequelize.sync({ force: false });
+  })
+  .then(() => {
+    app.listen(Number(PORT) || 9000, '0.0.0.0', () => {});
+  })
+  .catch(err => {
+    // eslint-disable-next-line no-console
+    console.error('Unable to connect to the database:', err);
+  });

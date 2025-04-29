@@ -10,14 +10,17 @@ COPY package.json yarn.lock ./
 # Install dependencies
 RUN yarn install --frozen-lockfile
 
+ENV PORT=9000
+
+# EXPOSE is just documentation, but good to keep consistent with PORT
+EXPOSE 9000
+
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
-RUN yarn build
 
 # Expose the application port
-EXPOSE 9000
+# EXPOSE 9000
 
 # Define environment variables for PostgreSQL (optional; can also be in Docker Compose)
 ENV DB_USER=hamrocoders
@@ -27,4 +30,4 @@ ENV DB_PASSWORD=hamrocoders@123
 ENV DB_PORT=8080
 
 # Command to run the application
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]

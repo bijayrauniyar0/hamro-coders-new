@@ -16,46 +16,20 @@ export const theme = {
   },
   extend: {
     fontFamily: {
-      primary: ['Poppins', 'sans-serif'],
+      primary: ['Poppins'],
     },
     colors: {
-      // primary: {
-      //   100: '#F4F7FE',
-      //   200: '#EAECF0',
-      //   300: '#41588F',
-      //   400: '#C0C7DA',
-      //   500: '#8091B4',
-      //   600: '#41588F',
-      //   700: '#012069',
-      // },
-      // secondary: {
-      //   100: '#E2ECF7',
-      //   200: '#CFE0F1',
-      //   300: '#9FBEE4',
-      //   400: '#709ED6',
-      //   500: '#417EC9',
-      // },
       primary: {
-        100: '#efe1fc',
-        200: '#dfc3f9',
-        300: '#cfa5f5',
-        400: '#bf87f2',
-        500: '#af69ef',
-        600: '#8c54bf',
-        700: '#693f8f',
-        800: '#462a60',
-        900: '#231530',
-      },
-      secondary: {
-        100: '#ebdcef',
-        200: '#d7b8df',
-        300: '#c295ce',
-        400: '#ae71be',
-        500: '#9a4eae',
-        600: '#7b3e8b',
-        700: '#5c2f68',
-        800: '#3e1f46',
-        900: '#1f1023',
+        50: '#faf8fc', // Very light, almost white
+        100: '#f3ecfa', // Very light, almost white
+        200: '#e1d4f3', // Soft lavender
+        300: '#cebceb', // Light purple
+        400: '#bfa2e2', // Slightly stronger, but still calm
+        500: '#aa8bd3', // Base color - muted lavender
+        600: '#886db0', // Muted mid-tone
+        700: '#65508c', // Comfortable for dark mode
+        800: '#433569', // Deep but readable
+        900: '#261b3d', // Very dark, but not pitch black
       },
       // grey and neutral represent same color
       grey: {
@@ -80,6 +54,10 @@ export const theme = {
       light: '0px 2px 20px 4px rgba(0, 0, 0, 0.12)',
       dark: '0px 4px 16px 8px rgba(217, 217, 217, 0.28)',
       formshadow: '4px 0px 19px 0px rgba(58, 58, 58, 0.16)',
+      custom: '0px 2px 6px 0px rgba(20, 86, 146, 0.12)',
+      box: '2px 6px 6px rgba(16, 24, 40, 0.5)',
+      stats: '1.5px 1.5px 3px #bfa2e2',
+      statsCard: '0 4px 12px rgba(0, 0, 0, 0.07)'
     },
     animation: {
       loader: 'loader 0.6s infinite alternate',
@@ -126,15 +104,17 @@ export const theme = {
     },
   },
   fontSize: {
-    xs: '0.75rem',
-    sm: '0.838rem',
+    xs: '0.625rem',
+    sm: '0.75rem',
+    md: '0.875rem',
     base: '1rem',
-    lg: '1.063rem',
-    xl: '1.25rem',
-    '2xl': '1.563rem',
-    '3xl': '1.953rem',
-    '4xl': '2.441rem',
-    '5xl': '3.052rem',
+    lg: '1.25rem',
+    xl: '1.375rem',
+    '2xl': '1.5rem',
+    '3xl': '1.75rem',
+    '4xl': '2rem',
+    '5xl': '2.25rem',
+    '6xl': '2.5rem',
   },
 };
 export const plugins = [import('tailwindcss-animate')];

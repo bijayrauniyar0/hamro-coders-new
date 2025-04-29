@@ -1,11 +1,12 @@
 import {
+  Arrow,
+  Portal,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  Arrow,
-  Portal,
 } from '@radix-ui/react-tooltip';
+
 import Icon from '../common/Icon';
 
 interface ToolTipProps {
@@ -42,7 +43,7 @@ export default function ToolTip({
           <Portal>
             <TooltipContent sideOffset={5} className="z-50">
               <div
-                className={`message rounded-sm bg-[#417EC9] px-3 py-1 text-xs font-semibold text-white ${messageStyle}`}
+                className={`message rounded-sm bg-primary-700 px-3 py-1 text-xs font-semibold text-white ${messageStyle}`}
               >
                 {message}
               </div>

@@ -1,24 +1,66 @@
+import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useQuery } from '@tanstack/react-query';
 
+import { setUserProfile } from '@Store/actions/common';
+import { useTypedDispatch } from '@Store/hooks';
+import { checkLogin, getUserProfile } from '@Services/common';
+
+import Navbar from './components/common/Navbar';
 import appRoutes from './routes/appRoutes';
 import generateRoutes from './routes/generateRoutes';
-import Navbar from './components/common/Navbar';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
+  const { pathname } = useLocation();
+  const dispatch = useTypedDispatch();
+  const navigate = useNavigate();
+
+  const routesWithoutNavbar = ['/login', '/signup','/verify-email'];
+  const showNavbar = !routesWithoutNavbar.some(route =>
+    pathname.includes(route),
+  );
+
+  const {
+    isSuccess: isUserLoggedIn,
+    isError: errorUserLogin,
+    data: userId,
+  } = useQuery({
+    queryKey: ['checkLogin'],
+    queryFn: () => checkLogin(),
+    select: ({ data }) => data?.id,
+    enabled: !!localStorage.getItem('token'),
+  });
+
+  const { isSuccess: userProfileIsFetched, data: userProfile } = useQuery({
+    queryKey: ['user-profile', isUserLoggedIn, userId],
+    queryFn: () => getUserProfile(),
+    select: ({ data }) => data,
+    enabled: isUserLoggedIn,
+  });
+
+  useEffect(() => {
+    if (errorUserLogin) {
+      localStorage.removeItem('token');
+      navigate('/login');
+    }
+  }, [errorUserLogin]);
+
+  useEffect(() => {
+    if (userProfileIsFetched && userProfile) {
+      dispatch(setUserProfile(userProfile));
+    }
+  }, [userProfileIsFetched, userProfile]);
+
   return (
     <>
-      <div className="fixed top-0 z-[49] w-full bg-white">
-        <Navbar />
-      </div>
+      {showNavbar && <Navbar />}
       <div className="absolute right-0 top-4 w-1/4">
         <ToastContainer />
       </div>
-      <div className="min-h-screen w-full bg-[#F4F7FE] px-4 pb-[2rem] pt-[6rem]">
-        <div className="mx-auto w-11/12">
-          {generateRoutes({ routes: appRoutes })}
-        </div>
-      </div>
+      {generateRoutes({ routes: appRoutes })}
     </>
   );
 }
