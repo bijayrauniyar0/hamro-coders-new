@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Backend for the project",
   "engines": {
-    "node": "21.7.3"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "nodemon",
