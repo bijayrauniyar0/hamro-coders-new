@@ -28,7 +28,7 @@ const AuthenticationComponent = () => {
 
   useEffect(() => {
     if (isAuthenticated()) {
-      navigate('/');
+      navigate('/courses');
     }
   }, []);
   return (
