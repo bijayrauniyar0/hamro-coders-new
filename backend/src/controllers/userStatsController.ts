@@ -10,7 +10,7 @@ import {
   IRecentSessions,
   UserScoresArgsType,
 } from '@Constants/Types/userStats';
-import Subject from '../models/subjectsModels';
+import Subject from '../models/subjectsModel';
 import {
   subDays,
   subWeeks,

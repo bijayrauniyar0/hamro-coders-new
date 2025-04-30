@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import UserScores from '../models/userScoresModels';
 import User from '../models/userModels';
-import Subject from '../models/subjectsModels';
+import Subject from '../models/subjectsModel';
 import { Op } from 'sequelize';
 import {
   getStartDate,

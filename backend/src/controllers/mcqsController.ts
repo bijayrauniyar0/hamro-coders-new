@@ -1,5 +1,5 @@
 import MCQ from '../models/mcqModels';
-import Subject from '../models/subjectsModels';
+import Subject from '../models/subjectsModel';
 import { Request, Response } from 'express';
 import sequelize from '../config/database';
 

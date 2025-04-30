@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import User from './userModels';
-import Subject from './subjectsModels';
+import Subject from './subjectsModel';
 
 class UserScores extends Model {
   public id!: number;
@@ -53,7 +53,6 @@ UserScores.init(
     updatedAt: false,
   },
 );
-
 
 UserScores.belongsTo(Subject, {
   foreignKey: 'subject_id',

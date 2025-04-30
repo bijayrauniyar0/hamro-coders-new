@@ -30,22 +30,6 @@ Subject.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    marks: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    questions_count: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    negative_marking: {
-      allowNull: false,
-      type: DataTypes.FLOAT,
-    },
-    total_marks: {
-      allowNull: false,
-      type: DataTypes.FLOAT,
-    },
     time_limit: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -57,7 +41,6 @@ Subject.init(
     timestamps: false,
   },
 );
-
 
 Subject.belongsTo(Course, {
   foreignKey: 'course_id',

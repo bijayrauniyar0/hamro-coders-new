@@ -7,19 +7,17 @@ services:
       - "9000:9000" # Exposes the backend API
     volumes:
       - ./backend:/app # Syncs local backend directory with the container
-    environment:
-      - DB_HOST=ep-still-paper-a80p9o3b-pooler.eastus2.azure.neon.tech
-      - DB_PORT=5432
-      - DB_USER=neondb_owner
-      - DB_PASSWORD=npg_BAao2jLMCFQ6
-      - DB_NAME=hamrocoders
-    #   - NODE_ENV=development
-    #   - DB_HOST=hamrocoders-sql-db # Use 'db' as the hostname, which matches the db service name
-    #   - DB_PORT=5432
-    #   - DB_USER=bijay
-    #   - DB_PASSWORD=bijay@123
-    #   - DB_NAME=hamrocoders
+    # environment:
+    #   JWT_SECRET: ${JWT_SECRET}
+    #   PORT: ${PORT}
+    #   DB_HOST: ${DB_HOST}
+    #   DB_PORT: ${DB_PORT}
+    #   DB_USER: ${DB_USER}
+    #   DB_PASSWORD: ${DB_PASSWORD}
+    #   DB_NAME: ${DB_NAME}
     command: ["yarn", "dev"]
+    depends_on:
+      - db
     networks:
       - app-network # Ensure the backend is on the app-network
 
@@ -35,14 +33,15 @@ services:
       - NODE_ENV=development
     networks:
       - app-network # Ensure the frontend is on the app-network
-
+    depends_on:
+      - backend
   db:
     image: postgres:15
     container_name: hamrocoders-sql-db
     environment:
-      POSTGRES_USER: bijay
-      POSTGRES_PASSWORD: bijay@123
-      POSTGRES_DB: hamrocoders
+      POSTGRES_USER: ${POSTGRES_USER} # Set the database user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Set the database password
+      POSTGRES_DB: ${POSTGRES_DB} # Set the database name
     ports:
       - "5433:5432" # Exposes the database on port 5432
     volumes:
@@ -53,8 +52,8 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com # Set pgAdmin email (you can change this)
-      PGADMIN_DEFAULT_PASSWORD: admin # Set pgAdmin password (you can change this)
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL} # Set pgAdmin email (you can change this)
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD} # Set pgAdmin password (you can change this)
     ports:
       - "5050:80" # Access pgAdmin at localhost:5050
     volumes:
