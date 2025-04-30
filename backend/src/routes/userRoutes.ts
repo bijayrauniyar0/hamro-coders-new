@@ -10,7 +10,7 @@ import {
   getUserProfile,
   verifyEmail,
 } from '../controllers/userController';
-import { authenticate } from 'src/middlewares/authenticate';
+import { authenticate } from '../middlewares/authenticate';
 
 const userRouter = express.Router();
 

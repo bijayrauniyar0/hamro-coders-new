@@ -1,9 +1,9 @@
 import {
   createScoreEntry,
   getLeaderboard,
-} from '@Controllers/leaderboardController';
+} from '../controllers/leaderboardController';
 import express from 'express';
-import { authenticate } from 'src/middlewares/authenticate';
+import { authenticate } from '..//middlewares/authenticate';
 
 const userScoresRouter = express.Router();
 

@@ -1,6 +1,6 @@
-import { getMCQs, getMCQsAnswers } from '@Controllers/mcqsController';
+import { getMCQs, getMCQsAnswers } from '../controllers/mcqsController';
 import express from 'express';
-import { authenticate } from 'src/middlewares/authenticate';
+import { authenticate } from '../middlewares/authenticate';
 
 const mcqRouter = express.Router();
 

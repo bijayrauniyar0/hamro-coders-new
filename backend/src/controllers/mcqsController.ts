@@ -1,7 +1,7 @@
-import MCQ from '@Models/mcqModels';
-import Subject from '@Models/subjectsModels';
+import MCQ from '../models/mcqModels';
+import Subject from '../models/subjectsModels';
 import { Request, Response } from 'express';
-import sequelize from 'src/config/database';
+import sequelize from '../config/database';
 
 export const getMCQs = async (req: Request, res: Response) => {
   const { subject_id } = req.params;

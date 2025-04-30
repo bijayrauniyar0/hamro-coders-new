@@ -2,9 +2,9 @@ import {
   getCourses,
   getSubjectsByCourse,
   getSubjectsMetaData,
-} from '@Controllers/courseController';
+} from '../controllers/courseController';
 import express from 'express';
-import { authenticate } from 'src/middlewares/authenticate';
+import { authenticate } from '../middlewares/authenticate';
 
 const courseRouter = express.Router();
 

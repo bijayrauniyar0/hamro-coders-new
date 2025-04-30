@@ -1,6 +1,6 @@
 import { ParsedQs } from 'qs';
 import { ScoreFilter } from './leaderboard';
-import UserScores from '@Models/userScoresModels';
+import UserScores from '../../models/userScoresModels';
 import { InferAttributes } from 'sequelize';
 import { SequelizeAttributes } from '.';
 

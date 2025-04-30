@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
 import { Request, Response } from 'express';
 import { LeaderboardService } from './leaderboardController';
-import UserScores from '@Models/userScoresModels';
+import UserScores from '../models/userScoresModels';
 import { Op } from 'sequelize';
-import { formatToMinSec, getStartDateByTimePeriod } from '@Utils/index';
+import { formatToMinSec, getStartDateByTimePeriod } from '../utils/index';
 import {
   IGetUserStatsParamType,
   IPerformanceDetails,
   IRecentSessions,
   UserScoresArgsType,
 } from '@Constants/Types/userStats';
-import Subject from '@Models/subjectsModels';
+import Subject from '../models/subjectsModels';
 import {
   subDays,
   subWeeks,

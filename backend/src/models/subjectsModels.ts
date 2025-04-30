@@ -1,7 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import Course from './courseModels';
-import UserScores from './userScoresModels';
 
 class Subject extends Model {
   public id!: number;

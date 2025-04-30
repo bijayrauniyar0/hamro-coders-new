@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import UserScores from '@Models/userScoresModels';
-import User from '@Models/userModels';
-import Subject from '@Models/subjectsModels';
+import UserScores from '../models/userScoresModels';
+import User from '../models/userModels';
+import Subject from '../models/subjectsModels';
 import { Op } from 'sequelize';
 import {
   getStartDate,
   getStartOfDay,
   getStartOfMonth,
   getStartOfWeek,
-} from '@Utils/index';
-import Notification from '@Models/notificationModel';
+} from '../utils/index';
+import Notification from '../models/notificationModel';
 import {
   AggregatedScore,
   FilterScoresByDateProps,

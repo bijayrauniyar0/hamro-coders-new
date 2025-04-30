@@ -1,13 +1,13 @@
 // src/server.ts
 import express from 'express';
-import userRoutes from '@Routes/userRoutes';
+import userRoutes from './routes/userRoutes';
 import sequelize from './config/database';
 import cors from 'cors';
-import mcqRouter from '@Routes/mcqsRoutes';
-import userScoresRouter from '@Routes/leaderboardRoutes';
-import courseRouter from '@Routes/courseRoutes';
-import notificationRouter from '@Routes/notificationRoutes';
-import analyticsRouter from '@Routes/analyticsRoutes';
+import mcqRouter from './routes/mcqsRoutes';
+import userScoresRouter from './routes/leaderboardRoutes';
+import courseRouter from './routes/courseRoutes';
+import notificationRouter from './routes/notificationRoutes';
+import analyticsRouter from './routes/analyticsRoutes';
 
 const PORT = process.env.PORT || 9000;
 
@@ -34,3 +34,5 @@ sequelize
     // eslint-disable-next-line no-console
     console.error('Unable to connect to the database:', err);
   });
+
+export default app;

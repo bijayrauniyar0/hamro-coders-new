@@ -28,3 +28,4 @@ coverage/
 
 # Optional: Ignore test reports or other artifact folders
 test-coverage/
+.vercel

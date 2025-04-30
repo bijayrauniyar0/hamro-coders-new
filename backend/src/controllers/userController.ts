@@ -2,8 +2,8 @@
 import { Request, Response } from 'express';
 import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
-import { generateToken, verifyToken } from '@Utils/jwtUtils';
-import { sendVerificationEmail } from '@Utils/mailer';
+import { generateToken, verifyToken } from '../utils/jwtUtils';
+import { sendVerificationEmail } from '../utils/mailer';
 import path from 'path';
 
 class UserService {

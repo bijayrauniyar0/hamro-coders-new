@@ -3,9 +3,9 @@ import {
   getPerformanceTrend,
   getRecentSessions,
   getUserStats,
-} from '@Controllers/userStatsController';
+} from '../controllers/userStatsController';
 import express from 'express';
-import { authenticate } from 'src/middlewares/authenticate';
+import { authenticate } from '../middlewares/authenticate';
 
 const analyticsRouter = express.Router();
 

@@ -20,6 +20,6 @@
       "@Constants/*": ["src/constants/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "include": ["/api/*.ts", "src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

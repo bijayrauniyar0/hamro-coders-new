@@ -1,4 +1,4 @@
-import UserScores from '@Models/userScoresModels';
+import UserScores from '../../models/userScoresModels';
 import { ParsedQs } from 'qs';
 
 export interface LeaderboardQuery extends ParsedQs {

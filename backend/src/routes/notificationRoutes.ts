@@ -3,9 +3,9 @@ import {
   getUnreadNotificationCount,
   markAllNotificationsAsRead,
   markNotificationAsRead,
-} from '@Controllers/notificationController';
+} from '../controllers/notificationController';
 import express from 'express';
-import { authenticate } from 'src/middlewares/authenticate';
+import { authenticate } from '../middlewares/authenticate';
 
 const notificationRouter = express.Router();
 

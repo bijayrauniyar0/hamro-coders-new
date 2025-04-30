@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '@Utils/jwtUtils';
+import { verifyToken } from '../../utils/jwtUtils';
 
 // Middleware to authenticate routes
 export const authenticate = (
