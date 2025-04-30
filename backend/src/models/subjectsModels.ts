@@ -59,16 +59,17 @@ Subject.init(
   },
 );
 
-Subject.hasMany(UserScores, {
-  foreignKey: 'subject_id',
-  onDelete: 'CASCADE',
-  onUpdate: 'CASCADE',
-});
-
 
 Subject.belongsTo(Course, {
   foreignKey: 'course_id',
   targetKey: 'id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
+Course.hasMany(Subject, {
+  foreignKey: 'course_id',
+  sourceKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });

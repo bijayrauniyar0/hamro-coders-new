@@ -62,6 +62,12 @@ UserScores.belongsTo(Subject, {
   onUpdate: 'CASCADE',
 });
 
+Subject.hasMany(UserScores, {
+  foreignKey: 'subject_id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+
 User.hasMany(UserScores, {
   foreignKey: 'user_id',
   onDelete: 'CASCADE',
