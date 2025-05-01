@@ -17,7 +17,7 @@ import {
   Rank,
   RankUserByDateProps,
   ScoreFilter,
-} from '@Constants/Types/leaderboard';
+} from '../constants/Types/leaderboard';
 
 const PERIODS = ['daily', 'weekly', 'monthly'] as const;
 type Period = (typeof PERIODS)[number];

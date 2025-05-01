@@ -3,7 +3,7 @@ import Subject from '../models/subjectsModel';
 import { Request, Response } from 'express';
 import sequelize from '../config/database';
 import { CoursesService } from './courseController';
-import Section from '@Models/sectionModel';
+import Section from '../models/sectionModel';
 
 export class MCQsService {
   async getMCQs(section_id: number, question_count: number) {

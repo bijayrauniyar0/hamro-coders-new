@@ -11,14 +11,6 @@
     "baseUrl": ".",
     "typeRoots": ["./src/@types", "./node_modules/@types"],
     "types": ["node", "express"],
-    "paths": {
-      "@Utils/*": ["src/utils/*"],
-      "@Models/*": ["src/models/*"],
-      "@Controllers/*": ["src/controllers/*"],
-      "@Services/*": ["src/services/*"],
-      "@Routes/*": ["src/routes/*"],
-      "@Constants/*": ["src/constants/*"]
-    }
   },
   "include": ["/api/*.ts", "src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules"]
