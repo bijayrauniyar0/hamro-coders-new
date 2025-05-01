@@ -72,7 +72,7 @@ export const getMCQs = async (req: Request, res: Response) => {
         0,
       ),
       time_limit: subject.time_limit,
-      questions: mcq_questions,
+      sections: mcq_questions,
     });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });

@@ -8,25 +8,28 @@ import React, {
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { ChevronDown, Grid } from 'lucide-react';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
 import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@Components/radix/Accordion';
 import { Button } from '@Components/radix/Button';
 import Skeleton from '@Components/radix/Skeleton';
-import { getPercentageColor } from '@Utils/index';
+import { chunkArray, getGlobalIndex, getPercentageColor } from '@Utils/index';
 import isEmpty from '@Utils/isEmpty';
 import {
   endStats,
   modesDescription,
   optionsLabel,
 } from '@Constants/QuestionsBox';
-import {
-  getMcqAnswers,
-  getMcqs,
-  getSubjectsMetaData,
-} from '@Services/academics';
+import { getMcqAnswers, getMcqs } from '@Services/academics';
 import { createLeaderboardEntry } from '@Services/leaderboard';
 
 import MCQButton from './MCQButton';
@@ -34,39 +37,326 @@ import MCQSkeleton from './MCQSkeleton';
 import Question from './Question';
 import TimeBox from './TimeBox';
 
-type Option = {
+export type OptionType = {
   id: number;
   value: string;
 };
 
 export type QuestionType = {
-  question: string;
-  options: Option[];
   id: number;
+  section_id: number;
+  question: string;
+  options: OptionType[];
+  answer: string; // If it's always a string (e.g., "1")
 };
+
+export type SectionType = {
+  section_id: number;
+  name: string;
+  question_count: number;
+  marks_per_question: number;
+  negative_marking: number;
+  questions: QuestionType[];
+};
+
+export type McqResponseType = {
+  questions_count: number;
+  time_limit: number;
+  sections: SectionType[];
+};
+
 type AnswerType = {
   id: number;
   answer: number;
 };
+
+type SelectedOptionType = {
+  [key: number]: {
+    section_id: number;
+    answer: number;
+  };
+};
+
+const mcqData = {
+  questions_count: 10,
+  time_limit: 10,
+  sections: [
+    {
+      section_id: 1,
+      name: 'Main',
+      question_count: 10,
+      marks_per_question: 1,
+      negative_marking: 0,
+      questions: [
+        {
+          id: 110,
+          section_id: 1,
+          question:
+            'Heat required to raise the temperature of a body through 1°C is known as:',
+          options: [
+            {
+              id: 1,
+              value: 'Specific heat capacity',
+            },
+            {
+              id: 2,
+              value: 'Water equivalent',
+            },
+            {
+              id: 3,
+              value: 'Molar specification',
+            },
+            {
+              id: 4,
+              value: 'Thermal capacity',
+            },
+          ],
+          answer: '4',
+        },
+        {
+          id: 103,
+          section_id: 1,
+          question:
+            'A particle moving along a circular path due to a centripetal force having constant magnitude is an example of motion with:',
+          options: [
+            {
+              id: 1,
+              value: 'Constant speed and velocity.',
+            },
+            {
+              id: 2,
+              value: 'Variable speed and velocity.',
+            },
+            {
+              id: 3,
+              value: 'Variable speed and constant velocity.',
+            },
+            {
+              id: 4,
+              value: 'Constant speed and variable velocity.',
+            },
+          ],
+          answer: '4',
+        },
+        {
+          id: 105,
+          section_id: 1,
+          question: 'A body weighs:',
+          options: [
+            {
+              id: 1,
+              value: 'Very slightly greater at night',
+            },
+            {
+              id: 2,
+              value: 'Very slightly less at night.',
+            },
+            {
+              id: 3,
+              value: 'Exactly equal at day & night.',
+            },
+            {
+              id: 4,
+              value: 'Zero at night.',
+            },
+          ],
+          answer: '2',
+        },
+        {
+          id: 109,
+          section_id: 1,
+          question:
+            'The pressure of H2 gas at a gas thermometer is 80cm at 0°C, 110cm at 100°C. At what temperature will it record 95cm pressure?',
+          options: [
+            {
+              id: 1,
+              value: '50°C',
+            },
+            {
+              id: 2,
+              value: '75°C',
+            },
+            {
+              id: 3,
+              value: '95°C',
+            },
+            {
+              id: 4,
+              value: '150°C',
+            },
+          ],
+          answer: '2',
+        },
+        {
+          id: 99,
+          section_id: 1,
+          question:
+            'Astronomical unit (AU) is distance between Earth and Sun. 1 AU =',
+          options: [
+            {
+              id: 1,
+              value: '1.496 x 10^8 Km',
+            },
+            {
+              id: 2,
+              value: '9.46 x 10^12 Km',
+            },
+            {
+              id: 3,
+              value: '3.084 x 10^13 Km',
+            },
+            {
+              id: 4,
+              value: 'None',
+            },
+          ],
+          answer: '1',
+        },
+        {
+          id: 107,
+          section_id: 1,
+          question:
+            'The speed of light in air is 3 x 10^8 m/s. What will be its speed in diamond whose refractive index is 2.4?',
+          options: [
+            {
+              id: 1,
+              value: '3 x 10^8 m/s',
+            },
+            {
+              id: 2,
+              value: '330 m/s',
+            },
+            {
+              id: 3,
+              value: '1.25 x 10^8 m/s',
+            },
+            {
+              id: 4,
+              value: '224 x 10^8 m/s',
+            },
+          ],
+          answer: '3',
+        },
+        {
+          id: 111,
+          section_id: 1,
+          question:
+            'The diameter of a wire is reduced to half. Now the resistance changes by factor:',
+          options: [
+            {
+              id: 1,
+              value: '2',
+            },
+            {
+              id: 2,
+              value: '4',
+            },
+            {
+              id: 3,
+              value: '8',
+            },
+            {
+              id: 4,
+              value: '16',
+            },
+          ],
+          answer: '4',
+        },
+        {
+          id: 100,
+          section_id: 1,
+          question:
+            'The magnitude of the sum of the two vectors is equal to the difference of their magnitudes. What is the angle between the vectors?',
+          options: [
+            {
+              id: 1,
+              value: '0°',
+            },
+            {
+              id: 2,
+              value: '45°',
+            },
+            {
+              id: 3,
+              value: '90°',
+            },
+            {
+              id: 4,
+              value: '180°',
+            },
+          ],
+          answer: '4',
+        },
+        {
+          id: 104,
+          section_id: 1,
+          question:
+            'A rod of mass M and length L is lying on a horizontal table. The work done in making it stand on one end will be:',
+          options: [
+            {
+              id: 1,
+              value: 'MgL',
+            },
+            {
+              id: 2,
+              value: 'MgL/2',
+            },
+            {
+              id: 3,
+              value: 'MgL/4',
+            },
+            {
+              id: 4,
+              value: '2MgL',
+            },
+          ],
+          answer: '2',
+        },
+        {
+          id: 108,
+          section_id: 1,
+          question: 'Critical angle for water is:',
+          options: [
+            {
+              id: 1,
+              value: '24°',
+            },
+            {
+              id: 2,
+              value: '49°',
+            },
+            {
+              id: 3,
+              value: '42°',
+            },
+            {
+              id: 4,
+              value: '35°',
+            },
+          ],
+          answer: '3',
+        },
+      ],
+    },
+  ],
+};
+const questionsIsLoading = false;
 
 const MCQBox = () => {
   const handleBeforeUnload = useRef((event: BeforeUnloadEvent) => {
     event.preventDefault();
   });
   const startTimeRef = useRef(new Date());
-  const metaDataRef = useRef<any>(null);
-  const [currentQuestion, setCurrentQuestion] = useState<boolean[]>([]);
   const [questionCount, setQuestionCount] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<Record<string, any>[]>(
-    [],
-  );
-  const [showModal, setShowModal] = useState(true);
-  const [timeOut, setTimeOut] = useState(5);
+  const [selectedOption, setSelectedOption] = useState<SelectedOptionType>({});
+  const [openAccordion, setOpenAccordion] = useState('');
+  const [visibleQuestionChunkIndex, setVisibleQuestionChunkIndex] = useState(0);
+  const [timeOut, setTimeOut] = useState(2);
   const timeOutRef = useRef<NodeJS.Timeout>();
 
   const [gameOver, setGameOver] = useState(false);
-  const [modeToShow, setModeToShow] = useState<
-    'answers' | 'questions' | 'results'
+  const [viewMode, setViewMode] = useState<
+    'answers' | 'questions' | 'results' | 'grid' | 'instructions'
   >('questions');
 
   const [searchParams] = useSearchParams();
@@ -77,48 +367,27 @@ const MCQBox = () => {
 
   const [isRecordCreated, setIsRecordCreated] = useState(false);
 
-  const {
-    data: metaData,
-    isLoading: metaDataIsLoading,
-    isSuccess: metaDataFetched,
-  } = useQuery({
-    queryKey: ['answers'],
-    queryFn: () => {
-      return getSubjectsMetaData(subject_id || '');
-    },
-    select: ({ data }) => data,
-  });
-
-  useEffect(() => {
-    if (metaDataFetched && metaData) {
-      metaDataRef.current = {
-        question_count: metaData.question_count,
-        subject_id: metaData.subject_id,
-        subject_name: metaData.subject_name,
-      };
-    }
-  }, [metaDataFetched]);
-
-  const { data: questions, isLoading: questionsIsLoading } = useQuery({
-    queryKey: ['questions', metaDataFetched],
-    queryFn: () =>
-      getMcqs({
-        subject_id,
-        question_count: metaData?.questions_count,
-      }),
-    select: ({ data }) => data as QuestionType[],
-    enabled: metaDataFetched && !!metaData,
-  });
+  // const { data: mcqData, isLoading: questionsIsLoading } = useQuery({
+  //   queryKey: ['mcq-data'],
+  //   queryFn: () =>
+  //     getMcqs({
+  //       subject_id,
+  //     }),
+  //   select: ({ data }) => data,
+  // });
 
   const { data: answers, isLoading: answersIsLoading } = useQuery({
     queryKey: ['answers'],
     queryFn: () =>
       getMcqAnswers({
         subject_id,
-        questions: questions?.map(question => question.id).join(','),
+        questions: mcqData?.sections
+          .map(section => section.questions.map(question => question.id))
+          .flat()
+          .join(','),
       }),
     select: ({ data }) => data as AnswerType[],
-    enabled: questionCount === (questions?.length ?? 0) - 1,
+    enabled: questionCount === (mcqData?.questions_count ?? 0) - 1,
   });
 
   const { mutate: createLeaderboardRecord } = useMutation({
@@ -127,7 +396,7 @@ const MCQBox = () => {
   });
 
   const results: { [key: string]: number } = useMemo(() => {
-    if (!questions || !answers) return { right: 0, wrong: 0 };
+    if (!mcqData || !answers) return { right: 0, wrong: 0 };
     const results = selectedOption.map(({ question_id, id }) => {
       const correctAnswer = answers.find(answer => answer.id === question_id);
       return {
@@ -137,7 +406,7 @@ const MCQBox = () => {
     });
     const rightAnswers = results.filter(result => result.correct).length;
 
-    const wrongAnswers = questions.length - rightAnswers;
+    const wrongAnswers = mcqData.questions_count - rightAnswers;
 
     return {
       right: rightAnswers,
@@ -160,38 +429,30 @@ const MCQBox = () => {
     setIsRecordCreated(true);
   };
 
-  function handleNextSkipClick(clickType: string) {
-    if (!gameOver) {
-      const value = clickType === 'skip' ? false : true;
-      setCurrentQuestion((prevData: boolean[]) => [...prevData, value]);
-    }
-    setQuestionCount(prevCount => prevCount + 1);
-  }
-
   const startCountdown = useCallback((time: number) => {
     const interval = setInterval(() => {
       setTimeOut(time);
       time -= 1;
       if (time < 0) {
         clearInterval(interval);
-        setShowModal(false);
+        setViewMode('questions');
       }
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    const listener = handleBeforeUnload.current;
+  // useEffect(() => {
+  //   const listener = handleBeforeUnload.current;
 
-    window.addEventListener('beforeunload', listener);
+  //   window.addEventListener('beforeunload', listener);
 
-    return () => {
-      window.removeEventListener('beforeunload', listener);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('beforeunload', listener);
+  //   };
+  // }, []);
 
-  const disableBeforeUnload = () => {
-    window.removeEventListener('beforeunload', handleBeforeUnload.current);
-  };
+  // const disableBeforeUnload = () => {
+  //   window.removeEventListener('beforeunload', handleBeforeUnload.current);
+  // };
 
   useEffect(() => {
     if (!selectedMode) {
@@ -201,12 +462,12 @@ const MCQBox = () => {
       }, 500);
       return () => {};
     }
-    startCountdown(5);
+    startCountdown(2);
     if (selectedMode === 'practice') return () => {};
     if (selectedMode === 'ranked') {
       setTimeout(() => {
         setQuestionCount(0);
-        setModeToShow('answers');
+        setViewMode('answers');
       }, 600000);
     }
 
@@ -217,9 +478,9 @@ const MCQBox = () => {
   }, [selectedMode]);
 
   useEffect(() => {
-    if (!questions) return;
-    if (questionCount === questions.length) {
-      setModeToShow('results');
+    if (!mcqData) return;
+    if (questionCount === mcqData.questions_count) {
+      setViewMode('results');
       handleScoreSubmission();
     }
   }, [questionCount]);
@@ -239,36 +500,90 @@ const MCQBox = () => {
     }
   };
 
+  const questions = useMemo(() => {
+    if (!mcqData) return [];
+    return mcqData.sections.flatMap(section => {
+      return section.questions.map(question => question);
+    });
+  }, [mcqData]);
+
+  const questionsChunk: QuestionType[][] = useMemo(() => {
+    return chunkArray(questions);
+  }, [questions]);
+
+  useEffect(() => {
+    const firstQuestionId = questionsChunk[visibleQuestionChunkIndex]?.[0]?.id;
+    if (firstQuestionId !== undefined) {
+      setOpenAccordion(firstQuestionId.toString());
+    }
+  }, [visibleQuestionChunkIndex, questionsChunk]);
   return (
     <>
       <BindContentContainer>
-        <div className="mx-auto w-full rounded-lg border bg-white p-2 shadow-lg md:w-4/5 md:p-4">
+        <div className="mx-auto w-full rounded-lg border bg-white p-4 shadow-lg md:w-4/5 md:p-4">
           {questionsIsLoading ? (
             <MCQSkeleton />
-          ) : isEmpty(questions) || !questions ? (
+          ) : isEmpty(mcqData) || !mcqData ? (
             <NoDataAvailable />
           ) : (
-            <FlexColumn className="items-end gap-6 px-3 py-2 md:px-6 md:py-4">
-              <FlexRow className="w-full justify-between">
-                <TimeBox
-                  startTimer={!showModal || timeOut < 1}
-                  stopTimer={questionCount === questions.length || gameOver}
-                />
-                <FlexRow className="items-center justify-center rounded-3xl bg-gray-100 px-2 py-1">
+            <FlexColumn className="items-end gap-6">
+              <FlexRow className="w-full justify-between border-b border-gray-300 pb-4">
+                <p className="text-lg font-semibold text-primary-600">
+                  Hamro Coders
+                </p>
+
+                <FlexRow className="items-center justify-end gap-4">
+                  <p className="text-md text-gray-500">
+                    Exam: Computer Science
+                  </p>
+                  <TimeBox
+                    startTimer={viewMode !== 'instructions' || timeOut < 1}
+                    stopTimer={
+                      questionCount === mcqData.questions_count || gameOver
+                    }
+                  />
+                </FlexRow>
+                {/* <FlexRow className="items-center justify-center rounded-3xl bg-gray-100 px-2 py-1">
                   <p className="text-sm md:text-md">
                     <span className="font-medium">Solved: </span>
                     <span
-                      className={`tracking-[-0.1rem] ${modeToShow === 'questions' ? getPercentageColor(questionCount, questions.length) : 'text-green-700'}`}
+                      className={`tracking-[-0.1rem] ${viewMode === 'questions' ? getPercentageColor(questionCount, mcqData.questions_count) : 'text-green-700'}`}
                     >
                       {currentQuestion.filter(item => item === true).length} /{' '}
-                      {questions.length}
+                      {mcqData.questions_count}
                     </span>
                   </p>
-                </FlexRow>
+                </FlexRow> */}
               </FlexRow>
-              {showModal ? (
+              <FlexRow className="w-full items-center justify-between gap-4">
+                <FlexRow className="items-center gap-6">
+                  <span className="font-medium">
+                    Solved {0}/{mcqData.questions_count}
+                  </span>
+                  <FlexRow className="items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <span className="inline-block h-3 w-3 rounded-full bg-green-500"></span>
+                      <span className="text-xs">Answered (0)</span>
+                    </div>
+                    {/* <div className="flex items-center gap-1">
+                      <span className="inline-block h-3 w-3 rounded-full bg-yellow-500"></span>
+                      <span className="text-xs">
+                        Flagged ({Object.keys(flaggedQuestions).length})
+                      </span>
+                    </div> */}
+                  </FlexRow>
+                </FlexRow>
+                <button
+                  onClick={() => {}}
+                  className="flex items-center gap-1 rounded bg-gray-200 px-2 py-1 text-xs hover:bg-gray-300"
+                >
+                  <Grid size={14} />
+                  Overview
+                </button>
+              </FlexRow>
+              {viewMode === 'instructions' ? (
                 <div className="mx-auto min-h-[15rem] md:w-1/2">
-                  {metaDataIsLoading ? (
+                  {questionsIsLoading ? (
                     <Skeleton className="h-[10rem] w-full" />
                   ) : (
                     <FlexColumn className="items-center gap-4 pt-8">
@@ -284,186 +599,132 @@ const MCQBox = () => {
                 </div>
               ) : (
                 <>
-                  {modeToShow === 'questions' ? (
-                    <FlexColumn className="w-full gap-5 items-end">
-                      <div className="w-full">
-                        {questions.map((questionData, index) => {
-                          if (index !== questionCount) return null;
-                          return (
-                            <Question
-                              questionCount={questionCount}
-                              questionData={questionData}
-                              selectedOption={selectedOption}
-                              handleOptionClick={id => {
-                                setSelectedOption(
-                                  (prevData: Record<string, any>[]) => {
-                                    // Check if the option is already selected
-                                    if (prevData[questionCount]?.id === id) {
-                                      // If selected, deselect it (remove it from the array)
-                                      return prevData.filter(
-                                        (_, index) => index !== questionCount,
-                                      );
-                                    } else {
-                                      // If not selected, add it to the array at the specific index
-                                      const updatedData = [...prevData];
-                                      updatedData[questionCount] = {
-                                        question_id: questionData.id,
-                                        id,
-                                      };
-                                      return updatedData;
-                                    }
-                                  },
-                                );
-                              }}
-                              key={questionData.id}
-                            />
-                            // <FlexColumn className="gap-5" key={questionData.id}>
-                            //   <p className="text-md font-medium leading-5 md:text-lg">
-                            //     {questionData.question}
-                            //   </p>
-                            //   <div className="grid select-none grid-cols-1 gap-4 md:grid-cols-2">
-                            //     {questionData.options.map(
-                            //       ({ id, value }, subIndex) => {
-                            //         const isOptionSelected =
-                            //           selectedOption[questionCount]?.id === id;
-                            //         return (
-                            //           <button
-                            //             className={`flex cursor-pointer items-center justify-start gap-4 rounded-lg border bg-white p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4 ${isOptionSelected ? 'border-primary-400' : 'border-gray-200'}`}
-                            //             key={subIndex}
-                            //             onClick={() => {
-                            //               setSelectedOption(
-                            //                 (
-                            //                   prevData: Record<string, any>[],
-                            //                 ) => {
-                            //                   // Check if the option is already selected
-                            //                   if (
-                            //                     prevData[questionCount]?.id ===
-                            //                     id
-                            //                   ) {
-                            //                     // If selected, deselect it (remove it from the array)
-                            //                     return prevData.filter(
-                            //                       (_, index) =>
-                            //                         index !== questionCount,
-                            //                     );
-                            //                   } else {
-                            //                     // If not selected, add it to the array at the specific index
-                            //                     const updatedData = [
-                            //                       ...prevData,
-                            //                     ];
-                            //                     updatedData[questionCount] = {
-                            //                       question_id: questionData.id,
-                            //                       id,
-                            //                     };
-                            //                     return updatedData;
-                            //                   }
-                            //                 },
-                            //               );
-                            //             }}
-                            //           >
-                            //             <MCQButton
-                            //               label={optionsLabel[subIndex]}
-                            //               value={value}
-                            //             />
-                            //           </button>
-                            //         );
-                            //       },
-                            //     )}
-                            //   </div>
-                            // </FlexColumn>
-                          );
-                        })}
-                      </div>
-                      <FlexRow className="gap-4">
-                        {selectedMode === 'practice' && (
-                          <Button
-                            variant="secondary"
-                            onClick={() => {
-                              setQuestionCount(questionCount - 1);
-                            }}
-                            disabled={questionCount === 0}
-                          >
-                            PREV
-                          </Button>
+                  {viewMode === 'questions' ? (
+                    <FlexColumn className="w-full items-end gap-5">
+                      <Accordion
+                        type="single"
+                        collapsible
+                        value={openAccordion}
+                        defaultValue={questionsChunk[
+                          visibleQuestionChunkIndex
+                        ]?.[0]?.id.toString()}
+                        className="flex w-full flex-col gap-4"
+                        onValueChange={setOpenAccordion}
+                      >
+                        {questionsChunk[visibleQuestionChunkIndex].map(
+                          (question, questionIndex) => {
+                            const isAccordionOpen =
+                              question.id.toString() === openAccordion;
+                            return (
+                              <AccordionItem
+                                value={question.id.toString()}
+                                key={question.id}
+                                className={`!rounded-md border transition-all duration-200 ease-in-out ${
+                                  isAccordionOpen
+                                    ? 'border-gray-300'
+                                    : 'border-gray-300 hover:border-primary-400'
+                                }`}
+                              >
+                                <AccordionTrigger
+                                  className={`grid min-w-full grid-cols-[1fr_2rem] gap-2 p-2 ${isAccordionOpen ? 'border-b bg-gray-100' : 'border-0 opacity-50'} transition-all duration-200 ease-in-out hover:no-underline hover:opacity-100`}
+                                >
+                                  <FlexRow className="items-center gap-2">
+                                    <p className="text-md font-semibold md:text-base">
+                                      Q
+                                      {getGlobalIndex(
+                                        questionsChunk,
+                                        visibleQuestionChunkIndex,
+                                        questionIndex,
+                                      ) + 1}
+                                    </p>{' '}
+                                    <p className="text-justify text-sm font-normal leading-[1.15rem] md:text-md">
+                                      {question.question}
+                                    </p>
+                                  </FlexRow>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="grid select-none grid-cols-1 gap-2 px-2 py-4 md:grid-cols-2">
+                                    {question.options.map(
+                                      (option, optionIndex) => {
+                                        const isOptionSelected =
+                                          selectedOption[question.id]
+                                            ?.answer === option.id;
+                                        return (
+                                          <MCQButton
+                                            label={optionsLabel[optionIndex]}
+                                            value={option.value}
+                                            onClick={() =>
+                                              setSelectedOption(
+                                                prevSelections => {
+                                                  return {
+                                                    ...prevSelections,
+                                                    [question.id]: {
+                                                      answer: option.id,
+                                                      section_id:
+                                                        question.section_id,
+                                                    },
+                                                  };
+                                                },
+                                              )
+                                            }
+                                            isOptionSelected={isOptionSelected}
+                                            key={`${question.id}-${option.id}`}
+                                          />
+                                        );
+                                      },
+                                    )}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            );
+                          },
                         )}
-                        <Button
-                          onClick={() => {
-                            handleNextSkipClick('next');
-                            if (questionCount === questions.length) {
-                              setGameOver(true);
-                              setModeToShow('results');
-                            }
-                          }}
-                          disabled={selectedOption[questionCount] === undefined}
-                        >
-                          NEXT
-                        </Button>
-                      </FlexRow>
-                    </FlexColumn>
-                  ) : modeToShow === 'answers' && answers ? (
-                    <>
-                      <div className="w-full">
-                        {questions.map((questionData, index) => {
-                          if (index !== questionCount) return null;
-                          return (
-                            <FlexColumn className="gap-5" key={questionData.id}>
-                              <p className="text-md font-medium leading-5 md:text-lg">
-                                {questionData.question}
-                              </p>
-                              <div className="grid select-none grid-cols-1 gap-4 md:grid-cols-2">
-                                {questionData.options.map(
-                                  ({ id, value }, subIndex) => {
-                                    const isOptionSelected =
-                                      selectedOption[questionCount]?.id === id;
-                                    const correctAnswer =
-                                      answers?.find(
-                                        answer =>
-                                          Number(answer.id) === questionData.id,
-                                      )?.answer || null;
-                                    const isCorrectAnswer =
-                                      correctAnswer === id;
-
-                                    return (
-                                      <button
-                                        className={`flex cursor-pointer items-center justify-start gap-4 rounded-lg border p-2 shadow-sm md:p-4 ${isOptionSelected && isCorrectAnswer ? 'bg-green-600 text-white' : ''} ${isOptionSelected && !isCorrectAnswer ? 'bg-red-400 text-white' : ''} ${!isOptionSelected && isCorrectAnswer ? 'bg-green-600 text-white' : ''}`}
-                                        key={subIndex}
-                                      >
-                                        <MCQButton
-                                          label={optionsLabel[subIndex]}
-                                          value={value}
-                                        />
-                                      </button>
-                                    );
-                                  },
-                                )}
-                              </div>
-                            </FlexColumn>
-                          );
-                        })}
-                      </div>
+                      </Accordion>
+                      {/* {questions.map((question, index) => {
+                        if (index !== questionCount) return null;
+                        return (
+                          <Question
+                            questionCount={questionCount}
+                            questionData={question}
+                            selectedOption={selectedOption}
+                            handleOptionClick={() => {}}
+                            key={question.id}
+                          />
+                        );
+                      })} */}
                       <FlexRow className="gap-4">
                         <Button
                           variant="secondary"
-                          disabled={questionCount === 0}
                           onClick={() => {
-                            setQuestionCount(questionCount - 1);
+                            if (visibleQuestionChunkIndex === 0) return;
+                            setVisibleQuestionChunkIndex(
+                              visibleQuestionChunkIndex - 1,
+                            );
                           }}
+                          disabled={visibleQuestionChunkIndex === 0}
                         >
                           PREV
                         </Button>
                         <Button
                           onClick={() => {
-                            if (questionCount !== questions.length - 1) {
-                              setQuestionCount(questionCount + 1);
+                            if (
+                              visibleQuestionChunkIndex ===
+                              questionsChunk.length - 1
+                            )
                               return;
-                            }
-                            setGameOver(true);
-                            setModeToShow('results');
+                            setVisibleQuestionChunkIndex(
+                              visibleQuestionChunkIndex + 1,
+                            );
                           }}
+                          disabled={
+                            visibleQuestionChunkIndex ===
+                            questionsChunk.length - 1
+                          }
                         >
                           NEXT
                         </Button>
                       </FlexRow>
-                    </>
+                    </FlexColumn>
                   ) : (
                     <>
                       <FlexColumn className="flex w-full items-center gap-6 p-2 md:p-4">
@@ -540,7 +801,7 @@ const MCQBox = () => {
                           onClick={() => {
                             cancelTimeout();
                             setQuestionCount(0);
-                            setModeToShow('answers');
+                            setViewMode('answers');
                           }}
                           variant="secondary"
                           disabled={answersIsLoading}

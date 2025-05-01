@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
+import { Clock } from 'lucide-react';
 
-import Icon from '@Components/common/Icon';
 import { FlexRow } from '@Components/common/Layouts';
 import useStopwatch from '@Components/common/StopWatch';
 
@@ -20,12 +20,10 @@ const TimeBox = ({ startTimer, stopTimer }: TimeBoxProps) => {
   }, [stopTimer]);
   return (
     <FlexRow className="items-center gap-1">
-      <Icon name="access_alarm" className="flex items-center justify-center !text-xl !font-light" />
-      <p className='font-medium text-sm md:text-md'>Time: </p>
-      <FlexRow className="items-center gap-1 text-primary-600 text-sm md:text-md">
-        <span>{stopWatch.time.minutes}:</span>
-        <span>{stopWatch.time.seconds}:</span>
-        <span>{stopWatch.time.milliseconds}</span>
+      <Clock size={20} className='items-center' />
+      <FlexRow className="items-center justify-end gap-1 text-sm md:text-md">
+        <span className="w-4">{stopWatch.time.minutes}:</span>
+        <span className="w-4">{stopWatch.time.seconds}</span>
       </FlexRow>
     </FlexRow>
   );

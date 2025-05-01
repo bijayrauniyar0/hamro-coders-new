@@ -95,3 +95,23 @@ export function getDisplayedRowCount(data: any): number {
   });
   return allData.length;
 }
+
+export function chunkArray(arr: any[], chunkSize = 4) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    result.push(arr.slice(i, i + chunkSize));
+  }
+  return result;
+}
+
+export const getGlobalIndex = (
+  questionsChunk: any[],
+  chunkIndex: number,
+  questionIndex: number,
+) => {
+  return (
+    questionsChunk
+      .slice(0, chunkIndex)
+      .reduce((acc, chunk) => acc + chunk.length, 0) + questionIndex
+  );
+};
