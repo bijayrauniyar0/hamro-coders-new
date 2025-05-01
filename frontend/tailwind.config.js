@@ -12,11 +12,17 @@ export const theme = {
     padding: '2rem',
     screens: {
       '2xl': '1400px',
+      xs: '540px',
     },
   },
   extend: {
     fontFamily: {
       primary: ['Poppins'],
+    },
+    utilities: {
+      '.backface-hidden': {
+        'backface-visibility': 'hidden',
+      },
     },
     colors: {
       primary: {
@@ -57,7 +63,7 @@ export const theme = {
       custom: '0px 2px 6px 0px rgba(20, 86, 146, 0.12)',
       box: '2px 6px 6px rgba(16, 24, 40, 0.5)',
       stats: '1.5px 1.5px 3px #bfa2e2',
-      statsCard: '0 4px 12px rgba(0, 0, 0, 0.07)'
+      statsCard: '0 4px 12px rgba(0, 0, 0, 0.07)',
     },
     animation: {
       loader: 'loader 0.6s infinite alternate',

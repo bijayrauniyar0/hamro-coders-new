@@ -1,18 +1,15 @@
 // import ModesPage from '@Views/Modes';
+import Courses from '@Components/Courses';
+import Subjects from '@Components/Courses/Subjects';
 import AuthenticationComponent from '@Components/UserAuthentication';
 import CoursesPage from '@Views/Courses';
-import DashboardPage from '@Views/Dashboard';
 import LeaderboardPage from '@Views/LeaderboardPage';
+import MCQPage from '@Views/MCQPage';
 import MyStatsPage from '@Views/MyStatsPage';
 
 import { IRoute } from './type';
 
 const appRoutes: IRoute[] = [
-  {
-    name: 'Dashboard',
-    path: '/',
-    component: DashboardPage,
-  },
   {
     name: 'Login',
     path: '/login',
@@ -43,6 +40,24 @@ const appRoutes: IRoute[] = [
     name: 'Verify Email',
     path: '/verify-email',
     component: AuthenticationComponent,
+  },
+  {
+    name: 'Academics',
+    path: '/',
+    component: Courses,
+    authenticated: true,
+  },
+  {
+    name: 'Subjects',
+    path: '/courses/subjects/:course_id',
+    component: Subjects,
+    authenticated: true,
+  },
+  {
+    name: 'MCQ',
+    path: '/mcq/:course_id/*',
+    component: MCQPage,
+    authenticated: true,
   },
 ];
 

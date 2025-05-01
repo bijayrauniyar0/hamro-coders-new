@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 
-import { McqResponseType } from '@Components/Courses/MCQSection';
+import { McqResponseType } from '@Components/MCQSection/Context/MCQContextTypes';
 
 import { api, authenticated } from '.';
 

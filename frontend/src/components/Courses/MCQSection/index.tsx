@@ -1,81 +1,26 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { ChevronDown, Grid } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { Grid } from 'lucide-react';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
 import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@Components/radix/Accordion';
 import { Button } from '@Components/radix/Button';
 import Skeleton from '@Components/radix/Skeleton';
-import { chunkArray, getGlobalIndex, getPercentageColor } from '@Utils/index';
 import isEmpty from '@Utils/isEmpty';
-import {
-  endStats,
-  modesDescription,
-  optionsLabel,
-} from '@Constants/QuestionsBox';
-import { getMcqAnswers, getMcqs } from '@Services/academics';
+import { endStats, modesDescription } from '@Constants/QuestionsBox';
 import { createLeaderboardEntry } from '@Services/leaderboard';
 
-import MCQButton from './MCQButton';
+import { useMCQContext } from '../../MCQSection/Context/MCQContext';
+import { MCQProvider } from '../../MCQSection/Context/MCQProvider';
+
 import MCQSkeleton from './MCQSkeleton';
-import Question from './Question';
+import QuestionsView from './QuestionsView';
 import TimeBox from './TimeBox';
-
-export type OptionType = {
-  id: number;
-  value: string;
-};
-
-export type QuestionType = {
-  id: number;
-  section_id: number;
-  question: string;
-  options: OptionType[];
-  answer: string; // If it's always a string (e.g., "1")
-};
-
-export type SectionType = {
-  section_id: number;
-  name: string;
-  question_count: number;
-  marks_per_question: number;
-  negative_marking: number;
-  questions: QuestionType[];
-};
-
-export type McqResponseType = {
-  questions_count: number;
-  time_limit: number;
-  sections: SectionType[];
-};
-
-type AnswerType = {
-  id: number;
-  answer: number;
-};
-
-type SelectedOptionType = {
-  [key: number]: {
-    section_id: number;
-    answer: number;
-  };
-};
 
 const mcqData = {
   questions_count: 10,
@@ -343,13 +288,12 @@ const mcqData = {
 const questionsIsLoading = false;
 
 const MCQBox = () => {
+  const { results, questionsChunk, answersIsLoading } = useMCQContext();
   const handleBeforeUnload = useRef((event: BeforeUnloadEvent) => {
     event.preventDefault();
   });
   const startTimeRef = useRef(new Date());
   const [questionCount, setQuestionCount] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<SelectedOptionType>({});
-  const [openAccordion, setOpenAccordion] = useState('');
   const [visibleQuestionChunkIndex, setVisibleQuestionChunkIndex] = useState(0);
   const [timeOut, setTimeOut] = useState(2);
   const timeOutRef = useRef<NodeJS.Timeout>();
@@ -367,52 +311,10 @@ const MCQBox = () => {
 
   const [isRecordCreated, setIsRecordCreated] = useState(false);
 
-  // const { data: mcqData, isLoading: questionsIsLoading } = useQuery({
-  //   queryKey: ['mcq-data'],
-  //   queryFn: () =>
-  //     getMcqs({
-  //       subject_id,
-  //     }),
-  //   select: ({ data }) => data,
-  // });
-
-  const { data: answers, isLoading: answersIsLoading } = useQuery({
-    queryKey: ['answers'],
-    queryFn: () =>
-      getMcqAnswers({
-        subject_id,
-        questions: mcqData?.sections
-          .map(section => section.questions.map(question => question.id))
-          .flat()
-          .join(','),
-      }),
-    select: ({ data }) => data as AnswerType[],
-    enabled: questionCount === (mcqData?.questions_count ?? 0) - 1,
-  });
-
   const { mutate: createLeaderboardRecord } = useMutation({
     mutationFn: (payload: Record<string, any>) =>
       createLeaderboardEntry(payload),
   });
-
-  const results: { [key: string]: number } = useMemo(() => {
-    if (!mcqData || !answers) return { right: 0, wrong: 0 };
-    const results = selectedOption.map(({ question_id, id }) => {
-      const correctAnswer = answers.find(answer => answer.id === question_id);
-      return {
-        question_id,
-        correct: correctAnswer?.answer === id, // Compare selected option with correct answer
-      };
-    });
-    const rightAnswers = results.filter(result => result.correct).length;
-
-    const wrongAnswers = mcqData.questions_count - rightAnswers;
-
-    return {
-      right: rightAnswers,
-      wrong: wrongAnswers,
-    };
-  }, [answers]);
 
   const handleScoreSubmission = () => {
     const payload = {
@@ -500,25 +402,8 @@ const MCQBox = () => {
     }
   };
 
-  const questions = useMemo(() => {
-    if (!mcqData) return [];
-    return mcqData.sections.flatMap(section => {
-      return section.questions.map(question => question);
-    });
-  }, [mcqData]);
-
-  const questionsChunk: QuestionType[][] = useMemo(() => {
-    return chunkArray(questions);
-  }, [questions]);
-
-  useEffect(() => {
-    const firstQuestionId = questionsChunk[visibleQuestionChunkIndex]?.[0]?.id;
-    if (firstQuestionId !== undefined) {
-      setOpenAccordion(firstQuestionId.toString());
-    }
-  }, [visibleQuestionChunkIndex, questionsChunk]);
   return (
-    <>
+    <MCQProvider>
       <BindContentContainer>
         <div className="mx-auto w-full rounded-lg border bg-white p-4 shadow-lg md:w-4/5 md:p-4">
           {questionsIsLoading ? (
@@ -601,7 +486,8 @@ const MCQBox = () => {
                 <>
                   {viewMode === 'questions' ? (
                     <FlexColumn className="w-full items-end gap-5">
-                      <Accordion
+                      <QuestionsView />
+                      {/* <Accordion
                         type="single"
                         collapsible
                         value={openAccordion}
@@ -679,7 +565,7 @@ const MCQBox = () => {
                             );
                           },
                         )}
-                      </Accordion>
+                      </Accordion> */}
                       {/* {questions.map((question, index) => {
                         if (index !== questionCount) return null;
                         return (
@@ -748,6 +634,7 @@ const MCQBox = () => {
                                   name={stat.name}
                                   className={`flex items-center justify-center ${stat.bg_color} ${stat.color} rounded-full p-1`}
                                 />
+                                {/* @ts-ignore */}
                                 <p className="text-md font-medium leading-4 tracking-tight md:text-base md:tracking-normal">{`${results[stat.keyName]} ${stat.text}`}</p>
                               </FlexRow>
                             ))}
@@ -816,7 +703,7 @@ const MCQBox = () => {
                         </Button>
                         <Button
                           onClick={() => {
-                            disableBeforeUnload();
+                            // disableBeforeUnload();
                             navigate(0);
                           }}
                           className="w-full md:w-fit"
@@ -832,7 +719,7 @@ const MCQBox = () => {
           )}
         </div>
       </BindContentContainer>
-    </>
+    </MCQProvider>
   );
 };
 
