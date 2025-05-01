@@ -10,7 +10,7 @@ import {
   IRecentSessions,
   UserScoresArgsType,
 } from '@Constants/Types/userStats';
-import Subject from '../models/subjectsModels';
+import Subject from '../models/subjectsModel';
 import {
   subDays,
   subWeeks,
@@ -18,10 +18,11 @@ import {
   startOfWeek,
   startOfMonth,
 } from 'date-fns';
+// import User from '@Models/userModels';
 
 export async function seedUserScores(count: number = 100) {
-  const startDate = new Date('2025-01-01');
-  const endDate = new Date('2025-04-26');
+  const startDate = new Date('2025-04-26');
+  const endDate = new Date('2025-05-01');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -31,16 +32,16 @@ export async function seedUserScores(count: number = 100) {
   const getRandomInt = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
 
-  const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
+  // const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
 
   const records = Array.from({ length: count }).map(() => {
-    const user_id = getRandomInt(1, 4);
+    const user_id = getRandomInt(1, 10);
     return {
       user_id: user_id,
       score: getRandomInt(6, 10),
       created_at: getRandomDate(),
       elapsed_time: getRandomInt(200, 600),
-      mode: getRandomMode(),
+      mode: 'ranked',
       subject_id: getRandomInt(1, 5),
     };
   });
@@ -262,8 +263,7 @@ export const getPerformanceDetails = async (
   const { user } = req;
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
-
-  // await seedUserScores(300);
+  // await seedUserScores(150);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(

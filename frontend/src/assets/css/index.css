@@ -110,6 +110,10 @@ body {
   border: none;
 }
 
+.transition {
+  transition: all 0.3s ease-in-out;
+}
+
 
 /* * {
   border: 1px solid red !important;

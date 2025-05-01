@@ -8,6 +8,7 @@ import userScoresRouter from './routes/leaderboardRoutes';
 import courseRouter from './routes/courseRoutes';
 import notificationRouter from './routes/notificationRoutes';
 import analyticsRouter from './routes/analyticsRoutes';
+import './models/subjectSectionLinkModel';
 
 const PORT = process.env.PORT || 9000;
 

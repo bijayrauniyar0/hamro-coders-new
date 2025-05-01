@@ -13,7 +13,7 @@ Course.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    course_name: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },

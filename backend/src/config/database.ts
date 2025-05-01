@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import pg from 'pg';
 
 dotenv.config();
-
 // Ensure 'port' is correctly converted to a number
 const sequelize = new Sequelize({
   host: process.env.DB_HOST || 'hamrocoders-sql-db',
@@ -15,6 +14,7 @@ const sequelize = new Sequelize({
   dialect: 'postgres',
   timezone: '+05:45',
   dialectModule: pg,
+  ssl: true,
 });
 
 export default sequelize;

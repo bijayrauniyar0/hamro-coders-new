@@ -4,6 +4,7 @@ import { cardVariants, containerVariants } from '@Animations/index';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 
+import BindContentContainer from '@Components/common/BindContentContainer';
 import BreadCrumb from '@Components/common/FormComponent/BreadCrumb';
 import hasErrorBoundary from '@Components/common/hasErrorBoundary';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
@@ -43,7 +44,7 @@ const Subjects = () => {
     );
   }, [subjectsData, searchValue]);
   return (
-    <>
+    <BindContentContainer>
       <FlexColumn className="w-full gap-4">
         <FlexRow className="w-full items-center justify-between">
           <BreadCrumb onBackClick={() => navigate(-1)} heading="Subjects" />
@@ -93,12 +94,12 @@ const Subjects = () => {
           onClose={() => setIsModesOpen(false)}
           handleNextClick={() =>
             navigate(
-              `/courses/${course_id}/mcq/?subject_id=${selectedSubject}&mode=${selectedMode}`,
+              `/mcq/courses/${course_id}/?subject_id=${selectedSubject}&mode=${selectedMode}`,
             )
           }
         />
       )}
-    </>
+    </BindContentContainer>
   );
 };
 

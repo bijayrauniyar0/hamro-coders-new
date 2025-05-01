@@ -17,7 +17,7 @@ export const navbarData: INavbarLinkData[] = [
   {
     id: 1,
     name: 'Courses',
-    link: '/courses',
+    link: '/',
   },
   // {
   //   id: 2,

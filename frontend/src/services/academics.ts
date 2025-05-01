@@ -1,3 +1,7 @@
+import { AxiosResponse } from 'axios';
+
+import { McqResponseType } from '@Components/MCQSection/Context/MCQContextTypes';
+
 import { api, authenticated } from '.';
 
 export const getSubjectsByCourse = async (course_id: number) => {
@@ -14,7 +18,9 @@ export const getSubjectsMetaData = async (subject_id: string) => {
   );
 };
 
-export const getMcqs = async (paramsX: Record<string, any>) => {
+export const getMcqs = async (
+  paramsX: Record<string, any>,
+): Promise<AxiosResponse<McqResponseType>> => {
   const { subject_id, ...params } = paramsX;
   return authenticated(api).get(`/api/mcq/questions/${subject_id}/`, {
     params,
