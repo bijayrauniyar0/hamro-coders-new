@@ -26,7 +26,7 @@ const Courses = () => {
 
   const courses = useMemo(() => {
     const searchedCourses = courseData?.filter(course =>
-      course.course_name.toLowerCase().includes(searchValue.toLowerCase()),
+      course.name.toLowerCase().includes(searchValue.toLowerCase()),
     );
     return searchedCourses;
   }, [courseData, searchValue]);
@@ -71,7 +71,7 @@ const Courses = () => {
                 >
                   <FlexRow className="w-full items-center justify-between">
                     <p className="!w-[18rem] text-lg font-medium leading-5">
-                      {course.course_name}
+                      {course.name}
                     </p>
                     <ToolTip message="View Course Details" name="info" />
                   </FlexRow>

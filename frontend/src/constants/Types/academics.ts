@@ -4,7 +4,7 @@ export interface ISubjectBoxProps {
 }
 
 export type CoursesType = {
-  course_name: string;
+  name: string;
   id: number;
   subjects_count: number;
 };

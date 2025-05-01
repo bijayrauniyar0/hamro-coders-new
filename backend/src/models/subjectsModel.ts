@@ -1,18 +1,14 @@
-import { DataTypes, Model } from 'sequelize';
+import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import Course from './courseModels';
+import Section from './sectionModel';
 
 class Subject extends Model {
   public id!: number;
   public course_id!: number;
   public title!: string;
-  public marks!: number;
-  public duration_in_minutes!: number;
-  public questions_count!: number;
-  public marks_per_question!: number;
-  public negative_marking!: number;
-  public total_marks!: number;
   public time_limit!: number;
+  public getSections!: BelongsToManyGetAssociationsMixin<Section>;
 }
 
 Subject.init(
