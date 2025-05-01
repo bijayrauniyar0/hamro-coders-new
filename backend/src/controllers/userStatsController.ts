@@ -9,7 +9,7 @@ import {
   IPerformanceDetails,
   IRecentSessions,
   UserScoresArgsType,
-} from '@Constants/Types/userStats';
+} from '../constants/Types/userStats';
 import Subject from '../models/subjectsModel';
 import {
   subDays,
