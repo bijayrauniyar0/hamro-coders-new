@@ -4,12 +4,9 @@ import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
 import { ISubjectBoxProps } from '@Constants/Types/academics';
 
-const SubjectBox = ({ title, handlePlay }: ISubjectBoxProps) => {
+const SubjectBox = ({ title, course_name }: ISubjectBoxProps) => {
   return (
-    <div
-      className="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:border-primary-200 hover:shadow-lg"
-      onClick={handlePlay}
-    >
+    <div className="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:border-primary-200 hover:shadow-lg">
       <FlexColumn className="items-start gap-4 px-6 py-5">
         <FlexRow className="w-full items-start justify-between">
           <div className="flex items-center gap-2">
@@ -17,7 +14,7 @@ const SubjectBox = ({ title, handlePlay }: ISubjectBoxProps) => {
               <Book size={16} className="text-primary-700" />
             </div>
             <span className="text-xs font-medium capitalize text-primary-700">
-              hey man
+              {course_name}
             </span>
           </div>
           <Info

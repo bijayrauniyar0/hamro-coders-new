@@ -3,7 +3,7 @@ import sequelize from '../config/database';
 
 class Course extends Model {
   public id!: number;
-  public course_name!: string;
+  public name!: string;
 }
 
 Course.init(

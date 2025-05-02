@@ -81,7 +81,10 @@ const Subjects = () => {
                       setIsModesOpen(true);
                     }}
                   >
-                    <SubjectBox title={subject.title} handlePlay={() => {}} />
+                    <SubjectBox
+                      title={subject.title}
+                      course_name={subject.course_name}
+                    />
                   </motion.button>
                 );
               })}

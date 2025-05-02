@@ -8,6 +8,7 @@ class Subject extends Model {
   public course_id!: number;
   public title!: string;
   public time_limit!: number;
+  public Course?: Course;
   public getSections!: BelongsToManyGetAssociationsMixin<Section>;
 }
 

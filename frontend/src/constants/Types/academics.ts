@@ -1,8 +1,3 @@
-export interface ISubjectBoxProps {
-  title: string;
-  handlePlay: () => void;
-}
-
 export type CoursesType = {
   name: string;
   id: number;
@@ -13,6 +8,10 @@ export type SubjectType = {
   id: number;
   course_id: number;
   title: string;
-  marks: number;
-  duration_in_minutes: number;
+  course_name: string;
 };
+
+export interface ISubjectBoxProps {
+  title: string;
+  course_name: string;
+}
