@@ -49,7 +49,7 @@ const Subjects = () => {
         <FlexRow className="w-full items-center justify-between">
           <BreadCrumb onBackClick={() => navigate(-1)} heading="Subjects" />
           <Searchbar
-            wrapperStyle="!w-[15rem]"
+            wrapperStyle="!w-[10rem] lg:!w-[15rem]"
             placeholder="Search Subjects"
             onChange={e => setSearchValue(e.target.value)}
             value={searchValue}
@@ -64,7 +64,7 @@ const Subjects = () => {
         ) : isEmpty(filteredSubjects) ? (
           <NoDataAvailable />
         ) : (
-          <FlexColumn className="gap-4">
+          <FlexColumn className="scrollbar max-h-[calc(100dvh-9rem)] gap-4 overflow-y-auto pb-4">
             <motion.div
               className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4"
               variants={containerVariants}
