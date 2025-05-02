@@ -34,7 +34,7 @@ const QuestionsView = () => {
     >
       {questionsChunk[visibleQuestionChunkIndex].map(
         (question, questionIndex) => {
-          const isAccordionOpen = question.id.toString() === openAccordion;
+          const isAccordionOpen = question.id.toString() === openAccordion;ww
           return (
             <AccordionItem
               value={question.id.toString()}

@@ -42,6 +42,12 @@ const appRoutes: IRoute[] = [
     authenticated: true,
   },
   {
+    name: 'Academics',
+    path: '/courses',
+    component: Courses,
+    authenticated: true,
+  },
+  {
     name: 'Subjects',
     path: '/courses/subjects/:course_id',
     component: Subjects,
