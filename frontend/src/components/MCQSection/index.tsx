@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { Grid } from 'lucide-react';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
@@ -39,7 +40,7 @@ const MCQBox = () => {
     event.preventDefault();
   });
   const startTimeRef = useRef(new Date());
-  const [questionCount, setQuestionCount] = useState(0);
+  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [timeOut, setTimeOut] = useState(2);
   const timeOutRef = useRef<NodeJS.Timeout>();
 
@@ -110,7 +111,7 @@ const MCQBox = () => {
     if (selectedMode === 'practice') return () => {};
     if (selectedMode === 'ranked') {
       setTimeout(() => {
-        setQuestionCount(0);
+        // setQuestionCount(0);
         setViewMode('answers');
       }, 600000);
     }
@@ -121,13 +122,13 @@ const MCQBox = () => {
     return () => clearInterval(timeoutId);
   }, [selectedMode]);
 
-  useEffect(() => {
-    if (!mcqData) return;
-    if (questionCount === mcqData.questions_count) {
-      setViewMode('results');
-      handleScoreSubmission();
-    }
-  }, [questionCount]);
+  // useEffect(() => {
+  //   if (!mcqData) return;
+  //   if (questionCount === mcqData.questions_count) {
+  //     setViewMode('results');
+  //     handleScoreSubmission();
+  //   }
+  // }, [questionCount]);
 
   useEffect(() => {
     if (gameOver) {
@@ -232,7 +233,7 @@ const MCQBox = () => {
           <Button
             onClick={() => {
               cancelTimeout();
-              setQuestionCount(0);
+              // setQuestionCount(0);
               setViewMode('answers');
             }}
             variant="secondary"
@@ -258,20 +259,20 @@ const MCQBox = () => {
         </div>
       </>
     ),
-    overview: <OverviewMode />,
+    // overview: ,
   };
 
   return (
     <>
       <BindContentContainer>
         <div className="flex w-full items-center justify-center">
-          <div className="mx-auto h-[calc(100dvh-4rem)] w-full rounded-lg border bg-white p-4 shadow-lg md:w-4/5 md:p-4">
+          <div className="relative mx-auto h-[calc(100dvh-4rem)] w-full rounded-lg border bg-white p-4 shadow-lg md:w-4/5 md:p-4 overflow-hidden">
             {questionsIsLoading ? (
               <MCQSkeleton />
             ) : isEmpty(mcqData) || !mcqData ? (
               <NoDataAvailable />
             ) : (
-              <FlexColumn className="min-h-[40rem] items-end gap-3 md:gap-6">
+              <FlexColumn className="items-end gap-3 md:gap-6">
                 <div className="flex w-full flex-wrap justify-between border-b border-gray-300 pb-4">
                   <p className="text-md font-semibold text-primary-600 lg:text-lg">
                     Hamro Coders
@@ -284,7 +285,8 @@ const MCQBox = () => {
                     <TimeBox
                       startTimer={viewMode !== 'instructions' || timeOut < 1}
                       stopTimer={
-                        questionCount === mcqData.questions_count || gameOver
+                        false
+                        // questionCount === mcqData.questions_count || gameOver
                       }
                     />
                   </FlexRow>
@@ -300,7 +302,7 @@ const MCQBox = () => {
                     </p>
                   </FlexRow> */}
                 </div>
-                <FlexRow className="w-full items-center justify-between gap-4">
+                <FlexRow className="z-10 w-full items-center justify-between gap-4 bg-white">
                   <FlexRow className="items-center gap-6">
                     <span className="text-sm font-medium md:text-md">
                       Section {visibleQuestionChunkIndex}/
@@ -315,11 +317,7 @@ const MCQBox = () => {
                   </FlexRow>
                   <button
                     onClick={() => {
-                      if (viewMode === 'overview') {
-                        setViewMode('questions');
-                        return;
-                      }
-                      setViewMode('overview');
+                      setIsOverviewOpen(!isOverviewOpen);
                     }}
                     className={`flex items-center gap-1 rounded px-2 py-1 text-xs hover:bg-primary-500 hover:text-white ${viewMode === 'overview' ? 'bg-primary-500 text-white' : 'bg-gray-300'}`}
                   >
@@ -327,40 +325,60 @@ const MCQBox = () => {
                     Overview
                   </button>
                 </FlexRow>
-                <div className="scrollbar h-[calc(100dvh-19rem)] w-full overflow-y-auto">
+                <motion.div
+                  layout // This enables smooth layout transitions based on content size
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{
+                    height: isOverviewOpen ? 'auto' : 0,
+                    opacity: isOverviewOpen ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="w-full overflow-hidden"
+                >
+                  <OverviewMode />
+                </motion.div>
+
+                <motion.div
+                  layout
+                  animate={{ y: isOverviewOpen ? 0 : -16 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className=" max-md:scrollbar-thin h-[calc(100dvh-19rem)] w-full overflow-y-auto"
+                >
                   {viewModes[viewMode]}
-                </div>
-                <FlexRow className="gap-4">
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      if (visibleQuestionChunkIndex === 0) return;
-                      setVisibleQuestionChunkIndex(
-                        visibleQuestionChunkIndex - 1,
-                      );
-                    }}
-                    disabled={visibleQuestionChunkIndex === 0}
-                  >
-                    PREV
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      if (
-                        visibleQuestionChunkIndex ===
-                        questionsChunk.length - 1
-                      )
-                        return;
-                      setVisibleQuestionChunkIndex(
-                        visibleQuestionChunkIndex + 1,
-                      );
-                    }}
-                    disabled={
-                      visibleQuestionChunkIndex === questionsChunk.length - 1
-                    }
-                  >
-                    NEXT
-                  </Button>
-                </FlexRow>
+                </motion.div>
+                {!isOverviewOpen && (
+                  <FlexRow className="gap-4">
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        if (visibleQuestionChunkIndex === 0) return;
+                        setVisibleQuestionChunkIndex(
+                          visibleQuestionChunkIndex - 1,
+                        );
+                      }}
+                      disabled={visibleQuestionChunkIndex === 0}
+                    >
+                      PREV
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (
+                          visibleQuestionChunkIndex ===
+                          questionsChunk.length - 1
+                        )
+                          return;
+                        setVisibleQuestionChunkIndex(
+                          visibleQuestionChunkIndex + 1,
+                        );
+                      }}
+                      disabled={
+                        visibleQuestionChunkIndex === questionsChunk.length - 1
+                      }
+                    >
+                      NEXT
+                    </Button>
+                  </FlexRow>
+                )}
               </FlexColumn>
             )}
           </div>

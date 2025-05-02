@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
 
@@ -19,17 +19,9 @@ function App() {
   const navigate = useNavigate();
 
   const routesWithoutNavbar = ['/login', '/signup', '/verify-email', '/mcq'];
-  const currentRoute =
-    appRoutes.find(route =>
-      matchPath({ path: route.path, end: false }, pathname),
-    ) || appRoutes.find(route => route.path === '*');
-
-  // check if the current route is the 404 Page
-  const isPageNotFound = currentRoute?.path === '*';
-  const showNavbar =
-    !routesWithoutNavbar.some(route => pathname.includes(route)) &&
-    isPageNotFound;
-
+  const showNavbar = !routesWithoutNavbar.some(route =>
+    pathname.includes(route),
+  );
   const {
     isSuccess: isUserLoggedIn,
     isError: errorUserLogin,

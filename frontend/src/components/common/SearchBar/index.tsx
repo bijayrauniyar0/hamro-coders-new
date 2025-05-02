@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect,useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import SearchIcon from '@Assets/images/icons/searchIcon.svg';
 
@@ -68,8 +68,8 @@ export default function Searchbar({
         <input
           ref={inputRef}
           type="text"
-          className={`block w-full rounded-lg border border-grey-600 pl-[35px] pr-[28px] text-[13px] font-normal text-gray-500 placeholder:font-normal placeholder:text-gray-500 focus:border-[#484848] focus:outline-none ${
-            isSmall ? 'h-[36px] py-2' : 'h-[40px] py-3'
+          className={`block w-full rounded-lg border border-grey-600 pl-[35px] pr-[28px] text-[13px] font-normal text-gray-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-500 focus:border-[#484848] focus:outline-none placeholder:md:text-md ${
+            isSmall ? 'py-2 h-[2.25rem]' : 'h-[40px] py-3'
           } ${className}`}
           placeholder={placeholder}
           value={value}

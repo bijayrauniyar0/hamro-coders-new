@@ -168,6 +168,25 @@
     .scrollbar::-webkit-scrollbar-thumb:hover {
       background: #d0d3da;
     }
+
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      border-radius: 100vh;
+      background: transparent;
+      padding: 2px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: #eaecf0;
+      border-radius: 100vh;
+      border: 1px solid #d0d3da;
+      background-clip: padding-box;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: #d0d3da;
+    }
   }
 }
 

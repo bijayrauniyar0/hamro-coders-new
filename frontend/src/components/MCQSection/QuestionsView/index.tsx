@@ -42,7 +42,7 @@ const QuestionsView = () => {
               className={`!rounded-md border transition-all duration-200 ease-in-out ${
                 isAccordionOpen
                   ? 'border-gray-300'
-                  : 'border-gray-300 hover:border-primary-400'
+                  : 'border-gray-300 hover:border-primary'
               }`}
             >
               <AccordionTrigger
