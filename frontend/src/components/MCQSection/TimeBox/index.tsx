@@ -4,27 +4,35 @@ import { Clock } from 'lucide-react';
 import { FlexRow } from '@Components/common/Layouts';
 import useStopwatch from '@Hooks/useStopWatch';
 
-type TimeBoxProps = {
-  startTimer: boolean;
-  stopTimer: boolean;
-};
-const TimeBox = ({ startTimer, stopTimer }: TimeBoxProps) => {
+import { useMCQContext } from '../Context/MCQContext';
+
+const TimeBox = () => {
+  const { viewMode, mcqData } = useMCQContext();
   const stopWatch = useStopwatch();
   useEffect(() => {
-    if (!startTimer) return;
+    if (viewMode !== 'questions') return;
     stopWatch.start();
-  }, [startTimer]);
+  }, [viewMode]);
   useEffect(() => {
-    if (!stopTimer) return;
-    stopWatch.stop();
-  }, [stopTimer]);
+    if (stopWatch.time.minutes >= mcqData.time_limit) {
+      stopWatch.stop();
+    }
+  }, [mcqData]);
   return (
     <FlexRow className="items-center gap-1">
       <Clock size={20} className="items-center" />
       <FlexRow className="items-center justify-end gap-[1px] text-sm md:text-md">
-        <span className="min-w-4">{stopWatch.time.minutes || '00'}</span>
+        <span className="min-w-4">
+          {stopWatch.time.minutes.toString().length < 2
+            ? `0${stopWatch.time.minutes}`
+            : stopWatch.time.minutes}
+        </span>
         <span>:</span>
-        <span className="min-w-4">{stopWatch.time.seconds}</span>
+        <span className="min-w-4">
+          {stopWatch.time.seconds.toString().length < 2
+            ? `0${stopWatch.time.seconds}`
+            : stopWatch.time.seconds}
+        </span>
       </FlexRow>
     </FlexRow>
   );

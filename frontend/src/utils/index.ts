@@ -115,3 +115,10 @@ export const getGlobalIndex = (
       .reduce((acc, chunk) => acc + chunk.length, 0) + questionIndex
   );
 };
+
+export const getElapsedTimeInSeconds = (startTime: Date) => {
+  const now = new Date();
+  const elapsedMs = now.getTime() - startTime.getTime();
+  const elapsedSeconds = Math.floor(elapsedMs / 1000);
+  return elapsedSeconds;
+};

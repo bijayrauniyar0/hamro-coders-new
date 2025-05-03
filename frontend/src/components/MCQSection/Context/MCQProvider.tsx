@@ -1,15 +1,18 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { chunkArray } from '@Utils/index'; // Utility to chunk questions
+import { chunkArray, getElapsedTimeInSeconds } from '@Utils/index'; // Utility to chunk questions
 import { getMcqAnswers, getMcqs } from '@Services/academics';
+import { createLeaderboardEntry } from '@Services/leaderboard';
 
 import { MCQContext } from './MCQContext';
 import {
   AnswerType,
+  EvaluatedAnswersType,
   MCQContextType,
   McqResponseType,
+  MetaDataType,
   ViewMode,
 } from './MCQContextTypes';
 
@@ -17,12 +20,17 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const timeOutRef = useRef<NodeJS.Timeout>();
+  const startTimeRef = useRef(new Date());
 
   const [questionCount, setQuestionCount] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<Record<string, any>>({});
+  const [selectedOption, setSelectedOption] = useState<
+    Record<number, { section_id: number; answer: number }>
+  >({});
   const [visibleQuestionChunkIndex, setVisibleQuestionChunkIndex] = useState(0);
   const [viewMode, setViewMode] = useState<ViewMode>('questions');
   const [isRecordCreated, setIsRecordCreated] = useState(false);
+  const [evaluatedAnswers, setEvaluatedAnswers] =
+    useState<EvaluatedAnswersType>({});
 
   const [searchParams] = useSearchParams();
   const subject_id = searchParams.get('subject_id');
@@ -37,6 +45,11 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
     enabled: !!subject_id,
   });
 
+  const questions = useMemo(() => {
+    if (!mcqData) return [];
+    return mcqData.sections.flatMap(s => s.questions);
+  }, [mcqData]);
+  const questionsChunk = useMemo(() => chunkArray(questions), [questions]);
   const {
     data: answers,
     isLoading: answersIsLoading,
@@ -55,7 +68,8 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const results = useMemo(() => {
-    if (!answers || !mcqData) return { right: 0, wrong: 0 };
+    if (!answers || !mcqData || answersIsLoading)
+      return { right: 0, wrong: 0, unanswered: 0 };
     let correctCount = 0;
 
     for (const correct of answers) {
@@ -64,25 +78,89 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
         correctCount++;
       }
     }
+    const wrongCount = Object.keys(selectedOption).length - correctCount;
     return {
       right: correctCount,
-      wrong: answers.length - correctCount,
+      wrong: wrongCount,
+      unanswered: answers.length - correctCount - wrongCount,
     };
-  }, [answers, mcqData, selectedOption]);
+  }, [answers, mcqData, selectedOption, answersIsLoading]);
+
+  const { mutate: createLeaderboardRecord } = useMutation({
+    mutationFn: (payload: Record<string, any>) => {
+      return createLeaderboardEntry(payload);
+    },
+    onSuccess: () => {
+      setViewMode('results');
+    },
+  });
+
+  const handleSubmit = async () => {
+    const answersResponse = await fetchAnswers();
+    const fetchedAnswers = answersResponse?.data as AnswerType[] | undefined;
+
+    if (!fetchedAnswers || answersIsLoading) return;
+
+    const evaluation = fetchedAnswers.reduce(
+      (acc, curr) => {
+        const userAnswer = selectedOption?.[curr.id]?.answer;
+        acc[curr.id] = {
+          correctAnswer: curr.answer,
+          selectedAnswer: userAnswer,
+          section_id: curr.section_id,
+          isCorrect: curr.answer === userAnswer,
+        };
+        return acc;
+      },
+      {} as typeof evaluatedAnswers,
+    );
+
+    setEvaluatedAnswers(evaluation);
+
+    let score = 0;
+    questions.forEach(question => {
+      const answerDetail = evaluation[question.id];
+      if (!answerDetail) return;
+      if (answerDetail.isCorrect) {
+        score += metaData[question.section_id].marks_per_question;
+      } else {
+        score -= metaData[question.section_id].negative_marking;
+      }
+    });
+
+    const payload = {
+      score,
+      subject_id,
+      mode: 'ranked',
+      elapsed_time: getElapsedTimeInSeconds(startTimeRef.current),
+    };
+
+    createLeaderboardRecord(payload);
+  };
 
   const solvedCount = Object.keys(selectedOption)
-    .map(option => selectedOption[option])
+    .map(option => selectedOption[Number(option)])
     .filter(option => option).length;
 
   const cancelTimeout = () => {
     if (timeOutRef.current) clearTimeout(timeOutRef.current);
   };
 
-  const questions = useMemo(() => {
-    if (!mcqData) return [];
-    return mcqData.sections.flatMap(s => s.questions);
+  const metaData = useMemo(() => {
+    if (!mcqData) return {};
+    const sectionsMetaData = mcqData.sections.reduce<MetaDataType>(
+      (acc, section) => {
+        const { negative_marking, marks_per_question } = section;
+        acc[section.section_id] = {
+          marks_per_question,
+          negative_marking,
+        };
+        return acc;
+      },
+      {},
+    );
+    return sectionsMetaData;
   }, [mcqData]);
-  const questionsChunk = useMemo(() => chunkArray(questions), [questions]);
 
   const value: MCQContextType = {
     questionCount,
@@ -104,6 +182,9 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
     mcqData: mcqData ?? ({} as McqResponseType),
     solvedCount,
     fetchAnswers,
+    evaluatedAnswers,
+    metaData,
+    handleSubmit,
   };
 
   return <MCQContext.Provider value={value}>{children}</MCQContext.Provider>;

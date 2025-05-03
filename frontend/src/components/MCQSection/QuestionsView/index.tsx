@@ -12,6 +12,7 @@ import { getGlobalIndex } from '@Utils/index';
 import { optionsLabel } from '@Constants/QuestionsBox';
 
 import MCQButton from '../MCQButton';
+
 const QuestionsView = () => {
   const [openAccordion, setOpenAccordion] = React.useState<string>('');
   const {
@@ -19,6 +20,7 @@ const QuestionsView = () => {
     selectedOption,
     setSelectedOption,
     visibleQuestionChunkIndex,
+    viewMode,
   } = useMCQContext();
 
   useEffect(() => {
@@ -53,13 +55,15 @@ const QuestionsView = () => {
               }`}
             >
               <AccordionTrigger
-                className={`relative grid min-w-full grid-cols-[1fr_1rem] gap-2 !overflow-hidden p-2 md:grid-cols-[1fr_2rem] ${isAccordionOpen ? 'border-b bg-gray-100' : 'border-0 opacity-50'} rounded-t-md transition-all duration-200 ease-in-out hover:no-underline hover:opacity-100`}
+                className={`relative min-w-full !overflow-hidden p-2 ${isAccordionOpen ? 'border-b bg-gray-100' : 'border-0 opacity-50'} rounded-t-md transition-all duration-200 ease-in-out hover:no-underline hover:opacity-100`}
               >
                 {selectedOption[question.id]?.answer && (
                   <div className="absolute left-[-0.675rem] top-[-0.685rem] h-7 w-5 rotate-45 bg-green-400" />
                 )}
-                <FlexRow className="w-full items-center gap-2">
-                  <p className="text-sm font-semibold md:text-md">
+                <FlexRow
+                  className={`items-start justify-start gap-2 ${isAccordionOpen ? 'w-full' : 'w-4/5'}`}
+                >
+                  <p className="h-fit w-fit text-md  font-semibold leading-4 md:text-base md:leading-[1.15rem]">
                     Q
                     {getGlobalIndex(
                       questionsChunk,
@@ -68,7 +72,7 @@ const QuestionsView = () => {
                     ) + 1}
                   </p>{' '}
                   <p
-                    className={`max-w-fit text-start text-sm font-normal leading-4 md:text-md md:leading-[1.15rem] ${isAccordionOpen ? '' : 'max-w-[150px] truncate md:max-w-[350px] lg:max-w-[650px] xl:max-w-[750px]'}`}
+                    className={`max-w-fit text-start text-sm font-normal leading-4 md:text-md md:leading-[1.15rem] ${isAccordionOpen ? '' : 'truncate'}`}
                   >
                     {question.question}
                   </p>
@@ -83,7 +87,8 @@ const QuestionsView = () => {
                       <MCQButton
                         label={optionsLabel[optionIndex]}
                         value={option.value}
-                        onClick={() =>
+                        onClick={() => {
+                          if (viewMode === 'answers') return;
                           setSelectedOption(prevSelections => {
                             return {
                               ...prevSelections,
@@ -92,8 +97,8 @@ const QuestionsView = () => {
                                 section_id: question.section_id,
                               },
                             };
-                          })
-                        }
+                          });
+                        }}
                         isOptionSelected={isOptionSelected}
                         key={`${question.id}-${option.id}`}
                       />

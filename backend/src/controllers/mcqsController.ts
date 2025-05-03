@@ -83,7 +83,7 @@ export const getMCQsAnswers = async (req: Request, res: Response) => {
   const { questions } = req.query;
   try {
     const mcqAnswers = await MCQ.findAll({
-      attributes: ['id', 'answer'],
+      attributes: ['id', 'answer', 'section_id'],
       where: {
         id: (questions as string)?.split(','),
       },
@@ -92,6 +92,7 @@ export const getMCQsAnswers = async (req: Request, res: Response) => {
       return {
         id: Number(mcq.id),
         answer: Number(mcq.answer),
+        section_id: Number(mcq.section_id),
       };
     });
     res.status(200).json(mcqAnswersArray);

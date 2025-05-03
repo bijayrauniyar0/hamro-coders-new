@@ -6,7 +6,7 @@ import Section from './sectionModel';
 class MCQ extends Model {
   public id!: number;
   public question!: string;
-  public subject_id!: string;
+  public section_id!: string;
   public options!: JSON;
   public answer!: string;
   public Subject?: Subject;
