@@ -17,7 +17,7 @@ export const theme = {
   },
   extend: {
     fontFamily: {
-      primary: ['Poppins'],
+      primary: ['Lato', 'sans-serif'],
     },
     utilities: {
       '.backface-hidden': {
@@ -64,6 +64,7 @@ export const theme = {
       box: '2px 6px 6px rgba(16, 24, 40, 0.5)',
       stats: '1.5px 1.5px 3px #bfa2e2',
       statsCard: '0 4px 12px rgba(0, 0, 0, 0.07)',
+      resultsStats: ' 0 1px 3px rgba(0,0,0,0.05)',
     },
     animation: {
       loader: 'loader 0.6s infinite alternate',

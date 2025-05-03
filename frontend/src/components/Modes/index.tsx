@@ -43,7 +43,11 @@ const Modes = ({ handleNextClick, onClose }: ModesProps) => {
   const handleModeClick = (value: string) => {
     dispatch(setSelectedMode(value));
   };
-
+  useEffect(() => {
+    return () => {
+      dispatch(setSelectedMode('ranked'));
+    };
+  }, [setSelectedMode, dispatch]);
   const reactSlickSettings: Settings = {
     dots: true,
     infinite: true,

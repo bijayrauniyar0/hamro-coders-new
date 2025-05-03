@@ -5,7 +5,7 @@ import { authenticate } from '../middlewares/authenticate';
 const mcqRouter = express.Router();
 
 mcqRouter.get('/questions/:subject_id/', authenticate, getMCQs);
-mcqRouter.get('/answers/:subject_id/', getMCQsAnswers);
+mcqRouter.get('/answers/', getMCQsAnswers);
 
 
 export default mcqRouter;

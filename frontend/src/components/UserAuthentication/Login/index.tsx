@@ -42,7 +42,7 @@ export default function Login() {
     onSuccess: (res: any) => {
       localStorage.setItem('token', res?.data?.token);
       toast.success('Login Successful');
-      navigate('/courses');
+      navigate('/');
     },
     onError: ({ response }: any) => {
       if (response?.status === 401 && response?.data?.verified === false) {

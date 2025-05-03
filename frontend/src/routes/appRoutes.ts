@@ -1,8 +1,8 @@
 // import ModesPage from '@Views/Modes';
+import PageNotFound from '@Components/common/PageNotFound';
 import Courses from '@Components/Courses';
 import Subjects from '@Components/Courses/Subjects';
 import AuthenticationComponent from '@Components/UserAuthentication';
-import CoursesPage from '@Views/Courses';
 import LeaderboardPage from '@Views/LeaderboardPage';
 import MCQPage from '@Views/MCQPage';
 import MyStatsPage from '@Views/MyStatsPage';
@@ -19,12 +19,6 @@ const appRoutes: IRoute[] = [
     name: 'Login',
     path: '/signup',
     component: AuthenticationComponent,
-  },
-  {
-    name: 'Courses',
-    path: '/courses/*',
-    component: CoursesPage,
-    authenticated: true,
   },
   {
     name: 'Leaderboard',
@@ -48,6 +42,12 @@ const appRoutes: IRoute[] = [
     authenticated: true,
   },
   {
+    name: 'Academics',
+    path: '/courses',
+    component: Courses,
+    authenticated: true,
+  },
+  {
     name: 'Subjects',
     path: '/courses/subjects/:course_id',
     component: Subjects,
@@ -58,6 +58,11 @@ const appRoutes: IRoute[] = [
     path: '/mcq/:course_id/*',
     component: MCQPage,
     authenticated: true,
+  },
+  {
+    name: 'Page Not Found',
+    path: '*',
+    component: PageNotFound,
   },
 ];
 

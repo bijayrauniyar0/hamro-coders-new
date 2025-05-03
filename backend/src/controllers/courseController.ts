@@ -27,10 +27,19 @@ export class CoursesService {
     try {
       const subjects = await Subject.findAll({
         where: { course_id },
+        include: [
+          {
+            model: Course,
+            attributes: ['name'],
+          },
+        ],
       });
-      return subjects;
-    } catch {
-      throw new Error('Internal server error');
+      return subjects.map(subject => ({
+        ...subject.toJSON(),
+        course_name: subject.Course?.name,
+      }));
+    } catch (error) {
+      throw new Error(error as string);
     }
   }
   async getSubjectsMetaDataAccordingToSection(subject_id: number | string) {
@@ -65,8 +74,8 @@ export const getSubjectsByCourse = async (req: Request, res: Response) => {
     const coursesService = new CoursesService();
     const subjects = await coursesService.getSubjectsByCourse(+course_id);
     res.status(200).json(subjects);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };
 

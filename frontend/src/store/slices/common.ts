@@ -17,7 +17,7 @@ type CommonState = {
 
 const initialState: CommonState = {
   isModesOpen: false,
-  selectedMode: '',
+  selectedMode: 'ranked',
   userProfile: {},
 };
 

@@ -10,11 +10,11 @@ interface StatusChipProps {
 }
 
 const statusColors: Record<StatusType, string> = {
-  success: 'bg-green-100 text-green-500',
-  warning: 'bg-yellow-100 text-yellow-500',
-  error: 'bg-red-100 text-red-500',
-  info: 'bg-blue-100 text-blue-500',
-  default: 'bg-gray-100 text-gray-500',
+  success: 'bg-green-50 text-green-600',
+  warning: 'bg-yellow-50 text-yellow-600',
+  error: 'bg-red-50 text-red-600',
+  info: 'bg-blue-50 text-blue-600',
+  default: 'bg-gray-50 text-gray-600',
 };
 
 const StatusChip: React.FC<StatusChipProps> = ({
@@ -28,7 +28,7 @@ const StatusChip: React.FC<StatusChipProps> = ({
         statusColors[status],
       )}
     >
-      <p className="text-xs font-medium capitalize md:text-sm">{label}</p>
+      <p className="text-xs font-normal capitalize md:text-sm">{label}</p>
     </div>
   );
 };

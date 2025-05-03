@@ -29,6 +29,7 @@ export type McqResponseType = {
 export type AnswerType = {
   id: number;
   answer: number;
+  section_id: number;
 };
 
 export type SelectedOptionType = {
@@ -37,13 +38,20 @@ export type SelectedOptionType = {
     answer: number;
   };
 };
-export type ViewMode =
-  | 'answers'
-  | 'questions'
-  | 'results'
-  | 'overview'
-  | 'instructions';
 
+export type MetaDataType = {
+  [key: number]: Pick<SectionType, 'marks_per_question' | 'negative_marking'>;
+};
+export type ViewMode = 'answers' | 'questions' | 'results' | 'instructions';
+
+export type EvaluatedAnswersType = {
+  [key: number]: {
+    correctAnswer: number;
+    selectedAnswer: number;
+    section_id: number;
+    isCorrect: boolean;
+  };
+};
 export interface MCQContextType {
   questionCount: number;
   setQuestionCount: React.Dispatch<React.SetStateAction<number>>;
@@ -51,8 +59,8 @@ export interface MCQContextType {
   selectedOption: SelectedOptionType;
   setSelectedOption: React.Dispatch<React.SetStateAction<SelectedOptionType>>;
 
-  openAccordion: string;
-  setOpenAccordion: React.Dispatch<React.SetStateAction<string>>;
+  // openAccordion: string;
+  // setOpenAccordion: React.Dispatch<React.SetStateAction<string>>;
 
   visibleQuestionChunkIndex: number;
   setVisibleQuestionChunkIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -63,7 +71,7 @@ export interface MCQContextType {
   isRecordCreated: boolean;
   setIsRecordCreated: React.Dispatch<React.SetStateAction<boolean>>;
 
-  results: { right: number; wrong: number };
+  results: { right: number; wrong: number; unanswered: number };
 
   cancelTimeout: () => void;
 
@@ -73,4 +81,9 @@ export interface MCQContextType {
   questionsIsLoading: boolean;
   answersIsLoading: boolean;
   mcqData: McqResponseType;
+  solvedCount: number;
+  fetchAnswers: () => void;
+  evaluatedAnswers: EvaluatedAnswersType;
+  metaData: MetaDataType;
+  handleSubmit: () => void;
 }

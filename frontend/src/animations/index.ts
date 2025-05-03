@@ -10,7 +10,7 @@ export const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2, // Delay between each card
+      staggerChildren: 0.1, // Delay between each card
     },
   },
 };

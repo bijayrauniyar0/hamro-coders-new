@@ -27,9 +27,8 @@ export const getMcqs = async (
   });
 };
 
-export const getMcqAnswers = async (paramsX: Record<string, any>) => {
-  const { subject_id, ...params } = paramsX;
-  return authenticated(api).get(`/api/mcq/answers/${subject_id}/`, {
+export const getMcqAnswers = async (params: Record<string, any>) => {
+  return authenticated(api).get(`/api/mcq/answers/`, {
     params,
   });
 };

@@ -12,16 +12,23 @@ export const modesDescription: { [key: string]: string } = {
 export const endStats = [
   {
     name: 'done',
-    color: 'text-green-400',
+    color: 'text-green-600',
     text: 'answers were correct',
     keyName: 'right',
     bg_color: 'bg-green-100',
   },
   {
     name: 'close',
-    color: 'text-red-400',
+    color: 'text-red-700',
     text: 'answers were wrong',
     keyName: 'wrong',
     bg_color: 'bg-red-100',
+  },
+  {
+    name: 'info',
+    color: 'text-yellow-600',
+    text: 'questions unanswered',
+    keyName: 'unanswered',
+    bg_color: 'bg-yellow-100',
   },
 ];
