@@ -36,15 +36,36 @@ const MCQButton = ({
 
     return 'border-gray-200';
   };
+  const getButtonLabelClassName = (
+    view: ViewMode,
+    isOptionSelected: boolean,
+    isCorrectAnswer: boolean,
+  ): string => {
+    if (view === 'questions' && isOptionSelected) {
+      return 'border-white bg-primary-400 border-[3px]';
+    }
+
+    if (view === 'answers') {
+      if (isCorrectAnswer) {
+        return 'bg-green-700 border-white border-[3px]';
+      }
+
+      if (isOptionSelected && !isCorrectAnswer) {
+        return 'bg-red-700 border-white border-[3px]';
+      }
+    }
+
+    return 'bg-primary-500';
+  };
 
   return (
     <button
-      className={`flex cursor-pointer items-center justify-start gap-2 md:gap-4 rounded-md border p-2 transition-all duration-200 ease-in-out hover:border-primary-500 md:p-3 ${getButtonClassName(viewMode, isOptionSelected, isAnswerCorrect)}`}
+      className={`flex cursor-pointer items-center justify-start gap-2 rounded-md border p-2 transition-all duration-200 ease-in-out md:gap-4 md:p-3 ${getButtonClassName(viewMode, isOptionSelected, isAnswerCorrect)} ${viewMode === 'questions' ? 'hover:border-primary-500' : ''}`}
       onClick={onClick}
     >
       <div className="relative">
         <div
-          className={`h-3 w-3 md:h-4 md:w-4 rounded-full ${isOptionSelected ? 'border-[3px] md:border-4 border-white bg-primary-500' : 'bg-primary-500'}`}
+          className={`h-3 w-3 rounded-full md:h-4 md:w-4 ${getButtonLabelClassName(viewMode, isOptionSelected, isAnswerCorrect)}`}
           style={{
             transition:
               'border-width 100ms ease-in-out, background-color 300ms ease-in-out',
@@ -52,7 +73,7 @@ const MCQButton = ({
         />
       </div>
       <p
-        className={`text-start text-sm leading-4 lg:text-md ${isOptionSelected ? 'text-white' : 'text-gray-700'}`}
+        className={`text-start text-sm leading-4 lg:text-md ${isOptionSelected && viewMode === 'questions' ? 'text-white' : 'text-gray-700'}`}
       >
         {value}
       </p>
