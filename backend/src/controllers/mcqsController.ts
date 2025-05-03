@@ -80,13 +80,11 @@ export const getMCQs = async (req: Request, res: Response) => {
 };
 
 export const getMCQsAnswers = async (req: Request, res: Response) => {
-  const { subject_id } = req.params;
   const { questions } = req.query;
   try {
     const mcqAnswers = await MCQ.findAll({
       attributes: ['id', 'answer'],
       where: {
-        subject_id,
         id: (questions as string)?.split(','),
       },
     });
@@ -97,7 +95,7 @@ export const getMCQsAnswers = async (req: Request, res: Response) => {
       };
     });
     res.status(200).json(mcqAnswersArray);
-  } catch {
-    res.status(500).json({ message: 'Internal server error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };
