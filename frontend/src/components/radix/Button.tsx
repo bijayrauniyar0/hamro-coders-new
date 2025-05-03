@@ -5,20 +5,21 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '@Utils/index';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none',
+  'inline-flex items-center  text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm  justify-center rounded-md text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none',
   {
     variants: {
       variant: {
         primary:
-          'bg-primary-600 text-white hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+          'bg-primary-600 text-white  text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
         secondary:
           'bg-white text-primary-500 border border-primary-500 hover:bg-primary-100 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
 
-        link: 'text-primary-600 hover:text-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary-600 hover:text-primary-600 text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm  disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+        ghost:
+          'hover:bg-accent hover:text-accent-foreground text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm ',
 
         outline:
-          'bg-white text-matt-100 border border-grey-600 focus:border-primary-500 rounded-lg',
+          'bg-white text-matt-100 border border-grey-600  text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm focus:border-primary-500 rounded-lg',
       },
       size: {
         normal: 'body-btn h-[2.5rem] py-3 px-5 gap-2 !rounded-lg',
@@ -55,8 +56,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant, size }),
-          "text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm",
-          className
+          'text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm',
+          className,
         )}
         ref={ref}
         {...props}

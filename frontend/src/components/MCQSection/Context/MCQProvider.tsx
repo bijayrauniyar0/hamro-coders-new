@@ -36,13 +36,13 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
   const subject_id = searchParams.get('subject_id');
 
   const { data: mcqData, isLoading: questionsIsLoading } = useQuery({
-    queryKey: ['mcq-data'],
+    queryKey: ['mcq-data', subject_id],
     queryFn: () =>
       getMcqs({
         subject_id,
       }),
     select: ({ data }) => data,
-    enabled: !!subject_id,
+    enabled: Boolean(subject_id),
   });
 
   const questions = useMemo(() => {

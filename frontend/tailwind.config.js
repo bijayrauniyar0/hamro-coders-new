@@ -17,7 +17,7 @@ export const theme = {
   },
   extend: {
     fontFamily: {
-      primary: ['Poppins'],
+      primary: ['Lato', 'sans-serif'],
     },
     utilities: {
       '.backface-hidden': {

@@ -10,10 +10,10 @@ import hasErrorBoundary from '@Components/common/hasErrorBoundary';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import Searchbar from '@Components/common/SearchBar';
-import Modes from '@Components/Modes';
+// import Modes from '@Components/Modes';
 import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
-import { useTypedSelector } from '@Store/hooks';
+// import { useTypedSelector } from '@Store/hooks';
 import { SubjectType } from '@Constants/Types/academics';
 import { getSubjectsByCourse } from '@Services/academics';
 
@@ -21,12 +21,12 @@ import SubjectBox from './SubjectBox';
 
 const Subjects = () => {
   const [searchValue, setSearchValue] = useState('');
-  const [isModesOpen, setIsModesOpen] = useState(false);
-  const [selectedSubject, setSelectedSubject] = useState<number>();
+  // const [isModesOpen, setIsModesOpen] = useState(false);
+  // const [selectedSubject, setSelectedSubject] = useState<number>();
 
-  const selectedMode = useTypedSelector(
-    state => state.commonSlice.selectedMode,
-  );
+  // const selectedMode = useTypedSelector(
+  //   state => state.commonSlice.selectedMode,
+  // );
 
   const { course_id } = useParams();
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const Subjects = () => {
       title?.toLowerCase()?.includes(searchValue.toLowerCase()),
     );
   }, [subjectsData, searchValue]);
-  
+
   return (
     <BindContentContainer>
       <FlexColumn className="w-full gap-4">
@@ -78,8 +78,8 @@ const Subjects = () => {
                     variants={cardVariants}
                     key={subject.id}
                     onClick={() => {
-                      setSelectedSubject(subject.id);
-                      setIsModesOpen(true);
+                      navigate(`/mcq/${course_id}/?subject_id=${subject.id}`);
+                      // setIsModesOpen(true);
                     }}
                   >
                     <SubjectBox
@@ -93,7 +93,7 @@ const Subjects = () => {
           </FlexColumn>
         )}
       </FlexColumn>
-      {isModesOpen && (
+      {/* {isModesOpen && (
         <Modes
           onClose={() => setIsModesOpen(false)}
           handleNextClick={() =>
@@ -102,7 +102,7 @@ const Subjects = () => {
             )
           }
         />
-      )}
+      )} */}
     </BindContentContainer>
   );
 };

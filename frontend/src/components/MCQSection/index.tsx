@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { DoorOpen, Expand, GridIcon, Minimize } from 'lucide-react';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
 import { ConfirmationDialog } from '@Components/common/Confirmation';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import NoDataAvailable from '@Components/common/NoDataAvailable';
 import isEmpty from '@Utils/isEmpty';
 
 import { useMCQContext } from './Context/MCQContext';
@@ -29,11 +29,13 @@ const MCQBox = () => {
     solvedCount,
   } = useMCQContext();
   const fullScreenRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const { course_id } = useParams();
+  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   // const handleBeforeUnload = useRef((event: BeforeUnloadEvent) => {
   //   event.preventDefault();
   // });
-  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
-  const [isFullScreen, setIsFullScreen] = useState(false);
 
   // useEffect(() => {
   //   const listener = handleBeforeUnload.current;
@@ -85,37 +87,13 @@ const MCQBox = () => {
       }
     }
   };
-
-  // const handleScoresSubmission = () => {
-  //   let score = 0;
-  //   if (!detailedAnswers) return;
-  //   questions.forEach(question => {
-  //     const answerDetail = detailedAnswers[question.id];
-  //     if (!answerDetail) return;
-  //     if (answerDetail.isCorrect) {
-  //       score += metaData[question.section_id].marks_per_question;
-  //     } else {
-  //       score -= metaData[question.section_id].negative_marking;
-  //     }
-  //   });
-  //   const payload = {
-  //     score,
-  //     subject_id,
-  //     mode: 'ranked',
-  //     elapsed_time: getElapsedTimeInSeconds(startTimeRef.current),
-  //   };
-  //   createLeaderboardRecord(payload);
-  // };
-
   return (
     <div ref={fullScreenRef} className="bg-white">
       <BindContentContainer>
         <div className="flex w-full items-center justify-center">
           <div className="relative mx-auto h-[calc(100dvh-2.5rem)] w-full overflow-hidden rounded-lg border bg-white p-4 shadow-lg md:h-[calc(100dvh-4rem)] md:w-4/5 md:p-4">
-            {questionsIsLoading ? (
+            {questionsIsLoading || !mcqData || isEmpty(mcqData) ? (
               <MCQSkeleton />
-            ) : isEmpty(mcqData) || !mcqData ? (
-              <NoDataAvailable />
             ) : (
               <FlexColumn className="items-end gap-3 md:gap-5">
                 <div className="flex w-full flex-wrap justify-between border-b border-gray-300 pb-4">
@@ -154,13 +132,11 @@ const MCQBox = () => {
                       confirmText="Leave"
                       triggerChildren={
                         <div className="rounded-md bg-red-400 p-1">
-                          <DoorOpen
-                            onClick={() => {
-                              // handleFullScreen();
-                            }}
-                            className="h-4 w-4 cursor-pointer rounded-lg text-white md:h-5 md:w-5"
-                          />
+                          <DoorOpen className="h-4 w-4 cursor-pointer rounded-lg text-white md:h-5 md:w-5" />
                         </div>
+                      }
+                      handleConfirm={() =>
+                        navigate(`/courses/subjects/${course_id}`)
                       }
                     />
 

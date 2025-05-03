@@ -32,12 +32,12 @@ export function ConfirmationDialog({
       <AlertDialogTrigger asChild>
         {triggerChildren || 'Show'}
       </AlertDialogTrigger>
-      <AlertDialogContent className="bg-white">
+      <AlertDialogContent className="bg-white max-sm:w-11/12 rounded-lg">
         <AlertDialogHeader>
-          <p className='text-base font-semibold'> {title}</p>
+          <p className='text-md md:text-base font-semibold leading-3 md:leading-normal'> {title}</p>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className=''>
           <AlertDialogCancel
             onClick={() => {
               if (handleCancel) handleCancel();

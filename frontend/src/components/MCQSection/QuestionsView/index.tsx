@@ -21,6 +21,7 @@ const QuestionsView = () => {
     setSelectedOption,
     visibleQuestionChunkIndex,
     viewMode,
+    evaluatedAnswers,
   } = useMCQContext();
 
   useEffect(() => {
@@ -63,7 +64,7 @@ const QuestionsView = () => {
                 <FlexRow
                   className={`items-start justify-start gap-2 ${isAccordionOpen ? 'w-full' : 'w-4/5'}`}
                 >
-                  <p className="h-fit w-fit text-md  font-semibold leading-4 md:text-base md:leading-[1.15rem]">
+                  <p className="h-fit w-fit text-md font-semibold leading-4 md:text-base md:leading-[1.15rem]">
                     Q
                     {getGlobalIndex(
                       questionsChunk,
@@ -83,6 +84,11 @@ const QuestionsView = () => {
                   {question.options.map((option, optionIndex) => {
                     const isOptionSelected =
                       selectedOption[question.id]?.answer === option.id;
+                    let correctAnswer = 0;
+                    if (evaluatedAnswers && viewMode === 'answers') {
+                      correctAnswer =
+                        evaluatedAnswers[question.id]?.correctAnswer;
+                    }
                     return (
                       <MCQButton
                         label={optionsLabel[optionIndex]}
@@ -101,6 +107,7 @@ const QuestionsView = () => {
                         }}
                         isOptionSelected={isOptionSelected}
                         key={`${question.id}-${option.id}`}
+                        isAnswerCorrect={correctAnswer === option.id}
                       />
                     );
                   })}
