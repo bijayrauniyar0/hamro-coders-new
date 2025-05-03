@@ -37,12 +37,7 @@ export type SelectedOptionType = {
     answer: number;
   };
 };
-export type ViewMode =
-  | 'answers'
-  | 'questions'
-  | 'results'
-  | 'overview'
-  | 'instructions';
+export type ViewMode = 'answers' | 'questions' | 'results' | 'instructions';
 
 export interface MCQContextType {
   questionCount: number;
@@ -51,8 +46,8 @@ export interface MCQContextType {
   selectedOption: SelectedOptionType;
   setSelectedOption: React.Dispatch<React.SetStateAction<SelectedOptionType>>;
 
-  openAccordion: string;
-  setOpenAccordion: React.Dispatch<React.SetStateAction<string>>;
+  // openAccordion: string;
+  // setOpenAccordion: React.Dispatch<React.SetStateAction<string>>;
 
   visibleQuestionChunkIndex: number;
   setVisibleQuestionChunkIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -73,4 +68,6 @@ export interface MCQContextType {
   questionsIsLoading: boolean;
   answersIsLoading: boolean;
   mcqData: McqResponseType;
+  solvedCount: number;
+  fetchAnswers: () => void;
 }

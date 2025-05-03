@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-primary-500 text-white hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+          'bg-primary-600 text-white hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
         secondary:
           'bg-white text-primary-500 border border-primary-500 hover:bg-primary-100 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
 
@@ -18,7 +18,7 @@ const buttonVariants = cva(
         ghost: 'hover:bg-accent hover:text-accent-foreground',
 
         outline:
-          'bg-white text-grey-900 border border-grey-600 focus:border-primary-500 rounded-lg',
+          'bg-white text-matt-100 border border-grey-600 focus:border-primary-500 rounded-lg',
       },
       size: {
         normal: 'body-btn h-[2.5rem] py-3 px-5 gap-2 !rounded-lg',

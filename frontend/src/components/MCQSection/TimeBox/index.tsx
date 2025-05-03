@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Clock } from 'lucide-react';
 
 import { FlexRow } from '@Components/common/Layouts';
-import useStopwatch from '@Components/common/StopWatch';
+import useStopwatch from '@Hooks/useStopWatch';
 
 type TimeBoxProps = {
   startTimer: boolean;
@@ -20,9 +20,10 @@ const TimeBox = ({ startTimer, stopTimer }: TimeBoxProps) => {
   }, [stopTimer]);
   return (
     <FlexRow className="items-center gap-1">
-      <Clock size={20} className='items-center' />
-      <FlexRow className="items-center justify-end gap-1 text-sm md:text-md">
-        <span className="w-4">{stopWatch.time.minutes}:</span>
+      <Clock size={20} className="items-center" />
+      <FlexRow className="items-center justify-end text-sm md:text-md">
+        <span className="w-4">{stopWatch.time.minutes || '00'}</span>
+        <span>:</span>
         <span className="w-4">{stopWatch.time.seconds}</span>
       </FlexRow>
     </FlexRow>

@@ -43,6 +43,7 @@ const Subjects = () => {
       title?.toLowerCase()?.includes(searchValue.toLowerCase()),
     );
   }, [subjectsData, searchValue]);
+  
   return (
     <BindContentContainer>
       <FlexColumn className="w-full gap-4">
