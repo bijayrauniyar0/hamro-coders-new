@@ -170,8 +170,8 @@
     }
 
     .scrollbar-thin::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
+      width: 6px;
+      height: 6px;
     }
     .scrollbar-thin::-webkit-scrollbar-track {
       border-radius: 100vh;
