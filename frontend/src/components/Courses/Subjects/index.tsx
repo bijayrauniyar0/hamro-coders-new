@@ -59,7 +59,7 @@ const Subjects = () => {
         {subjectsDataIsLoading ? (
           <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
             {[...Array(5).keys()].map(key => (
-              <Skeleton className="h-[12rem] w-[18rem]" key={key} />
+              <Skeleton className="h-[12rem]" key={key} />
             ))}
           </div>
         ) : isEmpty(filteredSubjects) ? (
@@ -67,7 +67,7 @@ const Subjects = () => {
         ) : (
           <FlexColumn className="scrollbar max-h-[calc(100dvh-9rem)] gap-4 overflow-y-auto pb-4">
             <motion.div
-              className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4"
+              className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
               variants={containerVariants}
               initial="hidden"
               animate="show"

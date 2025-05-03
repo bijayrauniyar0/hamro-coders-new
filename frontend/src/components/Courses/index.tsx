@@ -61,9 +61,9 @@ const Courses = () => {
           />
         </FlexRow>
         {subjectsDataIsLoading ? (
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
             {[...Array(5).keys()].map(key => (
-              <Skeleton className="h-[12rem] w-[18rem]" key={key} />
+              <Skeleton className="h-[12rem]" key={key} />
             ))}
           </div>
         ) : isEmpty(courses) ? (
