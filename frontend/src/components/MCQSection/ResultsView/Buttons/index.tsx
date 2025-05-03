@@ -7,13 +7,12 @@ import { Button } from '@Components/radix/Button';
 
 const ResultsViewButtons = () => {
   const navigate = useNavigate();
-  const { setViewMode, setVisibleQuestionChunkIndex } = useMCQContext();
+  const { setViewMode } = useMCQContext();
   return (
     <FlexRow className="gap-2">
       <Button
         onClick={() => {
           setViewMode('answers');
-          setVisibleQuestionChunkIndex(0);
         }}
         variant="secondary"
         className="w-full md:w-fit"

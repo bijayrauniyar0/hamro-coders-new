@@ -27,7 +27,7 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
     Record<number, { section_id: number; answer: number }>
   >({});
   const [visibleQuestionChunkIndex, setVisibleQuestionChunkIndex] = useState(0);
-  const [viewMode, setViewMode] = useState<ViewMode>('questions');
+  const [viewMode, setViewMode] = useState<ViewMode>('instructions');
   const [isRecordCreated, setIsRecordCreated] = useState(false);
   const [evaluatedAnswers, setEvaluatedAnswers] =
     useState<EvaluatedAnswersType>({});

@@ -116,13 +116,11 @@ const MCQBox = () => {
                         {questionsChunk.length}
                       </span>
                     ) : (
-                      <FlexRow className="items-center justify-center gap-2">
-                        <FlexRow className="items-center gap-2 text-xs">
-                          <div className="h-2 w-2 rounded-full bg-green-400" />
-                          <p className="text-xs text-gray-700">
-                            {solvedCount}/{mcqData.questions_count} Solved
-                          </p>
-                        </FlexRow>
+                      <FlexRow className="items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-green-400" />
+                        <p className="text-xs text-gray-700 md:text-sm">
+                          {solvedCount}/{mcqData.questions_count} Solved
+                        </p>
                       </FlexRow>
                     )}
                   </FlexRow>
@@ -158,10 +156,13 @@ const MCQBox = () => {
                       )}
                     </div>
                     <button
+                      disabled={
+                        viewMode === 'instructions' || viewMode === 'results'
+                      }
                       onClick={() => {
                         setIsOverviewOpen(!isOverviewOpen);
                       }}
-                      className={`flex items-center gap-1 rounded-md px-2 py-[0.325rem] text-xs text-primary-600 hover:bg-primary-500 hover:text-white md:text-sm ${isOverviewOpen ? 'bg-primary-500 text-white' : 'border border-gray-300 bg-white'}`}
+                      className={`flex items-center disabled:cursor-not-allowed gap-1 disabled:hover:text-white disabled:text-white rounded-md px-2 py-[0.325rem] text-xs text-primary-600 hover:bg-primary-500 hover:text-white md:text-sm ${isOverviewOpen ? 'bg-primary-500 text-white' : 'border border-gray-300 bg-white'} disabled:bg-gray-300`}
                     >
                       <GridIcon size={14} />
                       Overview

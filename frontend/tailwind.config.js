@@ -72,9 +72,18 @@ export const theme = {
       'accordion-up': 'accordion-up 0.2s ease-out',
       'fade-down': 'fade-down .5s both',
       'fade-up-hide': 'fade-up-hide .5s both',
+      'slide-x': 'slide-left-right 1s ease-in-out infinite',
+      'slide-y': 'slide-top-bottom 1s ease-in-out infinite',
     },
-
     keyframes: {
+      'slide-left-right': {
+        '0%, 100%': { transform: 'translateX(0%)' },
+        '50%': { transform: 'translateX(100%)' },
+      },
+      'slide-top-bottom': {
+        '0%, 100%': { transform: 'translateY(0%)' },
+        '50%': { transform: 'translateY(100%)' },
+      },
       loader: {
         to: {
           transform: 'translate3d(0, -0.3rem, 0)',
