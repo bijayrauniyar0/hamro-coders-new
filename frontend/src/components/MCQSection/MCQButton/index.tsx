@@ -39,12 +39,12 @@ const MCQButton = ({
 
   return (
     <button
-      className={`flex cursor-pointer items-center justify-start gap-4 rounded-md border p-2 transition-all duration-200 ease-in-out hover:border-primary-500 md:p-3 ${getButtonClassName(viewMode, isOptionSelected, isAnswerCorrect)}`}
+      className={`flex cursor-pointer items-center justify-start gap-2 md:gap-4 rounded-md border p-2 transition-all duration-200 ease-in-out hover:border-primary-500 md:p-3 ${getButtonClassName(viewMode, isOptionSelected, isAnswerCorrect)}`}
       onClick={onClick}
     >
       <div className="relative">
         <div
-          className={`h-4 w-4 rounded-full ${isOptionSelected ? 'border-4 border-white bg-primary-500' : 'bg-primary-500'}`}
+          className={`h-3 w-3 md:h-4 md:w-4 rounded-full ${isOptionSelected ? 'border-[3px] md:border-4 border-white bg-primary-500' : 'bg-primary-500'}`}
           style={{
             transition:
               'border-width 100ms ease-in-out, background-color 300ms ease-in-out',
