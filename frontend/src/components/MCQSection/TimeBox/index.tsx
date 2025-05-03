@@ -21,10 +21,10 @@ const TimeBox = ({ startTimer, stopTimer }: TimeBoxProps) => {
   return (
     <FlexRow className="items-center gap-1">
       <Clock size={20} className="items-center" />
-      <FlexRow className="items-center justify-end text-sm md:text-md">
-        <span className="w-4">{stopWatch.time.minutes || '00'}</span>
+      <FlexRow className="items-center justify-end gap-[1px] text-sm md:text-md">
+        <span className="min-w-4">{stopWatch.time.minutes || '00'}</span>
         <span>:</span>
-        <span className="w-4">{stopWatch.time.seconds}</span>
+        <span className="min-w-4">{stopWatch.time.seconds}</span>
       </FlexRow>
     </FlexRow>
   );
