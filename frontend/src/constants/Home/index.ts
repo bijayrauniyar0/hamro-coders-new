@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { Settings } from 'react-slick';
 import {
+  BookOpen,
   Briefcase,
   Calculator,
   Clock,
   GraduationCap,
-  Languages,
   Laptop2,
   Lightbulb,
   LineChart,
@@ -15,46 +16,59 @@ import {
   Trophy,
 } from 'lucide-react';
 
-import { StreamsCardProps } from '@Components/Home/StreamsCard';
-
+export interface StreamsCardProps {
+  title: string;
+  description: string;
+  Icon: LucideIcon;
+  iconColor: string;
+  bgColor: string;
+  className?: string;
+}
+export interface FeatureCardProps extends StreamsCardProps {}
 export const Streams: StreamsCardProps[] = [
   {
     Icon: GraduationCap,
     title: 'College Entrance Exams',
     description: 'Engineering, Medical, Law',
+    iconColor: 'text-indigo-700',
+    bgColor: 'bg-indigo-100',
   },
   {
     Icon: Briefcase,
     title: 'Government Jobs',
     description: 'Civil Services, Banking, Railways',
+    iconColor: 'text-orange-700',
+    bgColor: 'bg-orange-100',
   },
   {
     Icon: Laptop2,
     title: 'IT Certifications',
     description: 'Programming, Networking, Security',
+    iconColor: 'text-blue-700',
+    bgColor: 'bg-blue-100',
   },
   {
     Icon: Stethoscope,
     title: 'Medical Exams',
     description: 'NEET, AIIMS, Medical PG',
+    iconColor: 'text-rose-700',
+    bgColor: 'bg-rose-100',
   },
   {
     Icon: Calculator,
     title: 'Engineering Exams',
     description: 'JEE, GATE, ESE',
+    iconColor: 'text-teal-700',
+    bgColor: 'bg-teal-100',
   },
   {
-    Icon: Languages,
-    title: 'Language Proficiency',
-    description: 'IELTS, TOEFL, GRE',
+    Icon: BookOpen,
+    title: 'Entrance Exams',
+    description: 'CMAT, +2 Entrance, BBA Entrance',
+    iconColor: 'text-green-700',
+    bgColor: 'bg-green-100',
   },
 ];
-
-export interface FeatureCardProps {
-  title: string;
-  description: string;
-  Icon: LucideIcon;
-}
 
 export const features: FeatureCardProps[] = [
   {
@@ -62,36 +76,49 @@ export const features: FeatureCardProps[] = [
     description:
       'Experience exam-like conditions with timed tests that mirror the actual format and difficulty level.',
     Icon: Pencil,
+    iconColor: 'text-purple-700',
+    bgColor: 'bg-purple-100',
   },
   {
     title: 'Detailed Analytics',
     description:
       'Track your progress with comprehensive performance metrics, including test-wise analysis.',
     Icon: LineChart,
+    iconColor: 'text-blue-700',
+    bgColor: 'bg-blue-100',
   },
   {
     title: 'Competitive Leaderboards',
     description:
       'Compete with peers nationwide and benchmark your performance against top performers.',
     Icon: Trophy,
-  },
-  {
-    title: 'Smart Question Bank',
-    description:
-      'Access thousands of quality MCQs with detailed explanations and solutions.',
-    Icon: Lightbulb,
+    iconColor: 'text-yellow-700',
+    bgColor: 'bg-yellow-100',
   },
   {
     title: 'Flexible Study Schedule',
     description:
       'Practice anytime, anywhere with 24/7 access to all mock tests and study materials.',
     Icon: Clock,
+    iconColor: 'text-emerald-700',
+    bgColor: 'bg-emerald-100',
   },
+  {
+    title: 'Smart Question Bank',
+    description:
+      'Access thousands of quality MCQs with detailed explanations and solutions.',
+    Icon: Lightbulb,
+    iconColor: 'text-pink-700',
+    bgColor: 'bg-pink-100',
+  },
+
   {
     title: 'Community Support',
     description:
       'Connect with fellow aspirants and experts to discuss questions and clarify doubts.',
     Icon: MessagesSquare,
+    iconColor: 'text-teal-700',
+    bgColor: 'bg-teal-100',
   },
 ];
 

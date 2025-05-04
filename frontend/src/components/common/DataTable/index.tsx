@@ -70,7 +70,7 @@ export default function DataTable({
   initialState,
   isPaginated = true,
   needSorting = true,
-  cellClassName,
+  // cellClassName,
   tableStyle,
   showDataCount = false,
   dataCountCategory,

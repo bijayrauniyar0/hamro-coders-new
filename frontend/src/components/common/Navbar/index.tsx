@@ -37,7 +37,7 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sticky right-0 top-0 z-[11] flex w-full items-center justify-between bg-white px-4 py-1 shadow-custom xl:px-7">
+      <header className="sticky right-0 top-0 z-[11111] flex w-full items-center justify-between bg-white px-4 py-1 shadow-custom xl:px-7">
         <div
           tabIndex={0}
           role="button"
