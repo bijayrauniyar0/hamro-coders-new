@@ -23,7 +23,7 @@ import Stream from 'src/models/streamModels';
 
 export async function seedUserScores(count: number = 100) {
   const startDate = new Date('2025-04-26');
-  const endDate = new Date('2025-05-01');
+  const endDate = new Date('2025-05-05');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -267,7 +267,7 @@ export const getPerformanceDetails = async (
   const { user } = req;
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
-  // await seedUserScores(100);
+  // await seedUserScores(400);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(
