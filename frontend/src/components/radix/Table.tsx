@@ -8,7 +8,7 @@ const Table = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     className={cn(
-      'scrollbar h-fit max-h-[calc(100vh-10rem)] w-full overflow-x-auto rounded-xl border border-[#EAECF0]',
+      'scrollbar-thin h-fit max-h-[calc(100vh-10rem)] w-full overflow-x-auto rounded-xl border border-[#EAECF0]',
       className,
     )}
   >

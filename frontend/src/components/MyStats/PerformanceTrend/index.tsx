@@ -105,9 +105,9 @@ export default function PerformanceTrend() {
   });
 
   return (
-    <FlexColumn className="gap-4">
+    <FlexColumn className="gap-2 md:gap-4">
       <FlexRow className="items-center justify-between max-md:gap-2">
-        <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
+        <p className="text-md md:text-md font-medium leading-4 tracking-tight text-matt-100 lg:text-base">
           Performance Trend
         </p>
         <SwitchTab

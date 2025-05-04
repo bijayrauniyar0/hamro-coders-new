@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import DataTable from '@Components/common/DataTable';
 import Icon from '@Components/common/Icon';
 import { FlexColumn } from '@Components/common/Layouts';
-import StatusChip from '@Components/common/StatusChip';
 import { IFilters } from '@Constants/Types/myStats';
 import { getPerformanceDetails } from '@Services/userStats';
 
@@ -19,20 +18,6 @@ const performanceTableColumns = [
         <p className="text-nowrap">
           {date ? format(date, 'MMMM dd, yyyy') : 'N/A'}
         </p>
-      );
-    },
-  },
-  {
-    header: 'Mode',
-    accessorKey: 'mode',
-    sortingFn: undefined,
-    cell: ({ row }: any) => {
-      const mode = row?.original?.mode;
-      return (
-        <StatusChip
-          status={mode === 'Ranked' ? 'success' : 'info'}
-          label={mode}
-        />
       );
     },
   },
@@ -69,7 +54,7 @@ const performanceTableColumns = [
   },
 ];
 
-const PerformanceDetails = ({ modeFilter, timePeriodFilter }: IFilters) => {
+const PerformanceDetails = ({ timePeriodFilter }: IFilters) => {
   return (
     <FlexColumn className="gap-6">
       <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
@@ -79,7 +64,6 @@ const PerformanceDetails = ({ modeFilter, timePeriodFilter }: IFilters) => {
       <DataTable
         queryFn={getPerformanceDetails}
         queryFnParams={{
-          mode: modeFilter,
           time_period: timePeriodFilter,
         }}
         initialState={{
