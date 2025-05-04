@@ -45,7 +45,7 @@ const SwitchTab = ({
             tabIndex={0}
             key={label}
             title={`${label}`}
-            className={`cursor-pointer select-none text-nowrap rounded-lg px-3 py-[0.38rem] text-sm leading-5 ${
+            className={`cursor-pointer select-none text-nowrap tracking-tight md:tracking-normal rounded-lg px-2 text-xs md:text-sm md:px-3 py-[0.38rem] leading-5 ${
               activeTab === value
                 ? cn(
                     'bg-primary-600 text-white shadow-[0px_0px_5px_0px_rgba(0,0,0,0.16)]',

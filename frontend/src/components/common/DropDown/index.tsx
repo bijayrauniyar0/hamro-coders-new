@@ -112,7 +112,7 @@ function Dropdown({
           disabled={disabled}
           aria-expanded={open}
           className={cn(
-            'group flex items-center justify-between gap-2 bg-white hover:border-primary-500 disabled:!cursor-not-allowed',
+            'group flex items-center justify-between gap-2 bg-white text-xs hover:border-primary-500 disabled:!cursor-not-allowed max-md:h-fit md:text-sm',
             className,
           )}
           onClick={() => setOpen(true)}
