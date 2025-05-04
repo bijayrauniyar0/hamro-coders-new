@@ -50,7 +50,6 @@ export const statsData = [
     title: 'Current Rank',
     value_key: 'current_rank',
     icon: 'trophy',
-    tooltipMessage: 'Rank is only based on ranked sessions',
   },
 ];
 
