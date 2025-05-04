@@ -2,9 +2,9 @@ import { Book, ChevronRight, Flame, Info, Users } from 'lucide-react';
 
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { ISubjectBoxProps } from '@Constants/Types/academics';
+import { ITestBoxProps } from '@Constants/Types/academics';
 
-const SubjectBox = ({ title, course_name }: ISubjectBoxProps) => {
+const TestBox = ({ title, stream_name }: ITestBoxProps) => {
   return (
     <div className="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:border-primary-200 hover:shadow-lg">
       <FlexColumn className="items-start gap-4 px-6 py-5">
@@ -14,7 +14,7 @@ const SubjectBox = ({ title, course_name }: ISubjectBoxProps) => {
               <Book size={16} className="text-primary-700" />
             </div>
             <span className="text-xs font-medium capitalize text-primary-700">
-              {course_name}
+              {stream_name}
             </span>
           </div>
           <Info
@@ -47,4 +47,4 @@ const SubjectBox = ({ title, course_name }: ISubjectBoxProps) => {
   );
 };
 
-export default SubjectBox;
+export default TestBox;
