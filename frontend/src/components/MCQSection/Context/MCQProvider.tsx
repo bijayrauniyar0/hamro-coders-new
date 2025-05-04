@@ -33,16 +33,16 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
     useState<EvaluatedAnswersType>({});
 
   const [searchParams] = useSearchParams();
-  const subject_id = searchParams.get('subject_id');
+  const test_id = searchParams.get('test_id');
 
   const { data: mcqData, isLoading: questionsIsLoading } = useQuery({
-    queryKey: ['mcq-data', subject_id],
+    queryKey: ['mcq-data', test_id],
     queryFn: () =>
       getMcqs({
-        subject_id,
+        test_id,
       }),
     select: ({ data }) => data,
-    enabled: Boolean(subject_id),
+    enabled: Boolean(test_id),
   });
 
   const questions = useMemo(() => {
@@ -130,7 +130,7 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const payload = {
       score,
-      subject_id,
+      test_id,
       mode: 'ranked',
       elapsed_time: getElapsedTimeInSeconds(startTimeRef.current),
     };

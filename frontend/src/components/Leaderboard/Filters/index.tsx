@@ -13,40 +13,40 @@ import isEmpty from '@Utils/isEmpty';
 import { resetFilters, setFilters } from '@Store/actions/leaderboard';
 import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
 import { filterOptions } from '@Constants/Leaderboard';
-import { SubjectType } from '@Constants/Types/academics';
-import { getCourses, getSubjectsByCourse } from '@Services/academics';
+import { TestsType } from '@Constants/Types/academics';
+import { getStreams, getTestsByStreams } from '@Services/academics';
 
 const Filters = () => {
   const dispatch = useTypedDispatch();
 
-  const { course_id, subject_id, filter_by } = useTypedSelector(
+  const { stream_id, test_id, filter_by } = useTypedSelector(
     state => state.leaderboardSlice.filters,
   );
   const isFiltersOpen = useTypedSelector(
     state => state.leaderboardSlice.isFiltersOpen,
   );
   const {
-    data: coursesList,
-    isLoading: coursesListIsLoading,
-    isSuccess: coursesListIsSuccess,
+    data: streamsList,
+    isLoading: streamsListIsLoading,
+    isSuccess: streamsListIsSuccess,
   } = useQuery({
-    queryKey: ['courses'],
-    queryFn: () => getCourses(),
+    queryKey: ['streams'],
+    queryFn: () => getStreams(),
     select: ({ data }) => {
-      return data.map((course: any) => ({
-        id: course.id,
-        label: course.course_name,
-        value: course.id,
+      return data.map((stream: any) => ({
+        id: stream.id,
+        label: stream.stream_name,
+        value: stream.id,
       }));
     },
   });
-  const { data: subjectsList, isLoading: subjectsListIsLoading } = useQuery({
-    queryKey: ['subjects', course_id],
-    queryFn: () => getSubjectsByCourse(course_id),
+  const { data: testsList, isLoading: testsListIsLoading } = useQuery({
+    queryKey: ['tests', stream_id],
+    queryFn: () => getTestsByStreams(stream_id),
     select: ({ data }) => {
       return [...data];
     },
-    enabled: !!course_id,
+    enabled: !!stream_id,
   });
 
   const variants = {
@@ -55,10 +55,10 @@ const Filters = () => {
   };
 
   useEffect(() => {
-    if (coursesListIsSuccess && !isEmpty(coursesList)) {
-      dispatch(setFilters({ course_id: coursesList[0].value }));
+    if (streamsListIsSuccess && !isEmpty(streamsList)) {
+      dispatch(setFilters({ stream_id: streamsList[0].value }));
     }
-  }, [coursesListIsSuccess]);
+  }, [streamsListIsSuccess]);
 
   return (
     <motion.div
@@ -73,7 +73,7 @@ const Filters = () => {
           className="reset-button flex items-center gap-1"
           onClick={() => {
             dispatch(resetFilters());
-            dispatch(setFilters({ course_id: coursesList[0]?.value }));
+            dispatch(setFilters({ stream_id: streamsList[0]?.value }));
           }}
         >
           <Icon
@@ -94,17 +94,17 @@ const Filters = () => {
       <FlexColumn className="gap-6">
         <FlexColumn className="gap-2 pt-4">
           <Label
-            label="Select Course"
+            label="Select Stream"
             className="text-md font-semibold text-matt-100"
           />
           <DropDown
-            options={coursesList}
-            isLoading={coursesListIsLoading}
-            value={course_id}
+            options={streamsList}
+            isLoading={streamsListIsLoading}
+            value={stream_id}
             onChange={val => {
               if (!val) return;
-              dispatch(setFilters({ course_id: val }));
-              dispatch(setFilters({ subject_id: [] }));
+              dispatch(setFilters({ stream_id: val }));
+              dispatch(setFilters({ test_id: [] }));
             }}
             placeholder="Select Filter"
             choose="value"
@@ -112,37 +112,33 @@ const Filters = () => {
         </FlexColumn>
         <FlexColumn className="gap-2">
           <Label
-            label="Select Subjects"
+            label="Select Tests"
             className="text-md font-semibold text-matt-100"
           />
-          {subjectsListIsLoading ? (
+          {testsListIsLoading ? (
             Array.from({ length: 5 }).map((_, index) => (
               <Skeleton
                 key={index}
                 className="h-4 w-full animate-pulse rounded bg-gray-200"
               />
             ))
-          ) : isEmpty(subjectsList) ? (
-            <p className="text-sm text-matt-200">No Subjects Available</p>
+          ) : isEmpty(testsList) ? (
+            <p className="text-sm text-matt-200">No Tests Available</p>
           ) : (
             <FlexColumn className="scrollbar max-h-[28rem] overflow-y-auto rounded-lg bg-gray-100">
-              {subjectsList?.map((subject: SubjectType) => (
+              {testsList?.map((test: TestsType) => (
                 <button
                   className="reset-button group flex cursor-pointer items-center gap-2 rounded-md px-2 py-4 duration-100"
-                  key={subject.id}
+                  key={test.id}
                   onClick={() => {
-                    if (subject_id.includes(subject.id)) {
+                    if (test_id.includes(test.id)) {
                       dispatch(
                         setFilters({
-                          subject_id: subject_id.filter(
-                            id => id !== subject.id,
-                          ),
+                          test_id: test_id.filter(id => id !== test.id),
                         }),
                       );
                     } else {
-                      dispatch(
-                        setFilters({ subject_id: [...subject_id, subject.id] }),
-                      );
+                      dispatch(setFilters({ test_id: [...test_id, test.id] }));
                     }
                   }}
                 >
@@ -152,50 +148,48 @@ const Filters = () => {
                       if (e.target.checked) {
                         dispatch(
                           setFilters({
-                            subject_id: [...subject_id, subject.id],
+                            test_id: [...test_id, test.id],
                           }),
                         );
                       } else {
                         dispatch(
                           setFilters({
-                            subject_id: subject_id.filter(
-                              id => id !== subject.id,
-                            ),
+                            test_id: test_id.filter(id => id !== test.id),
                           }),
                         );
                       }
                     }}
-                    checked={subject_id.includes(subject.id)}
+                    checked={test_id.includes(test.id)}
                   />
-                  <p className="text-sm">{subject.title}</p>
+                  <p className="text-sm">{test.title}</p>
                 </button>
               ))}
             </FlexColumn>
           )}
           {/* <DropDown
-            options={subjectsList}
-            isLoading={subjectsListIsLoading}
-            value={subject_id}
-            onChange={val => dispatch(setFilters({ subject_id: val }))}
-            placeholder="Select Subjects"
+            options={testsList}
+            isLoading={testsListIsLoading}
+            value={test_id}
+            onChange={val => dispatch(setFilters({ test_id: val }))}
+            placeholder="Select Tests"
             choose="value"
             multiple
           /> */}
           {/* <FlexRow className="flex-wrap items-start gap-2">
-            {selectedSubjects?.map((subject: IDropDownData) => (
+            {selectedTests?.map((test: IDropDownData) => (
               <button
-                key={subject.id}
+                key={test.id}
                 className="flex w-fit items-center justify-center gap-2 rounded-[2.5rem] border px-2 py-2"
                 onClick={() =>
                   dispatch(
                     setFilters({
-                      subject_id: subject_id.filter(id => id !== subject.id),
+                      test_id: test_id.filter(id => id !== test.id),
                     }),
                   )
                 }
               >
                 <p className="text-sm leading-3 tracking-tighter">
-                  {subject.label}
+                  {test.label}
                 </p>
                 <Icon
                   name="close"

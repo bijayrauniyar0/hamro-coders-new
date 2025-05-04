@@ -30,7 +30,7 @@ const MCQBox = () => {
   } = useMCQContext();
   const fullScreenRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { course_id } = useParams();
+  const { stream_id } = useParams();
   const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   // const handleBeforeUnload = useRef((event: BeforeUnloadEvent) => {
@@ -98,7 +98,7 @@ const MCQBox = () => {
               <FlexColumn className="items-end gap-3 md:gap-5">
                 <div className="flex w-full flex-wrap justify-between border-b border-gray-300 pb-4">
                   <p className="text-md font-semibold text-primary-600 lg:text-lg">
-                    Hamro Coders
+                    MockSewa
                   </p>
 
                   <FlexRow className="items-center justify-between gap-4 max-sm:w-full md:justify-end">
@@ -134,7 +134,7 @@ const MCQBox = () => {
                         </div>
                       }
                       handleConfirm={() =>
-                        navigate(`/courses/subjects/${course_id}`)
+                        navigate(`/streams/tests/${stream_id}`)
                       }
                     />
 
@@ -162,7 +162,7 @@ const MCQBox = () => {
                       onClick={() => {
                         setIsOverviewOpen(!isOverviewOpen);
                       }}
-                      className={`flex items-center disabled:cursor-not-allowed gap-1 disabled:hover:text-white disabled:text-white rounded-md px-2 py-[0.325rem] text-xs text-primary-600 hover:bg-primary-500 hover:text-white md:text-sm ${isOverviewOpen ? 'bg-primary-500 text-white' : 'border border-gray-300 bg-white'} disabled:bg-gray-300`}
+                      className={`flex items-center gap-1 rounded-md px-2 py-[0.325rem] text-xs text-primary-600 hover:bg-primary-500 hover:text-white disabled:cursor-not-allowed disabled:text-white disabled:hover:text-white md:text-sm ${isOverviewOpen ? 'bg-primary-500 text-white' : 'border border-gray-300 bg-white'} disabled:bg-gray-300`}
                     >
                       <GridIcon size={14} />
                       Overview
