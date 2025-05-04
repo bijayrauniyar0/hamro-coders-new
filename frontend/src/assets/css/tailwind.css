@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .text {
-  @apply font-primary-600 tracking-normal;
+  @apply font-primary tracking-normal;
 }
 
 @layer base {
