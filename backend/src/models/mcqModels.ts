@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
-import Subject from './subjectsModel';
+import Test from './mockTestModel';
 import Section from './sectionModel';
 
 class MCQ extends Model {
@@ -9,7 +9,7 @@ class MCQ extends Model {
   public section_id!: string;
   public options!: JSON;
   public answer!: string;
-  public Subject?: Subject;
+  public Test?: Test;
 }
 
 MCQ.init(

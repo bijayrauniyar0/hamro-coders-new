@@ -1,20 +1,20 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
-import Subject from './subjectsModel';
+import Test from './mockTestModel';
 import Section from './sectionModel';
 
-class SubjectSectionLink extends Model {
-  public subject_id!: number;
+class TestSectionLink extends Model {
+  public test_id!: number;
   public section_id!: number;
 }
 
-SubjectSectionLink.init(
+TestSectionLink.init(
   {
-    subject_id: {
+    mock_test_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'subjects', // Reference to the Subjects table
+        model: 'mock_tests', // Reference to the Tests table
         key: 'id',
       },
     },
@@ -28,23 +28,23 @@ SubjectSectionLink.init(
     },
   },
   {
-    tableName: 'subject_section_links',
+    tableName: 'test_section_links',
     sequelize,
     timestamps: false,
   },
 );
 
 // Setting up the many-to-many relationship
-Subject.belongsToMany(Section, {
-  through: SubjectSectionLink,
-  foreignKey: 'subject_id',
+Test.belongsToMany(Section, {
+  through: TestSectionLink,
+  foreignKey: 'mock_test_id',
   otherKey: 'section_id',
 });
 
-Section.belongsToMany(Subject, {
-  through: SubjectSectionLink,
+Section.belongsToMany(Test, {
+  through: TestSectionLink,
   foreignKey: 'section_id',
-  otherKey: 'subject_id',
+  otherKey: 'test_id',
 });
 
-export default SubjectSectionLink;
+export default TestSectionLink;

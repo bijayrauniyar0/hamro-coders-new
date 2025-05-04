@@ -5,10 +5,10 @@ import sequelize from './config/database';
 import cors from 'cors';
 import mcqRouter from './routes/mcqsRoutes';
 import userScoresRouter from './routes/leaderboardRoutes';
-import courseRouter from './routes/courseRoutes';
+import streamRouter from './routes/streamRoutes';
 import notificationRouter from './routes/notificationRoutes';
 import analyticsRouter from './routes/analyticsRoutes';
-import './models/subjectSectionLinkModel';
+import './models/testSectionLinkModel';
 
 const PORT = process.env.PORT || 9000;
 
@@ -18,7 +18,7 @@ app.use(express.json()); // Middleware to parse JSON requests
 
 app.use('/api/user', userRoutes);
 app.use('/api/mcq', mcqRouter);
-app.use('/api/courses', courseRouter);
+app.use('/api/streams', streamRouter);
 app.use('/api/leaderboard', userScoresRouter);
 app.use('/api/notification', notificationRouter);
 app.use('/api/analytics', analyticsRouter);

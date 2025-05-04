@@ -1,8 +1,8 @@
 import MCQ from '../models/mcqModels';
-import Subject from '../models/subjectsModel';
+import Test from '../models/mockTestModel';
 import { Request, Response } from 'express';
 import sequelize from '../config/database';
-import { CoursesService } from './courseController';
+import { StreamsService } from './streamController';
 import Section from '../models/sectionModel';
 
 export class MCQsService {
@@ -25,22 +25,22 @@ export class MCQsService {
   }
 }
 export const getMCQs = async (req: Request, res: Response) => {
-  const { subject_id } = req.params;
+  const { test_id } = req.params;
   try {
-    if (!subject_id) {
+    if (!test_id) {
       res
         .status(400)
-        .json({ message: 'subject_id and question_count are required' });
+        .json({ message: 'test_id and question_count are required' });
       return;
     }
-    const subject = await Subject.findByPk(subject_id);
-    if (!subject) {
-      res.status(404).json({ message: 'Subject not found' });
+    const test = await Test.findByPk(test_id);
+    if (!test) {
+      res.status(404).json({ message: 'Test not found' });
       return;
     }
-    const coursesService = new CoursesService();
-    const sections = await coursesService.getSubjectsMetaDataAccordingToSection(
-      subject_id,
+    const streamsService = new StreamsService();
+    const sections = await streamsService.getTestsMetaDataAccordingToSection(
+      test_id,
     );
     const mcqService = new MCQsService();
     const mcq_questions = await Promise.all([
@@ -71,7 +71,7 @@ export const getMCQs = async (req: Request, res: Response) => {
         (acc, section) => acc + section.question_count,
         0,
       ),
-      time_limit: subject.time_limit,
+      time_limit: test.time_limit,
       sections: mcq_questions,
     });
   } catch (error) {

@@ -1,4 +1,4 @@
 ### Table Names
-- subjects
+- tests
 - mcq_questions 
 - users

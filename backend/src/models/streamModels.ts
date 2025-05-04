@@ -1,12 +1,12 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
-class Course extends Model {
+class Stream extends Model {
   public id!: number;
   public name!: string;
 }
 
-Course.init(
+Stream.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -19,9 +19,9 @@ Course.init(
     },
   },
   {
-    tableName: 'courses',
+    tableName: 'streams',
     sequelize,
     timestamps: false,
   },
 );
-export default Course;
+export default Stream;

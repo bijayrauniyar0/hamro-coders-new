@@ -1,25 +1,25 @@
 import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
-import Course from './courseModels';
 import Section from './sectionModel';
+import Stream from './streamModels';
 
-class Subject extends Model {
+class MockTest extends Model {
   public id!: number;
-  public course_id!: number;
+  public stream_id!: number;
   public title!: string;
   public time_limit!: number;
-  public Course?: Course;
+  public Stream?: Stream;
   public getSections!: BelongsToManyGetAssociationsMixin<Section>;
 }
 
-Subject.init(
+MockTest.init(
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    course_id: {
+    stream_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -33,24 +33,24 @@ Subject.init(
     },
   },
   {
-    tableName: 'subjects',
+    tableName: 'mock_tests',
     sequelize,
     timestamps: false,
   },
 );
 
-Subject.belongsTo(Course, {
-  foreignKey: 'course_id',
+MockTest.belongsTo(Stream, {
+  foreignKey: 'stream_id',
   targetKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
-Course.hasMany(Subject, {
-  foreignKey: 'course_id',
+Stream.hasMany(MockTest, {
+  foreignKey: 'stream_id',
   sourceKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
-export default Subject;
+export default MockTest;

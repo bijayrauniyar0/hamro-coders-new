@@ -1,16 +1,16 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 import User from './userModels';
-import Subject from './subjectsModel';
+import Test from './mockTestModel';
+import MockTest from './mockTestModel';
 
 class UserScores extends Model {
   public id!: number;
   public User!: { name: string; id: number };
   public user_id!: number;
   public score!: number;
-  public subject_id!: string;
-  public subject!: { title: string; id: number };
-  public mode!: 'practice' | 'ranked';
+  public test_id!: string;
+  public MockTest!: MockTest;
   public elapsed_time!: number;
   public readonly created_at!: Date;
 }
@@ -26,14 +26,9 @@ UserScores.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    subject_id: {
+    mock_test_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    mode: {
-      type: DataTypes.ENUM('practice', 'ranked'),
-      allowNull: false,
-      defaultValue: 'practice',
     },
     score: {
       type: DataTypes.INTEGER,
@@ -54,15 +49,15 @@ UserScores.init(
   },
 );
 
-UserScores.belongsTo(Subject, {
-  foreignKey: 'subject_id',
+UserScores.belongsTo(Test, {
+  foreignKey: 'mock_test_id',
   targetKey: 'id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
 
-Subject.hasMany(UserScores, {
-  foreignKey: 'subject_id',
+Test.hasMany(UserScores, {
+  foreignKey: 'mock_test_id',
   onDelete: 'CASCADE',
   onUpdate: 'CASCADE',
 });
