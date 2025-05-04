@@ -1,21 +1,21 @@
 // import BindContentContainer from '@Components/common/BindContentContainer';
-// import courseRoutes from '@Routes/courseRoutes';
+// import streamRoutes from '@Routes/streamRoutes';
 // import generateRoutes from '@Routes/generateRoutes';
 
-// const CoursesPage = () => {
+// const StreamsPage = () => {
 //   return (
 //     <BindContentContainer>
-//       {generateRoutes({ routes: courseRoutes })}
+//       {generateRoutes({ routes: streamRoutes })}
 //     </BindContentContainer>
 //   );
 // };
 
-// export default CoursesPage;
+// export default StreamsPage;
 
 import React from 'react';
 
-const Courses = () => {
+const Streams = () => {
   return <div>hey</div>;
 };
 
-export default Courses;
+export default Streams;
