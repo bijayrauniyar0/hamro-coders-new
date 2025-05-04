@@ -21,22 +21,22 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: courses; Type: TABLE; Schema: public; Owner: bijay
+-- Name: streams; Type: TABLE; Schema: public; Owner: bijay
 --
 
-CREATE TABLE public.courses (
+CREATE TABLE public.streams (
     id integer NOT NULL,
-    course_name character varying(255) NOT NULL
+    stream_name character varying(255) NOT NULL
 );
 
 
-ALTER TABLE public.courses OWNER TO bijay;
+ALTER TABLE public.streams OWNER TO bijay;
 
 --
--- Name: courses_id_seq; Type: SEQUENCE; Schema: public; Owner: bijay
+-- Name: streams_id_seq; Type: SEQUENCE; Schema: public; Owner: bijay
 --
 
-CREATE SEQUENCE public.courses_id_seq
+CREATE SEQUENCE public.streams_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -45,13 +45,13 @@ CREATE SEQUENCE public.courses_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.courses_id_seq OWNER TO bijay;
+ALTER TABLE public.streams_id_seq OWNER TO bijay;
 
 --
--- Name: courses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bijay
+-- Name: streams_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bijay
 --
 
-ALTER SEQUENCE public.courses_id_seq OWNED BY public.courses.id;
+ALTER SEQUENCE public.streams_id_seq OWNED BY public.streams.id;
 
 
 --
@@ -60,7 +60,7 @@ ALTER SEQUENCE public.courses_id_seq OWNED BY public.courses.id;
 
 CREATE TABLE public.mcq_questions (
     id integer NOT NULL,
-    subject_id integer NOT NULL,
+    test_id integer NOT NULL,
     question character varying(255) NOT NULL,
     options json NOT NULL,
     answer character varying(255) NOT NULL
@@ -92,25 +92,25 @@ ALTER SEQUENCE public.mcq_questions_id_seq OWNED BY public.mcq_questions.id;
 
 
 --
--- Name: subjects; Type: TABLE; Schema: public; Owner: bijay
+-- Name: tests; Type: TABLE; Schema: public; Owner: bijay
 --
 
-CREATE TABLE public.subjects (
+CREATE TABLE public.tests (
     id integer NOT NULL,
-    course_id integer NOT NULL,
+    stream_id integer NOT NULL,
     title character varying(255) NOT NULL,
     marks integer NOT NULL,
     duration_in_minutes integer NOT NULL
 );
 
 
-ALTER TABLE public.subjects OWNER TO bijay;
+ALTER TABLE public.tests OWNER TO bijay;
 
 --
--- Name: subjects_id_seq; Type: SEQUENCE; Schema: public; Owner: bijay
+-- Name: tests_id_seq; Type: SEQUENCE; Schema: public; Owner: bijay
 --
 
-CREATE SEQUENCE public.subjects_id_seq
+CREATE SEQUENCE public.tests_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -119,13 +119,13 @@ CREATE SEQUENCE public.subjects_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.subjects_id_seq OWNER TO bijay;
+ALTER TABLE public.tests_id_seq OWNER TO bijay;
 
 --
--- Name: subjects_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bijay
+-- Name: tests_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: bijay
 --
 
-ALTER SEQUENCE public.subjects_id_seq OWNED BY public.subjects.id;
+ALTER SEQUENCE public.tests_id_seq OWNED BY public.tests.id;
 
 
 --
@@ -136,7 +136,7 @@ CREATE TABLE public.user_scores (
     id integer NOT NULL,
     user_id integer NOT NULL,
     score integer NOT NULL,
-    subject_id integer NOT NULL,
+    test_id integer NOT NULL,
     previous_rank json,
     created_at timestamp with time zone NOT NULL,
     updated_at timestamp with time zone NOT NULL
@@ -207,10 +207,10 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: courses id; Type: DEFAULT; Schema: public; Owner: bijay
+-- Name: streams id; Type: DEFAULT; Schema: public; Owner: bijay
 --
 
-ALTER TABLE ONLY public.courses ALTER COLUMN id SET DEFAULT nextval('public.courses_id_seq'::regclass);
+ALTER TABLE ONLY public.streams ALTER COLUMN id SET DEFAULT nextval('public.streams_id_seq'::regclass);
 
 
 --
@@ -221,10 +221,10 @@ ALTER TABLE ONLY public.mcq_questions ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- Name: subjects id; Type: DEFAULT; Schema: public; Owner: bijay
+-- Name: tests id; Type: DEFAULT; Schema: public; Owner: bijay
 --
 
-ALTER TABLE ONLY public.subjects ALTER COLUMN id SET DEFAULT nextval('public.subjects_id_seq'::regclass);
+ALTER TABLE ONLY public.tests ALTER COLUMN id SET DEFAULT nextval('public.tests_id_seq'::regclass);
 
 
 --
@@ -242,10 +242,10 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- Data for Name: courses; Type: TABLE DATA; Schema: public; Owner: bijay
+-- Data for Name: streams; Type: TABLE DATA; Schema: public; Owner: bijay
 --
 
-COPY public.courses (id, course_name) FROM stdin;
+COPY public.streams (id, stream_name) FROM stdin;
 1	BCA
 2	Others
 \.
@@ -255,7 +255,7 @@ COPY public.courses (id, course_name) FROM stdin;
 -- Data for Name: mcq_questions; Type: TABLE DATA; Schema: public; Owner: bijay
 --
 
-COPY public.mcq_questions (id, subject_id, question, options, answer) FROM stdin;
+COPY public.mcq_questions (id, test_id, question, options, answer) FROM stdin;
 11	1	What is the brain of a computer?	{"1": "RAM", "2": "CPU", "3": "Hard Disk", "4": "Monitor"}	2
 12	1	Which of the following is an output device?	{"1": "Keyboard", "2": "Mouse", "3": "Monitor", "4": "Scanner"}	3
 13	1	Which of the following is a type of software?	{"1": "System Software", "2": "Application Software", "3": "Utility Software", "4": "All of the above"}	4
@@ -270,10 +270,10 @@ COPY public.mcq_questions (id, subject_id, question, options, answer) FROM stdin
 
 
 --
--- Data for Name: subjects; Type: TABLE DATA; Schema: public; Owner: bijay
+-- Data for Name: tests; Type: TABLE DATA; Schema: public; Owner: bijay
 --
 
-COPY public.subjects (id, course_id, title, marks, duration_in_minutes) FROM stdin;
+COPY public.tests (id, stream_id, title, marks, duration_in_minutes) FROM stdin;
 1	1	Computer Fundamentals and Applications	10	10
 2	1	Digital Logic	10	10
 3	1	Mathematics I (Calculus and Algebra)	10	10
@@ -286,7 +286,7 @@ COPY public.subjects (id, course_id, title, marks, duration_in_minutes) FROM std
 -- Data for Name: user_scores; Type: TABLE DATA; Schema: public; Owner: bijay
 --
 
-COPY public.user_scores (id, user_id, score, subject_id, previous_rank, created_at, updated_at) FROM stdin;
+COPY public.user_scores (id, user_id, score, test_id, previous_rank, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -300,10 +300,10 @@ COPY public.users (id, name, email, password, number, "createdAt", "updatedAt") 
 
 
 --
--- Name: courses_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bijay
+-- Name: streams_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bijay
 --
 
-SELECT pg_catalog.setval('public.courses_id_seq', 2, true);
+SELECT pg_catalog.setval('public.streams_id_seq', 2, true);
 
 
 --
@@ -314,10 +314,10 @@ SELECT pg_catalog.setval('public.mcq_questions_id_seq', 20, true);
 
 
 --
--- Name: subjects_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bijay
+-- Name: tests_id_seq; Type: SEQUENCE SET; Schema: public; Owner: bijay
 --
 
-SELECT pg_catalog.setval('public.subjects_id_seq', 5, true);
+SELECT pg_catalog.setval('public.tests_id_seq', 5, true);
 
 
 --
@@ -335,11 +335,11 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, true);
 
 
 --
--- Name: courses courses_pkey; Type: CONSTRAINT; Schema: public; Owner: bijay
+-- Name: streams streams_pkey; Type: CONSTRAINT; Schema: public; Owner: bijay
 --
 
-ALTER TABLE ONLY public.courses
-    ADD CONSTRAINT courses_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.streams
+    ADD CONSTRAINT streams_pkey PRIMARY KEY (id);
 
 
 --
@@ -351,11 +351,11 @@ ALTER TABLE ONLY public.mcq_questions
 
 
 --
--- Name: subjects subjects_pkey; Type: CONSTRAINT; Schema: public; Owner: bijay
+-- Name: tests tests_pkey; Type: CONSTRAINT; Schema: public; Owner: bijay
 --
 
-ALTER TABLE ONLY public.subjects
-    ADD CONSTRAINT subjects_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.tests
+    ADD CONSTRAINT tests_pkey PRIMARY KEY (id);
 
 
 --
@@ -391,27 +391,27 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: mcq_questions mcq_questions_subject_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bijay
+-- Name: mcq_questions mcq_questions_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bijay
 --
 
 ALTER TABLE ONLY public.mcq_questions
-    ADD CONSTRAINT mcq_questions_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT mcq_questions_test_id_fkey FOREIGN KEY (test_id) REFERENCES public.tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: subjects subjects_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bijay
+-- Name: tests tests_stream_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bijay
 --
 
-ALTER TABLE ONLY public.subjects
-    ADD CONSTRAINT subjects_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.courses(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.tests
+    ADD CONSTRAINT tests_stream_id_fkey FOREIGN KEY (stream_id) REFERENCES public.streams(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: user_scores user_scores_subject_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bijay
+-- Name: user_scores user_scores_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: bijay
 --
 
 ALTER TABLE ONLY public.user_scores
-    ADD CONSTRAINT user_scores_subject_id_fkey FOREIGN KEY (subject_id) REFERENCES public.subjects(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT user_scores_test_id_fkey FOREIGN KEY (test_id) REFERENCES public.tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
