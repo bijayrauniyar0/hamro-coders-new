@@ -35,7 +35,7 @@ const Filters = () => {
     select: ({ data }) => {
       return data.map((stream: any) => ({
         id: stream.id,
-        label: stream.stream_name,
+        label: stream.name,
         value: stream.id,
       }));
     },
