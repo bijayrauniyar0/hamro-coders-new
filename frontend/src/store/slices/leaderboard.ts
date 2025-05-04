@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 type LeaderboardState = {
   filters: {
-    course_id: number;
-    subject_id: number[];
+    stream_id: number;
+    test_id: number[];
     filter_by: 'daily' | 'weekly' | 'monthly';
   };
   isFiltersOpen: boolean;
@@ -11,8 +11,8 @@ type LeaderboardState = {
 
 const initialState: LeaderboardState = {
   filters: {
-    course_id: 0,
-    subject_id: [],
+    stream_id: 0,
+    test_id: [],
     filter_by: 'daily',
   },
   isFiltersOpen: false,

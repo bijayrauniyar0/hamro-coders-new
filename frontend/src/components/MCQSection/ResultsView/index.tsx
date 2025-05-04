@@ -12,7 +12,7 @@ const ResultsView = () => {
   const { results } = useMCQContext();
   const timeOutRef = useRef<NodeJS.Timeout | null>();
   const intervalRef = useRef<NodeJS.Timeout | null>();
-  const [timeOut, setTimeOut] = useState(5);
+  const [timeOut, setTimeOut] = useState(10);
   const navigate = useNavigate();
 
   const startCountdown = useCallback((initialTime: number) => {
@@ -32,7 +32,7 @@ const ResultsView = () => {
     startCountdown(timeOut);
 
     timeOutRef.current = setTimeout(() => {
-      // navigate(`/leaderboard`);
+      navigate(`/leaderboard`);
     }, 10000);
 
     return () => {
@@ -102,7 +102,7 @@ const ResultsView = () => {
         {timeOut !== 0 && (
           <FlexColumn className="items-center gap-1">
             <p className="text-center text-sm font-medium leading-4 md:text-md">
-              Redirecting to Courses in{' '}
+              Redirecting to Streams in{' '}
               <span className="text-primary-500">{timeOut}</span>
             </p>
             <Button

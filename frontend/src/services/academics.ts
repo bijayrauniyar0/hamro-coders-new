@@ -4,25 +4,23 @@ import { McqResponseType } from '@Components/MCQSection/Context/MCQContextTypes'
 
 import { api, authenticated } from '.';
 
-export const getSubjectsByCourse = async (course_id: number) => {
-  return authenticated(api).get(`/api/courses/subjects/${course_id}/`);
+export const getTestsByStreams = async (stream_id: number) => {
+  return authenticated(api).get(`/api/streams/mock-tests/${stream_id}/`);
 };
 
-export const getCourses = async () => {
-  return authenticated(api).get('/api/courses/');
+export const getStreams = async () => {
+  return authenticated(api).get('/api/streams/');
 };
 
-export const getSubjectsMetaData = async (subject_id: string) => {
-  return authenticated(api).get(
-    `/api/courses/subjects/meta-data/${subject_id}/`,
-  );
+export const getTestsMetaData = async (test_id: string) => {
+  return authenticated(api).get(`/api/streams/tests/meta-data/${test_id}/`);
 };
 
 export const getMcqs = async (
   paramsX: Record<string, any>,
 ): Promise<AxiosResponse<McqResponseType>> => {
-  const { subject_id, ...params } = paramsX;
-  return authenticated(api).get(`/api/mcq/questions/${subject_id}/`, {
+  const { test_id, ...params } = paramsX;
+  return authenticated(api).get(`/api/mcq/questions/${test_id}/`, {
     params,
   });
 };

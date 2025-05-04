@@ -14,13 +14,16 @@ const TimeBox = () => {
     stopWatch.start();
   }, [viewMode]);
   useEffect(() => {
-    if (stopWatch.time.minutes >= mcqData.time_limit) {
+    if (
+      stopWatch.time.minutes >= mcqData.time_limit ||
+      viewMode === 'answers'
+    ) {
       stopWatch.stop();
     }
   }, [mcqData]);
   return (
     <FlexRow className="items-center gap-1">
-      <Clock className="items-center h-4 w-4 md:h-5 md:w-5" />
+      <Clock className="h-4 w-4 items-center md:h-5 md:w-5" />
       <FlexRow className="items-center justify-end gap-[1px] text-sm md:text-md">
         <span className="min-w-4">
           {stopWatch.time.minutes.toString().length < 2

@@ -33,7 +33,7 @@ export default function EmailVerified() {
     <FlexRow className="h-full items-center justify-center px-6">
       <FlexColumn className="w-full gap-6 rounded-lg border border-gray-300 bg-white p-7 text-center shadow-lg">
         <p className="select-none text-5xl font-semibold text-primary-700">
-          Hamro Coders
+          MockSewa
         </p>
         <FlexColumn className="w-full gap-6">
           <div className="w-full">

@@ -1,8 +1,9 @@
 // import ModesPage from '@Views/Modes';
 import PageNotFound from '@Components/common/PageNotFound';
-import Courses from '@Components/Courses';
-import Subjects from '@Components/Courses/Subjects';
+import Streams from '@Components/Streams';
+import Tests from '@Components/Streams/TestsComponent';
 import AuthenticationComponent from '@Components/UserAuthentication';
+import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
 import MCQPage from '@Views/MCQPage';
 import MyStatsPage from '@Views/MyStatsPage';
@@ -21,41 +22,44 @@ const appRoutes: IRoute[] = [
     component: AuthenticationComponent,
   },
   {
-    name: 'Leaderboard',
-    path: '/leaderboard',
-    component: LeaderboardPage,
-  },
-  {
-    name: 'Analytics',
-    path: '/analytics',
-    component: MyStatsPage,
-  },
-  {
     name: 'Verify Email',
     path: '/verify-email',
     component: AuthenticationComponent,
   },
   {
+    name: 'Leaderboard',
+    path: '/leaderboard',
+    component: LeaderboardPage,
+    authenticated: true,
+  },
+  {
+    name: 'Analytics',
+    path: '/analytics',
+    component: MyStatsPage,
+    authenticated: true,
+  },
+
+  {
     name: 'Academics',
     path: '/',
-    component: Courses,
-    authenticated: true,
+    component: HomePage,
+    authenticated: false,
   },
   {
-    name: 'Academics',
-    path: '/courses',
-    component: Courses,
-    authenticated: true,
+    name: 'Streams',
+    path: '/streams',
+    component: Streams,
+    authenticated: false,
   },
   {
-    name: 'Subjects',
-    path: '/courses/subjects/:course_id',
-    component: Subjects,
-    authenticated: true,
+    name: 'Tests',
+    path: '/streams/tests/:stream_id',
+    component: Tests,
+    authenticated: false,
   },
   {
     name: 'MCQ',
-    path: '/mcq/:course_id/*',
+    path: '/mcq/:stream_id/*',
     component: MCQPage,
     authenticated: true,
   },

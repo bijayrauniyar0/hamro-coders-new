@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Request, Response } from 'express';
-import { LeaderboardService } from './leaderboardController';
+import { LeaderboardService } from './userScoresController';
 import UserScores from '../models/userScoresModels';
 import { Op } from 'sequelize';
 import { formatToMinSec, getStartDateByTimePeriod } from '../utils/index';
@@ -10,7 +10,7 @@ import {
   IRecentSessions,
   UserScoresArgsType,
 } from '../constants/Types/userStats';
-import Subject from '../models/subjectsModel';
+import Test from '../models/mockTestModel';
 import {
   subDays,
   subWeeks,
@@ -18,11 +18,12 @@ import {
   startOfWeek,
   startOfMonth,
 } from 'date-fns';
+import Stream from 'src/models/streamModels';
 // import User from '@Models/userModels';
 
 export async function seedUserScores(count: number = 100) {
   const startDate = new Date('2025-04-26');
-  const endDate = new Date('2025-05-01');
+  const endDate = new Date('2025-05-05');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -41,8 +42,7 @@ export async function seedUserScores(count: number = 100) {
       score: getRandomInt(6, 10),
       created_at: getRandomDate(),
       elapsed_time: getRandomInt(200, 600),
-      mode: 'ranked',
-      subject_id: getRandomInt(1, 5),
+      mock_test_id: getRandomInt(1, 5),
     };
   });
 
@@ -57,15 +57,11 @@ export class UserStatsService {
   }
   async getUserScores({
     startDate,
-    mode,
     otherFilterOptions,
   }: UserScoresArgsType): Promise<UserScores[]> {
     const whereClause: any = {
       user_id: this.user_id,
     };
-    if (mode !== 'all') {
-      whereClause.mode = mode;
-    }
     if (startDate !== 'all_time') {
       whereClause.created_at = {
         [Op.gte]: startDate,
@@ -75,9 +71,20 @@ export class UserStatsService {
     const userScores = await UserScores.findAll({
       where: whereClause,
       attributes: {
-        exclude: ['user_id', 'subject_id'],
+        exclude: ['user_id', 'mock_test_id'],
       },
-      include: [{ model: Subject, attributes: ['title'] }],
+      include: [
+        {
+          model: Test,
+          attributes: ['title'],
+          include: [
+            {
+              model: Stream,
+              attributes: ['name'], // or other fields
+            },
+          ],
+        },
+      ],
       order: [['created_at', 'DESC']],
       ...otherFilterOptions,
     });
@@ -87,21 +94,20 @@ export class UserStatsService {
   async getRecentSessions(dataLimit: number = 5): Promise<IRecentSessions[]> {
     const userScores = await this.getUserScores({
       startDate: 'all_time',
-      mode: 'all',
       otherFilterOptions: {
         limit: dataLimit,
         raw: false,
       },
     });
     const scores = userScores.map(score => {
-      const { Subject, ...scoreData } = score.get();
+      const { MockTest, ...scoreData } = score.get();
       return {
         ...scoreData,
-        date: scoreData.created_at,
         elapsed_time: formatToMinSec(scoreData.elapsed_time),
-        title: `${Subject.title}`,
+        title: `${MockTest.title}`,
+        stream_name: MockTest.Stream.name,
         // accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
-        subject: Subject.title,
+        test: MockTest.title,
       };
     });
     return scores;
@@ -128,7 +134,6 @@ export class UserStatsService {
     const startDate = getStartDateByTimePeriod(time_period);
     const allScoresData = await this.getUserScores({
       startDate,
-      mode: 'ranked',
     });
 
     const total = allScoresData.length;
@@ -154,10 +159,10 @@ export class UserStatsService {
 
     const performanceDetails = await Promise.all(
       scoresData.map(async (scoreModel, index) => {
-        const { Subject, ...score } = scoreModel.get();
+        const { MockTest, ...score } = scoreModel.get();
         const response: IPerformanceDetails = {
           ...score,
-          subject: Subject.title,
+          test: MockTest.title,
           date: score.created_at,
           elapsed_time: formatToMinSec(score.elapsed_time),
           title: `${score.mode} #${score.id}`,
@@ -205,14 +210,13 @@ export const getUserStats = async (
   req: Request<unknown, unknown, unknown, IGetUserStatsParamType>,
   res: Response,
 ) => {
-  const { mode, time_period } = req.query;
+  const { time_period } = req.query;
   const { user } = req;
   const leaderboardService = new LeaderboardService();
   const userStatsService = new UserStatsService(user.id);
   try {
     const scores = await userStatsService.getUserScores({
       startDate: getStartDateByTimePeriod(time_period),
-      mode,
     });
     const userRanks = await leaderboardService.getRankedUsers({
       startDate: getStartDateByTimePeriod(time_period),
@@ -263,7 +267,7 @@ export const getPerformanceDetails = async (
   const { user } = req;
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
-  // await seedUserScores(150);
+  // await seedUserScores(400);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(

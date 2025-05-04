@@ -1,5 +1,4 @@
 import { ChartConfig } from '@Components/radix/chart';
-import { SessionsBoxProps } from '@Constants/Types/myStats';
 
 export const modeDropDownOptions = [
   {
@@ -50,47 +49,46 @@ export const statsData = [
     title: 'Current Rank',
     value_key: 'current_rank',
     icon: 'trophy',
-    tooltipMessage: 'Rank is only based on ranked sessions',
   },
 ];
 
-export const sessionsData: SessionsBoxProps[] = [
-  {
-    title: 'Speed Typing',
-    score: 85,
-    elapsed_time: 120,
-    mode: 'Practice',
-    created_at: '2025-04-18T14:30:00Z',
-  },
-  {
-    title: 'Code Challenge',
-    score: 72,
-    elapsed_time: 180,
-    mode: 'Ranked',
-    created_at: '2025-04-17T19:15:00Z',
-  },
-  {
-    title: 'Memory Test',
-    score: 90,
-    elapsed_time: 150,
-    mode: 'Practice',
-    created_at: '2025-04-16T11:00:00Z',
-  },
-  {
-    title: 'Reflex Drill',
-    score: 64,
-    elapsed_time: 60,
-    mode: 'Ranked',
-    created_at: '2025-04-15T17:45:00Z',
-  },
-  {
-    title: 'Focus Mode',
-    score: 95,
-    elapsed_time: 300,
-    mode: 'Practice',
-    created_at: '2025-04-14T08:20:00Z',
-  },
-];
+// export const sessionsData: SessionsBoxProps[] = [
+//   {
+//     title: 'Speed Typing',
+//     score: 85,
+//     elapsed_time: 120,
+//     mode: 'Practice',
+//     created_at: '2025-04-18T14:30:00Z',
+//   },
+//   {
+//     title: 'Code Challenge',
+//     score: 72,
+//     elapsed_time: 180,
+//     mode: 'Ranked',
+//     created_at: '2025-04-17T19:15:00Z',
+//   },
+//   {
+//     title: 'Memory Test',
+//     score: 90,
+//     elapsed_time: 150,
+//     mode: 'Practice',
+//     created_at: '2025-04-16T11:00:00Z',
+//   },
+//   {
+//     title: 'Reflex Drill',
+//     score: 64,
+//     elapsed_time: 60,
+//     mode: 'Ranked',
+//     created_at: '2025-04-15T17:45:00Z',
+//   },
+//   {
+//     title: 'Focus Mode',
+//     score: 95,
+//     elapsed_time: 300,
+//     mode: 'Practice',
+//     created_at: '2025-04-14T08:20:00Z',
+//   },
+// ];
 
 export const tableData = [
   {

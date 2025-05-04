@@ -8,16 +8,14 @@ export type StatsCardProps = {
   title: string;
   value: number | string;
   icon: string;
-  tooltipMessage?: string;
 };
 
 export interface SessionsBoxProps {
   title: string;
   score: number;
-  // accuracy: string;
   elapsed_time: number;
-  mode: string;
   created_at: string;
+  stream_name: string;
 }
 
 export interface PerformanceDetailsProps
@@ -30,7 +28,6 @@ export interface IPerformanceTrendProps {
 }
 
 export interface IFilters {
-  modeFilter: string;
   timePeriodFilter: string;
 }
 

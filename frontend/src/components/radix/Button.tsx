@@ -27,7 +27,7 @@ const buttonVariants = cva(
         // lg: 'h-11 px-8 rounded-md',
         // 'lg-icon': 'p-[0.625rem] h-fit',
         // 'sm-icon': 'p-[0.375rem] h-fit',
-        'drop-lg': 'h-[40px] rounded-lg py-[8px] pl-3 pr-2 gap-2',
+        'drop-lg': 'h-[1.75rem] md:h-[2.25rem] rounded-lg !py-1 md:!py-[8px] md:px-3 px-2 gap-2',
         'drop-sm': 'h-[36px]  rounded-lg py-[8px] pl-[4px] pr-[8px] gap-1',
         'drop-tiny': 'h-[36px] pl-[8px] !border-none py-[4px] pr-[4px]',
       },

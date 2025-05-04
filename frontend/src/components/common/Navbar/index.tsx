@@ -37,14 +37,14 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sticky right-0 top-0 z-[11] flex w-full items-center justify-between bg-white px-4 py-1 shadow-custom xl:px-7">
+      <header className="sticky right-0 top-0 z-[11111] flex w-full items-center justify-between bg-white px-4 py-1 shadow-custom xl:px-7">
         <div
           tabIndex={0}
           role="button"
           className="logo-container min-w-[9rem] cursor-pointer"
           onClick={() => navigate('/')}
         >
-          <p className="text-xl font-semibold text-primary-700">Hamro Coders</p>
+          <p className="text-xl font-bold text-primary-700">MockSewa</p>
         </div>
         {width > 768 && (
           <div className="flex items-center gap-x-9">
@@ -90,9 +90,7 @@ const Navbar = () => {
             <FlexColumn className="h-full">
               <FlexRow className="items-center justify-between px-6 py-4">
                 <div tabIndex={0} role="button" onClick={() => navigate('/')}>
-                  <p className="text-xl font-semibold text-primary-700">
-                    Hamro Coders
-                  </p>
+                  <p className="text-xl font-bold text-primary-700">MockSewa</p>
                 </div>
                 <Icon
                   name="close"
@@ -105,6 +103,7 @@ const Navbar = () => {
                   return (
                     <NavLink
                       key={navbarItem.id}
+                      onClick={closeBurgerMenu}
                       className={({ isActive }) =>
                         `rounded-lg px-3 py-4 text-md transition-all duration-300 ease-in-out hover:bg-primary-200 ${
                           isActive

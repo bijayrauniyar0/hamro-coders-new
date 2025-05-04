@@ -15,6 +15,7 @@ const QuestionsViewButtons = () => {
     setVisibleQuestionChunkIndex,
     questionsChunk,
     viewMode,
+    setViewMode,
   } = useMCQContext();
 
   const submitButton: { [key: string]: React.ReactNode } = {
@@ -52,13 +53,23 @@ const QuestionsViewButtons = () => {
         )}
       </>
     ),
-    answers: <></>,
+    answers: (
+      <Button
+        className="text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm text-nowrap"
+        onClick={() => {
+          setViewMode('answers');
+        }}
+        variant="secondary"
+      >
+        Preview Answers
+      </Button>
+    ),
   };
   return (
     <FlexRow className="w-full items-center justify-between">
       {submitButton[viewMode]}
 
-      <FlexRow className="gap-4 justify-end w-full">
+      <FlexRow className="w-full justify-end gap-4">
         <Button
           variant="outline"
           className="text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm"

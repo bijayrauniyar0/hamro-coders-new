@@ -68,7 +68,7 @@ export default function Login() {
           {/* ------ icon ------ */}
 
           <p className="select-none text-5xl font-semibold text-primary-700">
-            Hamro Coders
+            MockSewa
           </p>
           {/*  ------ form ------ */}
           <form onSubmit={handleSubmit(onSubmit)}>

@@ -31,19 +31,19 @@ const Leaderboard = () => {
   const navigate = useNavigate();
   const dispatch = useTypedDispatch();
 
-  const { course_id, subject_id, filter_by } = useTypedSelector(
+  const { stream_id, test_id, filter_by } = useTypedSelector(
     state => state.leaderboardSlice.filters,
   );
   const isFiltersOpen = useTypedSelector(
     state => state.leaderboardSlice.isFiltersOpen,
   );
   const { data: leaderboardData, isLoading: leaderBoardIsLoading } = useQuery({
-    queryKey: ['leaderboard', course_id, subject_id, filter_by],
+    queryKey: ['leaderboard', stream_id, test_id, filter_by],
     queryFn: () =>
       getLeaderboard({
         filter_by,
-        course_id,
-        subject_id: subject_id.join(','),
+        stream_id,
+        test_id: test_id.join(','),
       }),
     select: ({ data }) => data as UserRank[],
   });

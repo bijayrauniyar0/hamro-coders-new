@@ -10,16 +10,16 @@ import { MyStatsSkeleton } from '../MyStatsSkeleton';
 
 import StatsCard from './StatsCard';
 
-const Stats = ({ modeFilter, timePeriodFilter }: IFilters) => {
+const Stats = ({ timePeriodFilter }: IFilters) => {
   const { data: userStats, isLoading: userStatsIsLoading } = useQuery({
-    queryKey: ['userStats', modeFilter, timePeriodFilter],
+    queryKey: ['userStats', timePeriodFilter],
     queryFn: () =>
-      getUserStats({ mode: modeFilter, time_period: timePeriodFilter }),
+      getUserStats({ time_period: timePeriodFilter }),
     select: ({ data }) => data,
-    enabled: !!modeFilter && !!timePeriodFilter,
+    enabled: !!timePeriodFilter,
   });
   return (
-    <Grid className="w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <Grid className="w-full grid-cols-2 gap-2 md:grid-cols-4">
       {userStatsIsLoading ? (
         <MyStatsSkeleton />
       ) : (

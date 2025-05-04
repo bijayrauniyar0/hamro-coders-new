@@ -16,8 +16,8 @@ export interface INavbarLinkData {
 export const navbarData: INavbarLinkData[] = [
   {
     id: 1,
-    name: 'Courses',
-    link: '/courses',
+    name: 'Streams',
+    link: '/streams',
   },
   // {
   //   id: 2,

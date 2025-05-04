@@ -1,17 +1,17 @@
-export type CoursesType = {
+export type StreamsType = {
   name: string;
   id: number;
-  subjects_count: number;
+  tests_count: number;
 };
 
-export type SubjectType = {
+export type TestsType = {
   id: number;
-  course_id: number;
+  stream_id: number;
   title: string;
-  course_name: string;
+  stream_name: string;
 };
 
-export interface ISubjectBoxProps {
+export interface ITestBoxProps {
   title: string;
-  course_name: string;
+  stream_name: string;
 }

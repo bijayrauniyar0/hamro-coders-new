@@ -10,8 +10,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-import Icon from '@Components/common/Icon';
 import Skeleton from '@Components/radix/Skeleton';
 import {
   Table,
@@ -70,7 +70,7 @@ export default function DataTable({
   initialState,
   isPaginated = true,
   needSorting = true,
-  cellClassName,
+  // cellClassName,
   tableStyle,
   showDataCount = false,
   dataCountCategory,
@@ -177,7 +177,7 @@ export default function DataTable({
                   >
                     {!header.isPlaceholder && (
                       <FlexRow
-                        className={`hover:text-secondary-500 group cursor-pointer items-center justify-start gap-1 px-3 py-0 xl:px-6 ${
+                        className={`hover:text-secondary-500 group cursor-pointer items-center justify-start gap-1 px-3 py-0 text-xs md:text-sm xl:px-6 ${
                           header.column.getIsSorted() !== false
                             ? 'text-[#E0D4FD]'
                             : 'text-white'
@@ -190,26 +190,26 @@ export default function DataTable({
 
                         {header.column.columnDef.sortingFn && needSorting && (
                           <div
-                            className={`flex flex-col items-center justify-center gap-1 ${header.id === 'pdfIcon' ? 'hidden' : 'block'} ${needSorting ? 'block' : 'hidden'}`}
+                            className={`flex flex-col items-center justify-center ${header.id === 'pdfIcon' ? 'hidden' : 'block'} ${needSorting ? 'block' : 'hidden'}`}
                           >
                             {(header.column.getIsSorted() === 'asc' ||
                               header.column.getIsSorted() === false) && (
-                              <Icon
+                              <ChevronUp
                                 name="expand_less"
-                                className={`!flex !h-[6px] !items-center !justify-start !text-base group-hover:text-[#E0D4FD] ${
+                                className={`mb-[-2px] !h-3 !w-3 hover:text-primary-600 md:!h-4 md:!w-4 ${
                                   header.column.getIsSorted() !== false
-                                    ? 'text-[#E0D4FD]'
+                                    ? 'text-primary-600'
                                     : 'text-white'
                                 }`}
                               />
                             )}
                             {(header.column.getIsSorted() === 'desc' ||
                               header.column.getIsSorted() === false) && (
-                              <Icon
+                              <ChevronDown
                                 name="expand_more"
-                                className={`!text-icon-sm !flex !h-[6px] !items-center !justify-start !text-base group-hover:text-[#E0D4FD] ${
+                                className={`h-3 w-3 hover:text-primary-600 md:h-4 md:w-4 ${
                                   header.column.getIsSorted() !== false
-                                    ? 'text-[#E0D4FD]'
+                                    ? 'text-primary-600'
                                     : 'text-white'
                                 }`}
                               />
@@ -238,13 +238,12 @@ export default function DataTable({
                   return (
                     <TableCell
                       key={cell.id}
-                      className={`${cellClassName} ${cell.column.id === 'S.N' ? '!w-[5%]' : ''} table-body-row-child`}
                       style={{
                         width: `${cell.column.getSize()}px`,
                       }}
                     >
                       <div
-                        className={`!tracking- flex justify-start bg-center text-sm !font-medium leading-normal text-matt-200 md:text-md`}
+                        className={`flex justify-start bg-center text-xs md:text-sm !font-medium leading-normal text-matt-200`}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,

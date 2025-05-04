@@ -4,7 +4,7 @@
   font-style: normal;
 } */
 .lato-regular {
-  font-family: "Lato", sans-serif;
+  font-family: 'Lato', sans-serif;
   font-weight: 400;
   font-style: normal;
 }
@@ -40,17 +40,34 @@ body {
   height: auto; /* Allow the height to be determined by content */
   overflow: visible; /* Prevent cropping */
 }
-.slick-list {
-  overflow: visible !important; /* Ensure no cropping */
-}
 
 .slick-slide {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+  opacity: 0.7;
+  transform: scale(0.85);
   display: flex !important;
   justify-content: center;
   align-items: center;
   overflow: visible;
 }
+@media screen and (max-width: 768px) {
+  .slick-slide {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
 
+.slick-center {
+  opacity: 1 !important;
+  transform: scale(1.05) !important;
+  z-index: 2;
+}
+
+.slick-list {
+  overflow: visible !important; /* Ensure no cropping */
+}
 .slick-prev,
 .slick-next {
   z-index: 2;

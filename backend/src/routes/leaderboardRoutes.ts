@@ -1,7 +1,7 @@
 import {
   createScoreEntry,
   getLeaderboard,
-} from '../controllers/leaderboardController';
+} from '../controllers/userScoresController';
 import express from 'express';
 import { authenticate } from '..//middlewares/authenticate';
 

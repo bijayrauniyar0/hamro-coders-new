@@ -14,55 +14,55 @@ import Searchbar from '@Components/common/SearchBar';
 import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
 // import { useTypedSelector } from '@Store/hooks';
-import { SubjectType } from '@Constants/Types/academics';
-import { getSubjectsByCourse } from '@Services/academics';
+import { TestsType } from '@Constants/Types/academics';
+import { getTestsByStreams } from '@Services/academics';
 
-import SubjectBox from './SubjectBox';
+import TestBox from './TestBox';
 
-const Subjects = () => {
+const MockTests = () => {
   const [searchValue, setSearchValue] = useState('');
   // const [isModesOpen, setIsModesOpen] = useState(false);
-  // const [selectedSubject, setSelectedSubject] = useState<number>();
+  // const [selectedTest, setSelectedTest] = useState<number>();
 
   // const selectedMode = useTypedSelector(
   //   state => state.commonSlice.selectedMode,
   // );
 
-  const { course_id } = useParams();
+  const { stream_id } = useParams();
   const navigate = useNavigate();
 
-  const { data: subjectsData, isLoading: subjectsDataIsLoading } = useQuery({
-    queryKey: ['subjects'],
-    queryFn: () => getSubjectsByCourse(Number(course_id) || 0),
-    enabled: !!course_id,
-    select: ({ data }) => data as SubjectType[],
+  const { data: mockTestsData, isLoading: mockTestsDataIsLoading } = useQuery({
+    queryKey: ['mockTests'],
+    queryFn: () => getTestsByStreams(Number(stream_id) || 0),
+    enabled: !!stream_id,
+    select: ({ data }) => data as TestsType[],
   });
-  const filteredSubjects = useMemo(() => {
-    if (!subjectsData) return [];
-    return subjectsData.filter(({ title }: SubjectType) =>
+  const filteredTests = useMemo(() => {
+    if (!mockTestsData) return [];
+    return mockTestsData.filter(({ title }: TestsType) =>
       title?.toLowerCase()?.includes(searchValue.toLowerCase()),
     );
-  }, [subjectsData, searchValue]);
+  }, [mockTestsData, searchValue]);
 
   return (
     <BindContentContainer>
       <FlexColumn className="w-full gap-4">
         <FlexRow className="w-full items-center justify-between">
-          <BreadCrumb onBackClick={() => navigate(-1)} heading="Subjects" />
+          <BreadCrumb onBackClick={() => navigate(-1)} heading="Tests" />
           <Searchbar
             wrapperStyle="!w-[10rem] lg:!w-[15rem]"
-            placeholder="Search Subjects"
+            placeholder="Search mockTests"
             onChange={e => setSearchValue(e.target.value)}
             value={searchValue}
           />
         </FlexRow>
-        {subjectsDataIsLoading ? (
+        {mockTestsDataIsLoading ? (
           <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
             {[...Array(5).keys()].map(key => (
               <Skeleton className="h-[12rem]" key={key} />
             ))}
           </div>
-        ) : isEmpty(filteredSubjects) ? (
+        ) : isEmpty(filteredTests) ? (
           <NoDataAvailable />
         ) : (
           <FlexColumn className="scrollbar max-h-[calc(100dvh-9rem)] gap-4 overflow-y-auto pb-4">
@@ -72,19 +72,19 @@ const Subjects = () => {
               initial="hidden"
               animate="show"
             >
-              {filteredSubjects?.map(subject => {
+              {filteredTests?.map(test => {
                 return (
                   <motion.button
                     variants={cardVariants}
-                    key={subject.id}
+                    key={test.id}
                     onClick={() => {
-                      navigate(`/mcq/${course_id}/?subject_id=${subject.id}`);
+                      navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
                       // setIsModesOpen(true);
                     }}
                   >
-                    <SubjectBox
-                      title={subject.title}
-                      course_name={subject.course_name}
+                    <TestBox
+                      title={test.title}
+                      stream_name={test.stream_name}
                     />
                   </motion.button>
                 );
@@ -98,7 +98,7 @@ const Subjects = () => {
           onClose={() => setIsModesOpen(false)}
           handleNextClick={() =>
             navigate(
-              `/mcq/courses/${course_id}/?subject_id=${selectedSubject}&mode=${selectedMode}`,
+              `/mcq/streams/${stream_id}/?test_id=${selectedTest}&mode=${selectedMode}`,
             )
           }
         />
@@ -107,4 +107,4 @@ const Subjects = () => {
   );
 };
 
-export default hasErrorBoundary(Subjects);
+export default hasErrorBoundary(MockTests);
