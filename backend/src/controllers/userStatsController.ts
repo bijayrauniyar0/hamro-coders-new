@@ -18,7 +18,7 @@ import {
   startOfWeek,
   startOfMonth,
 } from 'date-fns';
-import Stream from 'src/models/streamModels';
+import Stream from '../models/streamModels';
 // import User from '@Models/userModels';
 
 export async function seedUserScores(count: number = 100) {
