@@ -19,6 +19,20 @@ import Section from './Section';
 import StreamsCard from './StreamsCard';
 import TestimonialCard from './TestimonialCard';
 
+const platformMetrics = [
+  {
+    title: 'Exam Categories',
+    value: '50+',
+  },
+  {
+    title: 'Questions',
+    value: '10,000+',
+  },
+  {
+    title: 'Students',
+    value: '25,000+',
+  },
+];
 const Home = () => {
   return (
     <>
@@ -27,7 +41,7 @@ const Home = () => {
           <FlexRow className="z-[10] items-center justify-between gap-4 pb-8 max-md:flex-wrap md:gap-8 md:pb-12 lg:pb-16">
             <FlexColumn className="items-start gap-6 md:max-w-[40%] md:gap-8">
               <FlexColumn className="gap-2 md:gap-3">
-                <p className="text-lg font-bold md:text-xl lg:text-2xl">
+                <p className="text-2xl font-bold md:text-3xl lg:text-4xl">
                   Ace Your <span className="text-primary-600">Exams</span> with
                   MockSewa
                 </p>
@@ -36,29 +50,7 @@ const Home = () => {
                   analyze your performance with detailed metrics.
                 </p>
               </FlexColumn>
-              <Button className="w-fit">Explore Exams</Button>
-              <Grid className="grid-cols-3 gap-4 text-center max-md:w-full md:gap-6 lg:gap-8">
-                <div>
-                  <p className="text-base font-bold text-primary-600 md:text-lg lg:text-xl">
-                    50+
-                  </p>
-                  <p className="text-sm text-gray-600 md:text-md">
-                    Exam Categories
-                  </p>
-                </div>
-                <div>
-                  <p className="text-base font-bold text-primary-600 md:text-lg lg:text-xl">
-                    10,000+
-                  </p>
-                  <p className="text-sm text-gray-600 md:text-md">Questions</p>
-                </div>
-                <div>
-                  <p className="text-base font-bold text-primary-600 md:text-lg lg:text-xl">
-                    25,000+
-                  </p>
-                  <p className="text-sm text-gray-600 md:text-md">Students</p>
-                </div>
-              </Grid>
+              <Button className="w-fit bg-secondary-100">Explore Exams</Button>
             </FlexColumn>
             <AnimatingSVg />
             {/* <img
@@ -67,14 +59,25 @@ const Home = () => {
               className="select-none object-contain md:w-[60%] lg:max-w-[35rem]"
             /> */}
           </FlexRow>
-
+          <Grid className="z-10 mx-auto grid-cols-3 gap-2 text-center max-md:w-full md:w-4/5 md:gap-6 lg:w-1/2 lg:gap-8">
+            {platformMetrics.map(metric => (
+              <div key={metric.title}>
+                <p className="lg:text-xl2 text-lg font-bold text-primary-600 md:text-xl lg:text-3xl">
+                  {metric.value}
+                </p>
+                <p className="text-sm text-gray-600 md:text-base lg:text-lg">
+                  {metric.title}
+                </p>
+              </div>
+            ))}
+          </Grid>
           {/* <div
         className="relative bg-purple-50 bg-cover bg-center bg-no-repeat py-16 lg:py-24"
         // style={{ backgroundImage: `url(${bgImage})` }}
       > */}
           {/* <div className="absolute inset-0 bg-[#5f576462] z-10 opacity-30"></div> */}
           <div className="relative z-10 overflow-hidden rounded-lg !bg-[rgba(243,236,250,0.7)] px-4 py-8 md:px-16 md:py-16 lg:px-20 lg:py-20">
-            <div className="relative flex flex-col z-10 gap-8 sm:grid-cols-3 sm:gap-4 md:grid lg:gap-6">
+            <div className="relative z-10 flex flex-col gap-8 sm:grid-cols-3 sm:gap-4 md:grid lg:gap-6">
               {features.map((feature, index) => (
                 <FeatureCard
                   {...feature}

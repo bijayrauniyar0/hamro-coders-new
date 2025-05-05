@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-primary-600 text-white  text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
+          'bg-primary-600 text-white text-sm max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm lg:text-base hover:bg-primary-600 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
         secondary:
           'bg-white text-primary-500 border border-primary-500 hover:bg-primary-100 disabled:bg-grey-100 disabled:text-grey-500 disabled:border border-grey-300',
 
@@ -27,7 +27,8 @@ const buttonVariants = cva(
         // lg: 'h-11 px-8 rounded-md',
         // 'lg-icon': 'p-[0.625rem] h-fit',
         // 'sm-icon': 'p-[0.375rem] h-fit',
-        'drop-lg': 'h-[1.75rem] md:h-[2.25rem] rounded-lg !py-1 md:!py-[8px] md:px-3 px-2 gap-2',
+        'drop-lg':
+          'h-[1.75rem] md:h-[2.25rem] rounded-lg !py-1 md:!py-[8px] md:px-3 px-2 gap-2',
         'drop-sm': 'h-[36px]  rounded-lg py-[8px] pl-[4px] pr-[8px] gap-1',
         'drop-tiny': 'h-[36px] pl-[8px] !border-none py-[4px] pr-[4px]',
       },
@@ -54,11 +55,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : 'button';
     return (
       <Comp
-        className={cn(
-          buttonVariants({ variant, size }),
-          'text-xs max-md:h-fit max-md:px-3 max-md:py-2 md:text-sm',
-          className,
-        )}
+        className={cn(buttonVariants({ variant, size }), className)}
         ref={ref}
         {...props}
       >
