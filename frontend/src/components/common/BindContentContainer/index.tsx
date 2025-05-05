@@ -8,7 +8,7 @@ export default function BindContentContainer({
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div {...props} className={cn('m-auto max-w-[90rem] max-2xl:px-4 max-md:px-2 pt-4 md:pt-7 pb-6', className)}>
+    <div {...props} className={cn('m-auto max-w-[90rem] max-2xl:px-4 max-sm:px-4 max-md:px-2 pt-4 md:pt-7 pb-6', className)}>
       {children}
     </div>
   );

@@ -326,7 +326,7 @@ const AnimatingSVg = () => {
         />
       </g>
       {/* clock */}
-      <g transform="translate(110, 100)">
+      {/* <g transform="translate(110, 100)">
         <circle
           cx="0"
           cy="0"
@@ -377,10 +377,9 @@ const AnimatingSVg = () => {
           dur="6s"
           repeatCount="indefinite"
         />
-      </g>
-      {/* box */}
+      </g> */}
+      {/* <!-- PC Monitor --> */}
       <g transform="translate(670, 80)">
-        {/* <!-- PC Monitor --> */}
         <rect
           x="-30"
           y="-30"
@@ -459,7 +458,7 @@ const AnimatingSVg = () => {
       </g>
 
       {/* trophy */}
-      <g transform="translate(520, 80)">
+      <g transform="translate(220, 80)">
         <path
           d="M-15,15 L15,15 L15,-5 C15,-15 25,-15 25,-25 C25,-35 15,-35 5,-35 L-5,-35 C-15,-35 -25,-35 -25,-25 C-25,-15 -15,-15 -15,-5 Z"
           fill="url(#yellowGradient)"
@@ -482,7 +481,7 @@ const AnimatingSVg = () => {
         <animateTransform
           attributeName="transform"
           type="translate"
-          values="520,80; 520,70; 520,80"
+          values="220,90; 220,70; 220,90"
           dur="3s"
           repeatCount="indefinite"
         />
@@ -516,7 +515,7 @@ const AnimatingSVg = () => {
         />
       </g>
       {/* a */}
-      <g transform="translate(280, 210)">
+      {/* <g transform="translate(280, 210)">
         <circle cx="0" cy="0" r="20" fill="url(#pinkGradient)" />
         <text
           x="-7"
@@ -535,9 +534,9 @@ const AnimatingSVg = () => {
           dur="6s"
           repeatCount="indefinite"
         />
-      </g>
+      </g> */}
       {/* b */}
-      <g transform="translate(420, 270)">
+      {/* <g transform="translate(420, 270)">
         <circle cx="0" cy="0" r="20" fill="url(#pinkGradient)" />
         <text
           x="-7"
@@ -556,9 +555,9 @@ const AnimatingSVg = () => {
           dur="4.5s"
           repeatCount="indefinite"
         />
-      </g>
+      </g> */}
       {/* c */}
-      <g transform="translate(310, 380)">
+      {/* <g transform="translate(310, 380)">
         <circle cx="0" cy="0" r="20" fill="url(#pinkGradient)" />
         <text
           x="-7"
@@ -577,9 +576,9 @@ const AnimatingSVg = () => {
           dur="5.5s"
           repeatCount="indefinite"
         />
-      </g>
+      </g> */}
       {/* D */}
-      <g transform="translate(390, 330)">
+      {/* <g transform="translate(390, 330)">
         <circle cx="0" cy="0" r="20" fill="url(#pinkGradient)" />
         <text
           x="-7"
@@ -598,7 +597,7 @@ const AnimatingSVg = () => {
           dur="7s"
           repeatCount="indefinite"
         />
-      </g>
+      </g> */}
 
       {/* bottom medal */}
       <g transform="translate(500, 320)">

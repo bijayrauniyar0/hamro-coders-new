@@ -3,6 +3,7 @@ import PageNotFound from '@Components/common/PageNotFound';
 import Streams from '@Components/Streams';
 import Tests from '@Components/Streams/TestsComponent';
 import AuthenticationComponent from '@Components/UserAuthentication';
+import AboutUsPage from '@Views/AboutUs';
 import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
 import MCQPage from '@Views/MCQPage';
@@ -67,6 +68,12 @@ const appRoutes: IRoute[] = [
     name: 'Page Not Found',
     path: '*',
     component: PageNotFound,
+  },
+  {
+    name: 'About Us',
+    path: '/about-us',
+    component: AboutUsPage,
+    authenticated: false,
   },
 ];
 
