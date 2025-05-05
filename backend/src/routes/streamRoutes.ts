@@ -3,7 +3,7 @@ import { authenticate } from '../middlewares/authenticate';
 import {
   getMockTestsListByStream,
   getStreams,
-} from 'src/controllers/streamController';
+} from '../controllers/streamController';
 
 const streamRouter = express.Router();
 
