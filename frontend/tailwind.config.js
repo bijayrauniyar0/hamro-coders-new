@@ -26,7 +26,7 @@ export const theme = {
     },
     colors: {
       primary: {
-        50: '#faf8fc', // Very light, almost white
+        50: '#faf5ff', // Very light, almost white
         100: '#f3ecfa', // Very light, almost white
         200: '#e1d4f3', // Soft lavender
         300: '#cebceb', // Light purple
@@ -36,6 +36,9 @@ export const theme = {
         700: '#65508c', // Comfortable for dark mode
         800: '#433569', // Deep but readable
         900: '#261b3d', // Very dark, but not pitch black
+      },
+      secondary: {
+        100: '#9C27B0',
       },
       // grey and neutral represent same color
       grey: {

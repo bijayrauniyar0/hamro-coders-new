@@ -19,19 +19,9 @@ export const navbarData: INavbarLinkData[] = [
     name: 'Streams',
     link: '/streams',
   },
-  // {
-  //   id: 2,
-  //   name: 'Coding',
-  //   link: '/coding',
-  // },
 
-  // {
-  //   id: 3,
-  //   name: 'Gaming Zone',
-  //   link: '/gaming-zone',
-  // },
   {
-    id: 4,
+    id: 3,
     name: 'Leaderboard',
     link: '/leaderboard',
   },
@@ -39,5 +29,10 @@ export const navbarData: INavbarLinkData[] = [
     id: 4,
     name: 'Analytics',
     link: '/analytics',
+  },
+  {
+    id: 5,
+    name: 'About Us',
+    link: '/about-us',
   },
 ];
