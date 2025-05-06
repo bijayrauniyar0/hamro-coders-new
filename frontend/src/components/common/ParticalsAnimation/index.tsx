@@ -39,7 +39,7 @@ const BackgroundParticles = () => {
             color: '#65508c',
             distance: 100,
             opacity: 0.3,
-            width: 0.5,
+            width: 0.6,
           },
           move: {
             enable: true,
