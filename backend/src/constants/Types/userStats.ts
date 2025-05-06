@@ -7,12 +7,15 @@ import { SequelizeAttributes } from '.';
 export type UserScoresArgsType = {
   startDate: ScoreFilter['startDate'];
   otherFilterOptions?: Partial<SequelizeAttributes>;
+  mock_test_id?: number;
+  controllerName?: string;
 };
 
 export interface IGetUserStatsParamType extends ParsedQs {
   time_period: 'last_1_month' | 'last_7_days' | 'all_time';
   sort_by?: keyof IPerformanceDetails;
   sort_order?: 'asc' | 'desc';
+  mock_test_id: string;
 }
 
 export type UserScoresType = InferAttributes<UserScores>;

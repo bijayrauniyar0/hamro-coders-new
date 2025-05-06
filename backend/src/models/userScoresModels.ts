@@ -6,10 +6,10 @@ import MockTest from './mockTestModel';
 
 class UserScores extends Model {
   public id!: number;
-  public User!: { name: string; id: number };
+  public User!: User;
   public user_id!: number;
   public score!: number;
-  public test_id!: string;
+  public mock_test_id!: string;
   public MockTest!: MockTest;
   public elapsed_time!: number;
   public readonly created_at!: Date;

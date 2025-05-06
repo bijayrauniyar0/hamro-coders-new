@@ -7,7 +7,7 @@ import AboutUsImage from '@Assets/images/about-us.png';
 import FounderProfile from '@Assets/images/founder.jpg';
 import StudentsExamImage from '@Assets/images/students-exam.png';
 
-import CollaborateForm from './CollaborationForm';
+// import CollaborateForm from './CollaborationForm';
 
 export default function AboutUs() {
   return (
@@ -184,7 +184,7 @@ export default function AboutUs() {
       </section>
 
       {/* Team Section */}
-      <section className="bg-white py-8 md:py-12 lg:py-16">
+      <section className="bg-white py-8 md:py-12 lg:py-16 lg:pb-32">
         <BindContentContainer>
           <FlexColumn className="gap-6 px-6 md:gap-8 lg:gap-12">
             <h2 className="mb-4 text-center text-3xl font-bold text-gray-900">
@@ -381,14 +381,14 @@ export default function AboutUs() {
         </FlexColumn>
       </section> */}
 
-      <div className="pt-8 md:pt-12 lg:pt-16">
+      {/* <div className="pt-8 md:pt-12 lg:pt-16">
         <div className="relative h-[25rem] w-full">
           <div className="absolute z-10 w-full">
             <CollaborateForm />
           </div>
           <div className="absolute bottom-0 h-1/2 w-full bg-primary-600" />
         </div>
-      </div>
+      </div> */}
       {/* CTA */}
       <Footer />
       {/* <section className="bg-primary-600 py-16 text-white">

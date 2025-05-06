@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import UserScores from '../models/userScoresModels';
 import User from '../models/userModels';
-import Test from '../models/mockTestModel';
 import { Op } from 'sequelize';
 import {
   getStartDate,
@@ -18,6 +17,7 @@ import {
   RankUserByDateProps,
   ScoreFilter,
 } from '../constants/Types/leaderboard';
+import MockTest from '../models/mockTestModel';
 
 const PERIODS = ['daily', 'weekly', 'monthly'] as const;
 type Period = (typeof PERIODS)[number];
@@ -216,7 +216,7 @@ export const createScoreEntry = async (req: Request, res: Response) => {
       mock_test_id,
     });
 
-    const test = await Test.findByPk(mock_test_id);
+    const test = await MockTest.findByPk(mock_test_id);
     await compareAndNotify(
       leaderboardService,
       oldRanks,
@@ -283,6 +283,37 @@ export const getLeaderboard = async (
       return;
     }
     res.status(200).json(rankedUserScores);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', details: error });
+  }
+};
+
+export const getMockTestsTakenByUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user.id;
+    const tests = await MockTest.findAll({
+      attributes: ['id', 'title'],
+      include: [
+        {
+          model: UserScores,
+          attributes: [],
+          where: {
+            user_id: userId,
+          },
+          required: true,
+        },
+      ],
+      group: ['MockTest.id'],
+    });
+    const testsFlat = tests.map(test => {
+      return {
+        id: test.id,
+        label: test.title,
+        value: test.id,
+      };
+    });
+
+    res.status(200).json(testsFlat);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
   }

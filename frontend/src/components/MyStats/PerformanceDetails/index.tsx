@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import DataTable from '@Components/common/DataTable';
 import Icon from '@Components/common/Icon';
 import { FlexColumn } from '@Components/common/Layouts';
+import { useTypedSelector } from '@Store/hooks';
 import { IFilters } from '@Constants/Types/myStats';
 import { getPerformanceDetails } from '@Services/userStats';
 
@@ -55,6 +56,7 @@ const performanceTableColumns = [
 ];
 
 const PerformanceDetails = ({ timePeriodFilter }: IFilters) => {
+  const mockTestId = useTypedSelector(state => state.analyticsSlice.mockTestId);
   return (
     <FlexColumn className="gap-6">
       <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
@@ -65,6 +67,7 @@ const PerformanceDetails = ({ timePeriodFilter }: IFilters) => {
         queryFn={getPerformanceDetails}
         queryFnParams={{
           time_period: timePeriodFilter,
+          mock_test_id: mockTestId,
         }}
         initialState={{
           paginationState: {
@@ -76,6 +79,7 @@ const PerformanceDetails = ({ timePeriodFilter }: IFilters) => {
         searchInput=""
         columns={performanceTableColumns}
         needSorting={true}
+        enabled={!!mockTestId}
       />
       {/* </div> */}
     </FlexColumn>

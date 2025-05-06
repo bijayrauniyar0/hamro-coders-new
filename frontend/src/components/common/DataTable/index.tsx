@@ -56,6 +56,7 @@ interface DataTableProps {
   dataCountCategory?: string;
   exportMode?: boolean;
   sortByKey?: boolean;
+  enabled?: boolean;
 }
 
 export default function DataTable({
@@ -76,6 +77,7 @@ export default function DataTable({
   dataCountCategory,
   exportMode = false,
   sortByKey = false,
+  enabled= true,
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const defaultData = React.useMemo(() => [], []);
@@ -101,6 +103,7 @@ export default function DataTable({
         });
         return res?.data;
       },
+      enabled,
       initialPageParam: 1,
       getNextPageParam: lastPage => {
         return lastPage?.next_page ?? undefined;

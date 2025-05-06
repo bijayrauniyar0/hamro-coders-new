@@ -14,7 +14,7 @@ const SessionsBox = ({
 }: SessionsBoxProps) => {
   return (
     <FlexRow className="w-full justify-between flex-wrap gap-2 border-b border-b-gray-200 px-4 py-4">
-      <FlexRow className="items-center gap-2">
+      <FlexRow className="items-center gap-2 min-w-[8rem] max-md:w-full">
         <div className="rounded-lg bg-primary-100 p-2">
           <Book className="h-3 w-3 text-primary-700 md:h-4 md:w-4" />
         </div>
