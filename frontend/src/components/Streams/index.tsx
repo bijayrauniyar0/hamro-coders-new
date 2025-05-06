@@ -71,7 +71,7 @@ const Streams = () => {
             <NoDataAvailable />
           </div>
         ) : (
-          <FlexColumn className="scrollbar max-h-[calc(100dvh-9rem)] gap-4 overflow-y-auto pb-4">
+          <FlexColumn className="no-scrollbar max-h-[calc(100dvh-9rem)] gap-4 overflow-y-auto pb-4">
             <motion.div
               className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
               variants={containerVariants}
@@ -137,7 +137,7 @@ const Streams = () => {
                           />
 
                           {stream.tests_count > 1 && (
-                            <button className="inline-flex items-center text-xs font-medium text-primary-600 transition-transform duration-200 hover:text-indigo-800 group-hover:translate-x-1">
+                            <button className="inline-flex items-center text-sm font-medium text-primary-600 transition-transform duration-200 hover:text-indigo-800 group-hover:translate-x-1">
                               Continue
                               <ChevronRight size={14} className="ml-1" />
                             </button>
