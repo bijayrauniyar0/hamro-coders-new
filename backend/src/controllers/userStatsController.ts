@@ -22,8 +22,8 @@ import Stream from '../models/streamModels';
 // import User from '@Models/userModels';
 
 export async function seedUserScores(count: number = 100) {
-  const startDate = new Date('2025-04-26');
-  const endDate = new Date('2025-05-05');
+  const startDate = new Date('2025-05-6');
+  const endDate = new Date('2025-05-06');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -36,10 +36,10 @@ export async function seedUserScores(count: number = 100) {
   // const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
 
   const records = Array.from({ length: count }).map(() => {
-    const user_id = getRandomInt(1, 10);
+    const user_id = getRandomInt(1, 26);
     return {
       user_id: user_id,
-      score: getRandomInt(6, 10),
+      score: getRandomInt(2, 10),
       created_at: getRandomDate(),
       elapsed_time: getRandomInt(200, 600),
       mock_test_id: getRandomInt(1, 5),
@@ -267,7 +267,7 @@ export const getPerformanceDetails = async (
   const { user } = req;
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
-  // await seedUserScores(400);
+  // await seedUserScores(250);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(

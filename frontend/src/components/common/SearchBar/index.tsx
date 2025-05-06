@@ -1,7 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useRef } from 'react';
+import { Search, X } from 'lucide-react';
 
-import SearchIcon from '@Assets/images/icons/searchIcon.svg';
+import { cn } from '@Utils/index';
+import useDebouncedInput from '@Hooks/useDebouncedInput';
+
+import { Input } from '../FormUI';
 
 interface ISearchbarProps {
   className?: string;
@@ -12,6 +16,7 @@ interface ISearchbarProps {
   isFocus?: boolean;
   onClick?: () => void;
   onBlur?: () => void;
+  onFocus?: () => void;
   required?: boolean;
   wrapperStyle?: string;
 }
@@ -25,57 +30,76 @@ export default function Searchbar({
   isFocus,
   onClick,
   onBlur,
-  wrapperStyle,
-  required = true, // in default required is true
+  onFocus,
+  wrapperStyle = '',
+  required = false,
 }: ISearchbarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const handleClearSearch = () => {
-    onChange({ target: { value: '' } });
-    inputRef?.current?.focus();
-  };
+
+  const [inputValue, handleDebouncedChange, setInputValue] = useDebouncedInput({
+    init: value,
+    onChange,
+    ms: 300, // adjust debounce delay if needed
+  });
 
   useEffect(() => {
     if (!isFocus) return;
     inputRef?.current?.focus();
   }, [isFocus]);
 
+  useEffect(() => {
+    setInputValue(value);
+  }, [setInputValue, value]);
+
+  const handleClearSearch = () => {
+    const fakeEvent = {
+      target: { value: '' },
+    } as React.ChangeEvent<HTMLInputElement>;
+    setInputValue('');
+    handleDebouncedChange(fakeEvent);
+    inputRef?.current?.focus();
+  };
+
   return (
     <div
-      className={`flex w-full items-center ${
-        isSmall ? 'h-10' : 'h-12'
-      } ${wrapperStyle} `}
+      className={`searchbar-wrapper flex w-full items-center ${wrapperStyle}`}
     >
-      <label htmlFor="simple-search" className="sr-only">
-        {placeholder}
-      </label>
       <div className="relative w-full">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <img src={SearchIcon} alt="Search Icon" className="h-5 w-5" />
+        {/* ------ search-icon ------- */}
+        <div className="pointer-events-none absolute left-3 top-1/2 mr-2 h-6 w-6 -translate-y-1/2 transform gap-2">
+          <Search
+            className="absolute left-0 top-1/2 -translate-y-1/2 text-grey-600"
+            name="search"
+            size={18}
+          />
         </div>
+
+        {/* ------ close-icon ------- */}
         {value && (
-          <div
-            className={`absolute right-2 ${
-              isSmall ? 'top-1.5' : 'top-[0.563rem]'
-            } flex cursor-pointer items-center justify-center rounded-full bg-gray-200 p-1 duration-200 hover:bg-gray-300`}
+          <button
+            className="absolute right-3 top-1/2 flex -translate-y-1/2 transform cursor-pointer items-center justify-center rounded-full p-1 transition-colors duration-200 ease-in hover:bg-grey-100"
             onClick={handleClearSearch}
           >
-            <span className="material-symbols-outlined text-[14px] text-grey-800">
-              close
-            </span>
-          </div>
+            <X size={16} className="text-grey-800" />
+          </button>
         )}
 
-        <input
+        {/* ------ search-input ------- */}
+        <Input
           ref={inputRef}
           type="text"
-          className={`block w-full rounded-lg border border-grey-600 pl-[35px] pr-[28px] text-[13px] font-normal text-gray-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-500 focus:border-[#484848] focus:outline-none placeholder:md:text-md ${
-            isSmall ? 'py-2 h-[2.25rem]' : 'h-[40px] py-3'
-          } ${className}`}
+          className={cn(
+            className,
+            `text-grey-700 w-full rounded-md border border-grey-300 py-2 pl-[2.5rem] pr-[2.5rem] transition duration-300 ease-in-out focus:shadow-none focus:outline-none focus-visible:!ring-[1px] ${
+              isSmall ? 'h-9 py-2' : 'h-9 py-3'
+            }`,
+          )}
           placeholder={placeholder}
-          value={value}
-          onChange={onChange}
+          value={inputValue}
+          onChange={handleDebouncedChange}
           onClick={onClick}
           onBlur={onBlur}
+          onFocus={onFocus}
           required={required}
         />
       </div>
