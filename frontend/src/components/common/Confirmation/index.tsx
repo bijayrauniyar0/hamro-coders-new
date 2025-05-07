@@ -34,7 +34,7 @@ export function ConfirmationDialog({
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-white max-sm:w-11/12 rounded-lg">
         <AlertDialogHeader>
-          <p className='text-md md:text-base font-semibold leading-3 md:leading-normal'> {title}</p>
+          <p className='text-base md:text-lg font-semibold leading-3 md:leading-normal lg:text-xl'> {title}</p>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className=''>

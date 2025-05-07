@@ -3,22 +3,22 @@ import { ParsedQs } from 'qs';
 
 export interface LeaderboardQuery extends ParsedQs {
   filter_by: string;
-  stream_id?: string;
-  mock_test_id?: string;
+  mock_test_id: string;
+  search?: string;
 }
 export interface ScoreFilter {
-  testIds?: number[];
+  mock_test_id?: number;
   startDate: Date | 'all_time';
   endDate?: Date;
 }
 
 export interface RankUserByDateProps {
   endDate?: Date;
-  testIds: number[];
+  mock_test_id: number;
 }
 
 export interface AggregatedScore {
-  id: number;
+  user_id: number;
   name: string;
   total_score: number;
 }

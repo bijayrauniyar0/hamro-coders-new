@@ -1,5 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BookOpen, CheckCircle, Clock, Target, Trophy } from 'lucide-react';
+import {
+  BookOpen,
+  CheckCircle,
+  Clock,
+  DoorOpen,
+  Expand,
+  GridIcon,
+  Target,
+  Trophy,
+} from 'lucide-react';
 
 import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
@@ -9,7 +18,7 @@ import { useMCQContext } from '../Context/MCQContext';
 
 const InstructionsView = () => {
   const { questionsIsLoading, mcqData, setViewMode } = useMCQContext();
-  const [timeOut, setTimeOut] = useState(5);
+  const [timeOut, setTimeOut] = useState(30);
 
   const instructionDetails = [
     {
@@ -39,7 +48,7 @@ const InstructionsView = () => {
       time -= 1;
       if (time < 0) {
         clearInterval(interval);
-        // setViewMode('questions');
+        setViewMode('questions');
       }
     }, 1000);
   }, []);
@@ -93,42 +102,31 @@ const InstructionsView = () => {
                 the top and claim your spot on the leaderboard?
               </p>
             </FlexColumn>
-            <FlexColumn className="w-full items-center gap-2 rounded-lg bg-gray-100 p-4 shadow-sm md:p-2">
-              {/* <FlexRow className="items-center gap-2">
+            <FlexColumn className="w-full items-start gap-2 md:gap-4 rounded-lg bg-white shadow-md border-gray-100 border p-4">
+              <FlexRow className="items-center gap-2">
                 <div className="rounded-md bg-red-400 p-1">
                   <DoorOpen className="h-4 w-4 cursor-pointer rounded-lg text-white md:h-5 md:w-5" />
                 </div>
-
+                <p className="text-sm md:text-md">
+                  You can leave anytime you want !
+                </p>
+              </FlexRow>
+              <FlexRow className="items-center gap-2">
                 <div className="rounded-md bg-blue-400 p-1">
-                  {isFullScreen ? (
-                    <Minimize
-                      onClick={() => {
-                        handleFullScreen();
-                      }}
-                      className="h-4 w-4 cursor-pointer rounded-lg text-white md:h-5 md:w-5"
-                    />
-                  ) : (
-                    <Expand
-                      onClick={() => {
-                        handleFullScreen();
-                      }}
-                      className="h-4 w-4 cursor-pointer rounded-lg text-white md:h-5 md:w-5"
-                    />
-                  )}
+                  <Expand className="h-4 w-4 cursor-pointer rounded-lg text-white md:h-5 md:w-5" />
                 </div>
-                <button
-                  disabled={
-                    viewMode === 'instructions' || viewMode === 'results'
-                  }
-                  onClick={() => {
-                    setIsOverviewOpen(!isOverviewOpen);
-                  }}
-                  className={`flex items-center gap-1 rounded-md px-2 py-[0.325rem] text-xs text-primary-600 hover:bg-primary-500 hover:text-white disabled:cursor-not-allowed disabled:text-white disabled:hover:text-white md:text-sm ${isOverviewOpen ? 'bg-primary-500 text-white' : 'border border-gray-300 bg-white'} disabled:bg-gray-300`}
-                >
-                  <GridIcon size={14} />
-                  Overview
-                </button>
-              </FlexRow> */}
+                <p className="text-sm md:text-md">
+                  Toggle full screen to avoid distraction !
+                </p>
+              </FlexRow>
+              <FlexRow className="items-center gap-2">
+                <div className="rounded-md bg-gray-300 p-1">
+                  <GridIcon className="h-4 w-4 cursor-pointer rounded-lg text-white md:h-5 md:w-5" />
+                </div>
+                <p className="text-sm md:text-md">
+                  Switch between sections !
+                </p>
+              </FlexRow>
             </FlexColumn>
             <FlexColumn className="gap-2 md:gap-4">
               <p className="text-sm md:text-md">

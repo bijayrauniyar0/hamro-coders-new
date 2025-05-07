@@ -10,7 +10,7 @@ import {
   IRecentSessions,
   UserScoresArgsType,
 } from '../constants/Types/userStats';
-import Test from '../models/mockTestModel';
+import MockTest from '../models/mockTestModel';
 import {
   subDays,
   subWeeks,
@@ -22,8 +22,8 @@ import Stream from '../models/streamModels';
 // import User from '@Models/userModels';
 
 export async function seedUserScores(count: number = 100) {
-  const startDate = new Date('2025-04-26');
-  const endDate = new Date('2025-05-05');
+  const startDate = new Date('2025-05-6');
+  const endDate = new Date('2025-05-06');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -36,10 +36,10 @@ export async function seedUserScores(count: number = 100) {
   // const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
 
   const records = Array.from({ length: count }).map(() => {
-    const user_id = getRandomInt(1, 10);
+    const user_id = getRandomInt(1, 26);
     return {
       user_id: user_id,
-      score: getRandomInt(6, 10),
+      score: getRandomInt(2, 10),
       created_at: getRandomDate(),
       elapsed_time: getRandomInt(200, 600),
       mock_test_id: getRandomInt(1, 5),
@@ -58,16 +58,20 @@ export class UserStatsService {
   async getUserScores({
     startDate,
     otherFilterOptions,
+    mock_test_id,
+    controllerName,
   }: UserScoresArgsType): Promise<UserScores[]> {
     const whereClause: any = {
       user_id: this.user_id,
     };
+    if (mock_test_id) {
+      whereClause.mock_test_id = mock_test_id;
+    }
     if (startDate !== 'all_time') {
       whereClause.created_at = {
         [Op.gte]: startDate,
       };
     }
-
     const userScores = await UserScores.findAll({
       where: whereClause,
       attributes: {
@@ -75,7 +79,7 @@ export class UserStatsService {
       },
       include: [
         {
-          model: Test,
+          model: MockTest,
           attributes: ['title'],
           include: [
             {
@@ -118,11 +122,13 @@ export class UserStatsService {
     page_size = 15,
     sort_by = 'created_at',
     sort_order = 'desc',
+    mock_test_id,
   }: Pick<IGetUserStatsParamType, 'time_period'> & {
     page?: number;
     page_size?: number;
     sort_by?: keyof IPerformanceDetails;
     sort_order?: 'asc' | 'desc';
+    mock_test_id: number;
   }): Promise<{
     results: IPerformanceDetails[];
     total: number;
@@ -134,6 +140,8 @@ export class UserStatsService {
     const startDate = getStartDateByTimePeriod(time_period);
     const allScoresData = await this.getUserScores({
       startDate,
+      mock_test_id: Number(mock_test_id),
+      controllerName: 'getUserPerformanceDetails',
     });
 
     const total = allScoresData.length;
@@ -162,7 +170,7 @@ export class UserStatsService {
         const { MockTest, ...score } = scoreModel.get();
         const response: IPerformanceDetails = {
           ...score,
-          test: MockTest.title,
+          test: MockTest?.title,
           date: score.created_at,
           elapsed_time: formatToMinSec(score.elapsed_time),
           title: `${score.mode} #${score.id}`,
@@ -170,30 +178,29 @@ export class UserStatsService {
           rank_change: 'N/A',
         };
 
-        if (score.mode !== 'practice') {
-          const userRank = await leaderboardService.getRankedUsers({
-            startDate,
-            endDate: new Date(
-              new Date(score.created_at).getTime() - 24 * 60 * 60 * 1000,
-            ),
-          });
+        const userRank = await leaderboardService.getRankedUsers({
+          startDate,
+          endDate: new Date(
+            new Date(score.created_at).getTime() - 24 * 60 * 60 * 1000,
+          ),
+          mock_test_id,
+        });
 
-          const userScoreDetail = userRank.find(
-            (user: any) => user.id === this.user_id,
-          );
+        const userScoreDetail = userRank.find(
+          (user: any) => user.id === this.user_id,
+        );
 
-          const updatedResponse = {
-            ...response,
-            rank_change:
-              (userScoreDetail?.rank ?? 0) -
-              Number(userScoresStack[index - 1]?.rank_change ?? 0),
-          };
+        const updatedResponse = {
+          ...response,
+          rank_change:
+            (userScoreDetail?.rank ?? 0) -
+            Number(userScoresStack[index - 1]?.rank_change ?? 0),
+        };
 
-          userScoresStack.push(updatedResponse);
-          return updatedResponse;
-        }
+        userScoresStack.push(updatedResponse);
+        return updatedResponse;
 
-        return response;
+        // return response;
       }),
     );
 
@@ -210,28 +217,33 @@ export const getUserStats = async (
   req: Request<unknown, unknown, unknown, IGetUserStatsParamType>,
   res: Response,
 ) => {
-  const { time_period } = req.query;
+  const { time_period, mock_test_id } = req.query;
   const { user } = req;
   const leaderboardService = new LeaderboardService();
   const userStatsService = new UserStatsService(user.id);
+  if (!mock_test_id) {
+    res.status(400).end('Mock test id is required');
+    return;
+  }
   try {
     const scores = await userStatsService.getUserScores({
       startDate: getStartDateByTimePeriod(time_period),
+      mock_test_id: Number(mock_test_id),
     });
     const userRanks = await leaderboardService.getRankedUsers({
-      startDate: getStartDateByTimePeriod(time_period),
+      startDate: 'all_time',
+      mock_test_id: Number(mock_test_id),
     });
 
     const totalScore = scores.reduce((acc, score) => acc + score.score, 0);
     const avg_accuracy = +((totalScore / (scores.length * 10)) * 100).toFixed(
       2,
     );
-
     const stats = {
       score: totalScore,
       avg_accuracy: avg_accuracy ? `${avg_accuracy}%` : 'N/A',
       total_sessions: scores.length,
-      current_rank: userRanks.find((user: any) => user.id === req.user.id)
+      current_rank: userRanks.find((user: any) => user.user_id === req.user.id)
         ?.rank,
     };
 
@@ -263,12 +275,17 @@ export const getPerformanceDetails = async (
     page_size = 15,
     sort_by,
     sort_order,
+    mock_test_id,
   } = req.query;
   const { user } = req;
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
-  // await seedUserScores(400);
+  // await seedUserScores(250);
   const userStatsService = new UserStatsService(user.id);
+  if (!mock_test_id) {
+    res.status(400).end('Mock test id is required');
+    return;
+  }
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(
       {
@@ -277,6 +294,7 @@ export const getPerformanceDetails = async (
         page_size: pageSize,
         sort_by,
         sort_order,
+        mock_test_id: Number(mock_test_id),
       },
     );
     res.status(200).json(performanceDetails);

@@ -9,11 +9,19 @@ import streamRouter from './routes/streamRoutes';
 import notificationRouter from './routes/notificationRoutes';
 import analyticsRouter from './routes/analyticsRoutes';
 import './models/testSectionLinkModel';
+import authRouter from './routes/authRoutes';
+import cookieParser from 'cookie-parser';
 
 const PORT = process.env.PORT || 9000;
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  }),
+);
+app.use(cookieParser()); // Middleware to parse cookies
 app.use(express.json()); // Middleware to parse JSON requests
 
 app.use('/api/user', userRoutes);
@@ -22,6 +30,7 @@ app.use('/api/streams', streamRouter);
 app.use('/api/leaderboard', userScoresRouter);
 app.use('/api/notification', notificationRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/auth', authRouter);
 
 sequelize
   .authenticate()

@@ -65,7 +65,7 @@ const MockTests = () => {
         ) : isEmpty(filteredTests) ? (
           <NoDataAvailable />
         ) : (
-          <FlexColumn className="scrollbar max-h-[calc(100dvh-9rem)] gap-4 overflow-y-auto pb-4">
+          <FlexColumn className="no-scrollbar max-h-[calc(100dvh-9rem)] gap-4 overflow-y-auto pb-4">
             <motion.div
               className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-4 lg:grid-cols-4"
               variants={containerVariants}

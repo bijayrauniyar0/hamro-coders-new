@@ -38,7 +38,7 @@ const Home = () => {
     <>
       <BindContentContainer className="overflow-hidden max-sm:px-4">
         <FlexColumn className="w-full gap-8 md:gap-10 lg:gap-12">
-          <FlexRow className="z-[10] items-center justify-between gap-4 pb-8 max-md:flex-wrap md:gap-8 md:pb-12 lg:pb-16">
+          <FlexRow className="z-[9] items-center justify-between gap-4 pb-8 max-md:flex-wrap md:gap-8 md:pb-12 lg:pb-16">
             <FlexColumn className="items-start gap-6 md:max-w-[40%] md:gap-8">
               <FlexColumn className="gap-2 md:gap-3">
                 <p className="text-2xl font-bold md:text-3xl lg:text-4xl">
@@ -76,8 +76,8 @@ const Home = () => {
         // style={{ backgroundImage: `url(${bgImage})` }}
       > */}
           {/* <div className="absolute inset-0 bg-[#5f576462] z-10 opacity-30"></div> */}
-          <div className="relative z-10 overflow-hidden rounded-lg !bg-[rgba(243,236,250,0.7)] px-4 py-8 md:px-16 md:py-16 lg:px-20 lg:py-20">
-            <div className="relative z-10 flex flex-col gap-8 sm:grid-cols-3 sm:gap-4 md:grid lg:gap-6">
+          <div className="relative z-[8] overflow-hidden rounded-lg !bg-[rgba(243,236,250,0.7)] px-4 py-8 md:px-16 md:py-16 lg:px-20 lg:py-20">
+            <div className="relative flex flex-col gap-8 sm:grid-cols-3 sm:gap-4 md:grid lg:gap-6">
               {features.map((feature, index) => (
                 <FeatureCard
                   {...feature}
@@ -101,7 +101,7 @@ const Home = () => {
             </Button>
           </Section>
 
-          <div className="z-[10] rounded-lg bg-gradient-to-tl from-primary-50 to-primary-100 px-1 pt-8 shadow-sm">
+          <div className="z-[9] rounded-lg bg-gradient-to-tl from-primary-50 to-primary-100 px-1 pt-8 shadow-sm">
             <Section
               header="What Our Students Say"
               description="Hear from students who improved their scores and achieved their goals with MockSewa."

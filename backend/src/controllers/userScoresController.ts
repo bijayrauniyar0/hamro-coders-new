@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import UserScores from '../models/userScoresModels';
 import User from '../models/userModels';
-import Test from '../models/mockTestModel';
 import { Op } from 'sequelize';
 import {
   getStartDate,
@@ -18,6 +17,7 @@ import {
   RankUserByDateProps,
   ScoreFilter,
 } from '../constants/Types/leaderboard';
+import MockTest from '../models/mockTestModel';
 
 const PERIODS = ['daily', 'weekly', 'monthly'] as const;
 type Period = (typeof PERIODS)[number];
@@ -35,15 +35,13 @@ const filterUserByDate = ({
 
 export class LeaderboardService {
   async getUserScores({
-    testIds,
+    mock_test_id,
     startDate,
     endDate = new Date(),
   }: ScoreFilter): Promise<UserScores[]> {
-    const whereClause: any = {};
-
-    if (testIds && testIds.length > 0) {
-      whereClause.mock_test_id = testIds;
-    }
+    const whereClause: any = {
+      mock_test_id,
+    };
     if (startDate !== 'all_time') {
       whereClause.created_at = {
         [Op.gte]: startDate,
@@ -71,7 +69,7 @@ export class LeaderboardService {
       const userId = score.user_id;
       if (!aggregated[userId]) {
         aggregated[userId] = {
-          id: userId,
+          user_id: userId,
           name: score.User.name || 'Unknown',
           total_score: 0,
         };
@@ -120,9 +118,9 @@ export class LeaderboardService {
     return rankedScores;
   };
 
-  async getRankedUsers({ testIds, startDate, endDate }: ScoreFilter) {
+  async getRankedUsers({ mock_test_id, startDate, endDate }: ScoreFilter) {
     const allScores = await this.getUserScores({
-      testIds,
+      mock_test_id,
       startDate,
       endDate,
     });
@@ -131,11 +129,11 @@ export class LeaderboardService {
   }
 
   async getRankedUsersByDate({
-    testIds,
+    mock_test_id,
     endDate = new Date(),
   }: RankUserByDateProps) {
     const scores = await this.getUserScores({
-      testIds,
+      mock_test_id,
       startDate:
         getStartOfMonth() < getStartOfWeek()
           ? getStartOfMonth()
@@ -154,7 +152,7 @@ export class LeaderboardService {
     await Promise.all(
       users.map(async (user: Rank) => {
         await Notification.create({
-          user_id: user.id,
+          user_id: user.user_id,
           message: `You have been surpassed by ${userName} in the ${period} leaderboard in ${test} test.`,
           is_read: false,
         });
@@ -164,7 +162,7 @@ export class LeaderboardService {
 }
 
 const getUserRank = (ranks: Rank[], userId: number) => {
-  const rank = ranks.find((rank: Rank) => rank.id === userId)?.rank;
+  const rank = ranks.find((rank: Rank) => rank.user_id === userId)?.rank;
   return rank ? rank : ranks.length + 1;
 };
 
@@ -181,8 +179,8 @@ const compareAndNotify = async (
       const previousRank = getUserRank(oldRanks[period], userId);
       const newRank = getUserRank(newRanks[period], userId);
       const surpassedUsers = oldRanks[period].filter(
-        ({ rank, id }) =>
-          rank >= newRank && rank <= previousRank && id !== userId,
+        ({ rank, user_id }) =>
+          rank >= newRank && rank <= previousRank && user_id !== userId,
       );
       // console.log(surpassedUsers, 'suprasssed--------------------------');
 
@@ -204,7 +202,7 @@ export const createScoreEntry = async (req: Request, res: Response) => {
     const user = req.user;
     const leaderboardService = new LeaderboardService();
     const oldRanks = await leaderboardService.getRankedUsersByDate({
-      testIds: [mock_test_id],
+      mock_test_id,
     });
 
     await UserScores.create({
@@ -215,10 +213,10 @@ export const createScoreEntry = async (req: Request, res: Response) => {
     });
 
     const newRanks = await leaderboardService.getRankedUsersByDate({
-      testIds: [mock_test_id],
+      mock_test_id,
     });
 
-    const test = await Test.findByPk(mock_test_id);
+    const test = await MockTest.findByPk(mock_test_id);
     await compareAndNotify(
       leaderboardService,
       oldRanks,
@@ -234,17 +232,12 @@ export const createScoreEntry = async (req: Request, res: Response) => {
   }
 };
 
-export const getLeaderboard = async (req: Request, res: Response) => {
-  const { filter_by, stream_id, mock_test_id } = req.query as LeaderboardQuery;
-  const tests = await Test.findAll({
-    where: { stream_id },
-    attributes: ['id'],
-  });
+export const getLeaderboard = async (
+  req: Request<unknown, unknown, unknown, LeaderboardQuery>,
+  res: Response,
+) => {
+  const { filter_by, mock_test_id, search } = req.query;
   const leaderboardService = new LeaderboardService();
-  let testIds = tests.map((test: Test) => test.id);
-  if (mock_test_id) {
-    testIds = mock_test_id.split(',').map((id: string) => Number(id));
-  }
 
   const startDate = getStartDate(filter_by);
 
@@ -252,16 +245,16 @@ export const getLeaderboard = async (req: Request, res: Response) => {
   twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
   try {
     const userRanks = await leaderboardService.getRankedUsers({
-      testIds,
+      mock_test_id: Number(mock_test_id),
       startDate,
     });
 
     const previousUserRanks = await leaderboardService.getRankedUsers({
-      testIds,
+      mock_test_id: Number(mock_test_id),
       startDate,
       endDate: twelveHoursAgo,
     });
-    const userIds = userRanks.map((user: any) => user.id);
+    const userIds = userRanks.map(user => user.user_id);
     const users = await User.findAll({
       where: {
         id: {
@@ -270,15 +263,57 @@ export const getLeaderboard = async (req: Request, res: Response) => {
       },
       attributes: ['id', 'avatar'],
     });
-    const rankedUserScores = userRanks.map((user: any) => ({
-      ...user,
-      previous_rank:
-        previousUserRanks.find(previousRank => previousRank.id === user.id)
-          ?.rank || userRanks.length + 1,
-      avatar: users.find(u => u.id === user.id)?.avatar,
-    }));
+    const rankedUserScores = userRanks.map(user => {
+      return {
+        ...user,
+        previous_rank:
+          previousUserRanks.find(
+            previousRank => previousRank.user_id === user.user_id,
+          )?.rank || userRanks.length + 1,
+        avatar: users.find(u => u.id === user.user_id)?.avatar,
+      };
+    });
 
+    if (search) {
+      const searchLower = search.toLowerCase();
+      const filteredUserScores = rankedUserScores?.filter(user =>
+        user?.name?.toLowerCase()?.includes(searchLower),
+      );
+      res.status(200).json([...filteredUserScores]);
+      return;
+    }
     res.status(200).json(rankedUserScores);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', details: error });
+  }
+};
+
+export const getMockTestsTakenByUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user.id;
+    const tests = await MockTest.findAll({
+      attributes: ['id', 'title'],
+      include: [
+        {
+          model: UserScores,
+          attributes: [],
+          where: {
+            user_id: userId,
+          },
+          required: true,
+        },
+      ],
+      group: ['MockTest.id'],
+    });
+    const testsFlat = tests.map(test => {
+      return {
+        id: test.id,
+        label: test.title,
+        value: test.id,
+      };
+    });
+
+    res.status(200).json(testsFlat);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
   }

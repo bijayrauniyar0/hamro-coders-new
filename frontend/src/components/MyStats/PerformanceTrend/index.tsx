@@ -7,8 +7,8 @@ import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import SwitchTab from '@Components/common/SwitchTab';
 import { Card, CardHeader, CardTitle } from '@Components/radix/card';
+import { useTypedSelector } from '@Store/hooks';
 import { chartKeysData, filterByOptions } from '@Constants/MyStats';
-import useScreenWidth from '@Hooks/useScreenWidth';
 import { getPerformanceTrend } from '@Services/userStats';
 
 import { PerformanceTrendSkeleton } from '../MyStatsSkeleton';
@@ -43,11 +43,11 @@ export const chartTooltipMeta: Record<
 export const chartsTypeData = [
   {
     type: 'bar',
-    icon: <BarChartIcon className='md:h-6 md:w-6 w-5 h-5' />,
+    icon: <BarChartIcon className="h-5 w-5 md:h-6 md:w-6" />,
   },
   {
     type: 'line',
-    icon: <LineChart className='md:h-6 md:w-6 w-5 h-5' />,
+    icon: <LineChart className="h-5 w-5 md:h-6 md:w-6" />,
   },
 ];
 
@@ -77,7 +77,6 @@ const ChartTooltipContent = ({
 };
 
 export default function PerformanceTrend() {
-  const screenWidth = useScreenWidth();
   const [selectedChartType, setSelectedChartType] = useState<
     Record<string, string>
   >(
@@ -92,22 +91,26 @@ export default function PerformanceTrend() {
 
   const [filterBy, setFilterBy] = useState<string>('last_3_weeks');
 
+  const mockTestId = useTypedSelector(state => state.analyticsSlice.mockTestId);
+
   const { data: chartData, isLoading: chartDataIsLoading } = useQuery({
     queryKey: ['performanceTrend', filterBy],
     queryFn: () => {
       return getPerformanceTrend({
         filter_by: filterBy,
+        mock_test_id: mockTestId,
       });
     },
     select: res => {
       return res?.data;
     },
+    enabled: !!mockTestId,
   });
 
   return (
     <FlexColumn className="gap-2 md:gap-4">
       <FlexRow className="items-center justify-between max-md:gap-2">
-        <p className="text-md md:text-md font-medium leading-4 tracking-tight text-matt-100 lg:text-base">
+        <p className="text-md font-medium leading-4 tracking-tight text-matt-100 md:text-md lg:text-base">
           Performance Trend
         </p>
         <SwitchTab

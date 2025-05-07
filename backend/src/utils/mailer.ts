@@ -5,19 +5,17 @@ export const sendVerificationEmail = async (
   name: string,
   link: string,
 ) => {
-  const testAccount = await nodemailer.createTestAccount();
   const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    host: 'smtp.zoho.com',
+    port: 465,
+    secure: true, // true for port 465, false for 587
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
+      user: process.env.EMAIL_ID, // your Zoho email
+      pass: process.env.EMAIL_PW, // app password if 2FA is enabled
     },
   });
-
   const info = await transporter.sendMail({
-    from: '"Tester" <test@example.com>',
+    from: process.env.EMAIL_ID, // sender address
     to: email,
     subject: 'Verify your email',
     html: `
@@ -27,9 +25,5 @@ export const sendVerificationEmail = async (
     `,
   });
 
-  // Log the URL where you can see the test email
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
   return info;
 };
-
