@@ -14,6 +14,7 @@ import cookieParser from 'cookie-parser';
 import { FRONTEND_URL, PORT } from './constants';
 
 const app = express();
+app.set('view engine', 'ejs');
 app.use(
   cors({
     origin: FRONTEND_URL,

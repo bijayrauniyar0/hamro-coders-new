@@ -4,9 +4,17 @@ import { findOrCreateGoogleUser } from '../services/authService';
 import dotenv from 'dotenv';
 import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
-import { UserService } from './userController';
 import { generateToken, verifyToken } from '../utils/jwtUtils';
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NODE_ENV } from '../constants';
+import {
+  BASE_URL,
+  FRONTEND_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  NODE_ENV,
+} from '../constants';
+import path from 'path';
+import ejs from 'ejs';
+import { sendVerificationEmail } from '../utils/mailer';
 
 dotenv.config();
 
@@ -17,32 +25,28 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 const SCOPES = ['profile', 'email'];
-
 export class AuthService {
-  async createUser({
-    name,
-    email,
-    password,
-    number,
-  }: {
-    name: string;
-    email: string;
-    password: string;
-    number: string;
-  }) {
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      number,
-    });
-
-    if (!newUser) {
-      throw new Error('User creation failed');
-    }
-    return newUser;
+  name: string;
+  email: string;
+  constructor(name: string, email: string) {
+    this.name = name;
+    this.email = email;
   }
+  sendVerificationEmail = async (): Promise<any> => {
+    const token = generateToken({ email: this.email, name: this.name }, 300);
+
+    const verificationLink = `${BASE_URL}/api/user/verify-email?token=${token}`;
+    const verificationTemplate = await ejs.renderFile(
+      path.join(__dirname, '../templates', 'emailVerification.ejs'), // Path to your email template
+      {
+        verificationLink: verificationLink,
+        currentYear: new Date().getFullYear(),
+        userName: this.name,
+        expiryTime: '30 minutes',
+      },
+    );
+    await sendVerificationEmail(this.email, verificationTemplate);
+  };
 }
 export const googleAuthRedirect = (req: Request, res: Response) => {
   const url = oauth2Client.generateAuthUrl({
@@ -76,7 +80,7 @@ export const googleAuthCallback = async (req: Request, res: Response) => {
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    res.redirect('http://localhost:3030/');
+    res.redirect(FRONTEND_URL!);
   } catch (err) {
     res.status(500).send({ message: 'Google Auth failed', err });
   }
@@ -97,7 +101,7 @@ export const createUser = async (req: Request, res: Response) => {
       res.status(400).json({ message: 'User creation failed' });
       return;
     }
-    const userService = new UserService(name, email);
+    const userService = new AuthService(name, email);
     try {
       await userService.sendVerificationEmail();
       res.status(201).json({
@@ -225,5 +229,69 @@ export const logoutController = async (
     res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
     res.status(500).json({ message: 'Error logging out', error });
+  }
+};
+
+export const verifyEmail = async (
+  req: Request<unknown, unknown, unknown, { token: string }>,
+  res: Response,
+) => {
+  try {
+    const { token } = req.query;
+    if (!token) {
+      res.status(400).json({ message: 'Token is required' });
+      return;
+    }
+    const decoded = verifyToken(token);
+    if (typeof decoded !== 'object' || !decoded) {
+      res.sendFile(
+        path.join(__dirname, '../../public/verificationFailed.html'),
+      );
+      return;
+    }
+    const { email } = decoded;
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.sendFile(
+        path.join(__dirname, '../../public/verificationFailed.html'),
+      );
+      return;
+    }
+    user.verified = true;
+    await user.save();
+    res.sendFile(path.join(__dirname, '../../public/verificationSuccess.html'));
+  } catch (error) {
+    res.status(500).json({ message: 'Error verifying email', error });
+  }
+};
+
+export const resendVerificationEmail = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ message: 'Email is required' });
+      return;
+    }
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    if (user.verified) {
+      res.status(400).json({ message: 'User already verified' });
+      return;
+    }
+    const userService = new AuthService(user.name, user.email);
+    await userService.sendVerificationEmail();
+    res.status(200).json({
+      message: 'Verification email resent successfully',
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Error sending verification email', error });
   }
 };
