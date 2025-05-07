@@ -27,7 +27,7 @@ const AuthenticationComponent = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated()) {
+    if (isAuthenticated) {
       navigate('/streams');
     }
   }, []);

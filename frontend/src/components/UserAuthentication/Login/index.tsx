@@ -8,11 +8,12 @@ import ErrorMessage from '@Components/common/ErrorMessage';
 import { Input } from '@Components/common/FormUI';
 import Checkbox from '@Components/common/FormUI/CheckBox';
 import InputLabel from '@Components/common/FormUI/InputLabel';
-import { FlexColumn } from '@Components/common/Layouts';
+import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
 import { setUserProfile } from '@Store/actions/common';
 import { useTypedDispatch } from '@Store/hooks';
 import { login } from '@Services/common';
+import { apiURL } from '@Services/index';
 
 import FormControl from '../../common/FormUI/FormControl';
 import Icon from '../../common/Icon';
@@ -40,7 +41,7 @@ export default function Login() {
   const { mutate } = useMutation<any, any, any, unknown>({
     mutationFn: (payload: Record<string, any>) => login(payload),
     onSuccess: (res: any) => {
-      localStorage.setItem('token', res?.data?.token);
+      dispatch(setUserProfile(res.data.user));
       toast.success('Login Successful');
       navigate('/');
     },
@@ -60,18 +61,21 @@ export default function Login() {
   const onSubmit = (data: Record<string, any>) => {
     mutate(data);
   };
+  const handleLogin = () => {
+    window.location.href = `${apiURL}/api/auth/google`;
+  };
 
   return (
     <div className="login-form-wrapper h-full">
       <div className="login-inner grid h-full place-items-center">
-        <div className="login-form w-full space-y-14 overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
+        <div className="login-form w-full overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
           {/* ------ icon ------ */}
 
           <p className="select-none text-5xl font-semibold text-primary-700">
             MockSewa
           </p>
           {/*  ------ form ------ */}
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="pb-8 pt-12">
             <FormControl className="mb-4">
               <InputLabel label="Email" className="mb-1" />
               <Input
@@ -146,6 +150,25 @@ export default function Login() {
               </p>
             </FlexColumn>
           </form>
+
+          <FlexColumn className="items-start gap-8">
+            <FlexRow className="w-full items-center justify-between gap-2">
+              <div className="h-[1px] w-2/5 bg-gray-300" />
+              <p className="text-center">Or</p>
+              <div className="h-[1px] w-2/5 bg-gray-300" />
+            </FlexRow>
+            <button
+              onClick={handleLogin}
+              className="mx-auto flex items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 shadow-sm transition-colors hover:bg-gray-100"
+            >
+              <img
+                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                alt="Google"
+                className="h-5 w-5"
+              />
+              <span>Continue with Google</span>
+            </button>
+          </FlexColumn>
         </div>
       </div>
     </div>

@@ -25,7 +25,7 @@ const generateRoutes = ({
             return (
               <Route
                 key={route.path}
-                element={<ProtectedRoute isAuthenticated={isAuthenticated()} />}
+                element={<ProtectedRoute isAuthenticated={isAuthenticated} />}
               >
                 {route?.children ? (
                   <Route key={route.name} path={route.path}>

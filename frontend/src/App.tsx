@@ -2,10 +2,12 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { setUserProfile } from '@Store/actions/common';
 import { useTypedDispatch } from '@Store/hooks';
-import { checkLogin, getUserProfile } from '@Services/common';
+import useAuth from '@Hooks/useAuth';
+import { checkLogin } from '@Services/common';
 
 import Navbar from './components/common/Navbar';
 import appRoutes from './routes/appRoutes';
@@ -17,7 +19,7 @@ function App() {
   const { pathname } = useLocation();
   const dispatch = useTypedDispatch();
   const navigate = useNavigate();
-
+  const { isAuthenticated } = useAuth();
   const routesWithoutNavbar = ['/login', '/signup', '/verify-email', '/mcq'];
   const showNavbar = !routesWithoutNavbar.some(route =>
     pathname.includes(route),
@@ -25,33 +27,37 @@ function App() {
   const {
     isSuccess: isUserLoggedIn,
     isError: errorUserLogin,
-    data: userId,
+    error: loginError,
+    data: loggedInUserDetails,
+    refetch: checkLoggedInUser,
   } = useQuery({
-    queryKey: ['checkLogin'],
+    queryKey: ['checkLogin', isAuthenticated],
     queryFn: () => checkLogin(),
-    select: ({ data }) => data?.id,
-    enabled: !!localStorage.getItem('token'),
-  });
-
-  const { isSuccess: userProfileIsFetched, data: userProfile } = useQuery({
-    queryKey: ['user-profile', isUserLoggedIn, userId],
-    queryFn: () => getUserProfile(),
-    select: ({ data }) => data,
-    enabled: isUserLoggedIn,
+    select: ({ data }) => data?.user,
+    enabled: true,
   });
 
   useEffect(() => {
+    if (isAuthenticated) {
+      checkLoggedInUser();
+    }
+  }, [isAuthenticated]);
+  useEffect(() => {
     if (errorUserLogin) {
-      localStorage.removeItem('token');
-      navigate('/login');
+      const axiosError = loginError as AxiosError;
+      if (axiosError?.response?.status === 401) {
+        navigate('/login');
+        dispatch(setUserProfile({}));
+        return;
+      }
     }
   }, [errorUserLogin]);
 
   useEffect(() => {
-    if (userProfileIsFetched && userProfile) {
-      dispatch(setUserProfile(userProfile));
+    if (isUserLoggedIn && loggedInUserDetails) {
+      dispatch(setUserProfile(loggedInUserDetails));
     }
-  }, [userProfileIsFetched, userProfile]);
+  }, [isUserLoggedIn, loggedInUserDetails, dispatch, setUserProfile]);
 
   return (
     <>

@@ -12,11 +12,15 @@ export const getUserProfile = async () => {
 };
 
 export const checkLogin = async () => {
-  return authenticated(api).get('/api/user/check-login/');
+  return authenticated(api).get('/api/auth/check-login/');
+};
+
+export const logoutUser = async () => {
+  return authenticated(api).post('/api/auth/log-out/');
 };
 
 export const createNewUser = (payload: Record<string, any>) => {
-  return api.post('/api/user/signup/', { ...payload });
+  return api.post('/api/auth/signup/', { ...payload });
 };
 
 export const updateUser = (payload: Partial<User>) => {
@@ -32,7 +36,7 @@ export const changePassword = (payload: IChangePasswordPayload) => {
 };
 
 export const login = (payload: Record<string, any>) => {
-  return api.post('/api/user/login/', { ...payload });
+  return api.post('/api/auth/login/', { ...payload });
 };
 
 export const getNotificationCount = () => {

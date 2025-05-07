@@ -12,10 +12,12 @@
     "@sequelize/postgres": "^7.0.0-alpha.43",
     "axios": "^1.9.0",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "googleapis": "^148.0.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.10.1",
     "pg": "^8.15.6",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.0",
@@ -44,13 +47,5 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.18.1"
-  },
-  "aliases": {
-    "@Utils/*": "src/utils/*",
-    "@Models/*": "src/models/*",
-    "@Controllers/*": "src/controllers/*",
-    "@Services/*": "src/services/*",
-    "@Routes/*": "src/routes/*",
-    "@Constants/*": "src/constants/*"
   }
 }
