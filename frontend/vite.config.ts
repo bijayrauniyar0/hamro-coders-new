@@ -11,6 +11,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@Animations': path.resolve(__dirname, './src/animations'),
+      '@Api': path.resolve(__dirname, './src/api'),
       '@Assets': path.resolve(__dirname, './src/assets'),
       '@Components': path.resolve(__dirname, './src/components'),
       '@Validations': path.resolve(__dirname, './src/validations'),

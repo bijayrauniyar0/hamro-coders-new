@@ -3,6 +3,7 @@ import PageNotFound from '@Components/common/PageNotFound';
 import Streams from '@Components/Streams';
 import Tests from '@Components/Streams/TestsComponent';
 import AuthenticationComponent from '@Components/UserAuthentication';
+import EmailVerified from '@Components/UserAuthentication/Signup/VerifyEmail';
 import AboutUsPage from '@Views/AboutUs';
 import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
@@ -23,9 +24,10 @@ const appRoutes: IRoute[] = [
     component: AuthenticationComponent,
   },
   {
-    name: 'Verify Email',
-    path: '/verify-email',
-    component: AuthenticationComponent,
+    name: 'Email Verified',
+    path: '/email-verification',
+    component: EmailVerified,
+    authenticated: false,
   },
   {
     name: 'Leaderboard',

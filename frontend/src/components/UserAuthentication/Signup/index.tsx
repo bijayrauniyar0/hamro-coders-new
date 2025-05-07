@@ -8,9 +8,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
 import ErrorMessage from '@Components/common/ErrorMessage';
-import { Input } from '@Components/common/FormUI';
+import { FormControl, Input } from '@Components/common/FormUI';
 import Checkbox from '@Components/common/FormUI/CheckBox';
 import InputLabel from '@Components/common/FormUI/InputLabel';
+import Icon from '@Components/common/Icon';
 import IconButton from '@Components/common/IconButton';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
@@ -22,8 +23,7 @@ import {
   signupSchemaStepTwo,
 } from '@Validations/Authentication';
 
-import FormControl from '../../common/FormUI/FormControl';
-import Icon from '../../common/Icon';
+import VerifyEmail from './VerifyEmail';
 
 const initialState = {
   name: '',
@@ -40,6 +40,7 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
+  const [showVerifyEmail, setShowVerifyEmail] = useState<boolean>(false);
   const [formStep, setFormStep] = useState(1);
   const [isTermsChecked, setIsTermsChecked] = useState(false);
 
@@ -49,9 +50,10 @@ export default function Signup() {
       dispatch(
         setUserProfile({
           email: watch('email'),
+          name: watch('name'),
         }),
       );
-      navigate('/verify-email');
+      setShowVerifyEmail(true);
     },
     onError: (error: any) => {
       const caughtError = error?.response?.data?.message;
@@ -185,57 +187,66 @@ export default function Signup() {
     }
   }
   return (
-    <div className="login-form-wrapper h-full">
-      <div className="login-inner grid h-full place-items-center">
-        <div className="login-form w-full space-y-14 overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
-          {/* ------ icon ------ */}
+    <>
+      {!showVerifyEmail ? (
+        <div className="login-inner grid h-full place-items-center">
+          <div className="login-form w-full space-y-14 overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
+            {/* ------ icon ------ */}
 
-          <p className="select-none text-5xl font-semibold text-primary-700">
-            MockSewa
-          </p>
-          {/*  ------ form ------ */}
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {getContentAccordingToStep()}
+            <p className="select-none text-5xl font-semibold text-primary-700">
+              MockSewa
+            </p>
+            {/*  ------ form ------ */}
 
-            <FlexColumn className="w-full items-center justify-center gap-8">
-              <FlexRow className="w-full gap-2">
-                {formStep !== 1 && (
-                  <IconButton
-                    className="w-[4rem] rounded-lg border p-3 text-primary-700 shadow-sm"
-                    disabled={isSubmitting || isPending}
-                    name="chevron_left"
-                    onClick={() => {
-                      const values = watch();
-                      reset({ ...values, password: '', confirmPassword: '' });
-                      setFormStep(1);
-                    }}
-                  />
-                )}
-                <Button
-                  className="w-full p-3 ease-in-out"
-                  disabled={
-                    (formStep === 2 && !isTermsChecked) ||
-                    isSubmitting ||
-                    isPending
-                  }
-                  isLoading={isSubmitting || isPending}
-                >
-                  {formStep === 1 ? 'Next' : 'Sign Up'}
-                </Button>
-              </FlexRow>
-              <p className="text-center text-sm">
-                Already have an account ?{' '}
-                <NavLink
-                  to="/login"
-                  className="font-semibold text-primary-700 hover:underline"
-                >
-                  Login Here
-                </NavLink>
-              </p>
-            </FlexColumn>
-          </form>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {getContentAccordingToStep()}
+
+              <FlexColumn className="w-full items-center justify-center gap-8">
+                <FlexRow className="w-full gap-2">
+                  {formStep !== 1 && (
+                    <IconButton
+                      className="w-[4rem] rounded-lg border p-3 text-primary-700 shadow-sm"
+                      disabled={isSubmitting || isPending}
+                      name="chevron_left"
+                      onClick={() => {
+                        const values = watch();
+                        reset({
+                          ...values,
+                          password: '',
+                          confirmPassword: '',
+                        });
+                        setFormStep(1);
+                      }}
+                    />
+                  )}
+                  <Button
+                    className="w-full p-3 ease-in-out"
+                    disabled={
+                      (formStep === 2 && !isTermsChecked) ||
+                      isSubmitting ||
+                      isPending
+                    }
+                    isLoading={isSubmitting || isPending}
+                  >
+                    {formStep === 1 ? 'Next' : 'Sign Up'}
+                  </Button>
+                </FlexRow>
+                <p className="text-center text-sm">
+                  Already have an account ?{' '}
+                  <NavLink
+                    to="/login"
+                    className="font-semibold text-primary-700 hover:underline"
+                  >
+                    Login Here
+                  </NavLink>
+                </p>
+              </FlexColumn>
+            </form>
+          </div>
         </div>
-      </div>
-    </div>
+      ) : (
+        <VerifyEmail />
+      )}
+    </>
   );
 }

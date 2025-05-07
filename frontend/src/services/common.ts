@@ -23,6 +23,14 @@ export const createNewUser = (payload: Record<string, any>) => {
   return api.post('/api/auth/signup/', { ...payload });
 };
 
+export const resendVerificationEmail = (payload: Record<string, any>) => {
+  return api.post('/api/auth/resend-verification-mail/', payload);
+};
+
+export const verifyEmail = (payload: Record<string, any>) => {
+  return api.post('/api/auth/verify-email/', payload);
+};
+
 export const updateUser = (payload: Partial<User>) => {
   return authenticated(api).patch('/api/user/update/profile/', {
     ...payload,

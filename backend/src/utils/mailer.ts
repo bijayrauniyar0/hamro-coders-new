@@ -1,10 +1,7 @@
 import nodemailer from 'nodemailer';
 import { EMAIL_ID, EMAIL_PW } from '../constants';
 
-export const sendVerificationEmail = async (
-  email: string,
-  html: string,
-) => {
+export const sendVerificationEmail = async (email: string, html: string) => {
   const transporter = nodemailer.createTransport({
     host: 'smtp.zoho.com',
     port: 465,
@@ -15,7 +12,7 @@ export const sendVerificationEmail = async (
     },
   });
   const info = await transporter.sendMail({
-    from: EMAIL_ID, // sender address
+    from: `"Mock Sewa" ${EMAIL_ID}`, // sender address
     to: email,
     subject: 'Verify your email',
     html,

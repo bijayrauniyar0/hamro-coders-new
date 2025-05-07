@@ -8,27 +8,22 @@
       /* Base styles */
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        color: #333333;
-        background-color: #f9f9f9;
-        margin: 0;
-        padding: 0;
       }
 
       .container {
         max-width: 600px;
         margin: 0 auto;
         background-color: #ffffff;
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
       }
 
       .header {
         background-color: #886db0;
         color: #ffffff;
         padding: 24px;
-        text-align: center;
+        text-align: start;
       }
 
       .logo {
@@ -98,11 +93,16 @@
       }
     </style>
   </head>
-  <body>
-    <div class="container">
+  <body
+  style="
+    margin: 0;
+    padding: 24px 0px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+  "
+>    <div class="container">
       <div class="header">
         <div class="logo">Mock Sewa</div>
-        <div>Serving Communities, Building Trust</div>
       </div>
 
       <div class="content">
@@ -116,24 +116,9 @@
           by clicking the button below:
         </p>
 
-        <a href="<%= verificationLink %>" class="button">Verify My Email</a>
-
-        <p>
-          If the button doesn't work, you can also copy and paste the following
-          link into your browser:
-        </p>
-
-        <p
-          style="
-            word-break: break-all;
-            background-color: #f5f7fa;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 12px;
-          "
+        <a href="<%= verificationLink %>" class="button" style="color: white"
+          >Verify My Email</a
         >
-          <%= verificationLink %>
-        </p>
 
         <p>
           If you did not create an account with Mock Sewa, please ignore this
@@ -149,21 +134,7 @@
       </div>
 
       <div class="footer">
-        <!-- <div class="social-links">
-                <a href="<%= socialLinks.facebook %>" class="social-icon">f</a>
-                <a href="<%= socialLinks.twitter %>" class="social-icon">t</a>
-                <a href="<%= socialLinks.instagram %>" class="social-icon">i</a>
-            </div> -->
-
         <p>© <%= currentYear %> Mock Sewa. All rights reserved.</p>
-        <!-- <p><%= companyAddress %></p> -->
-
-        <!-- <p>
-                <small>
-                    If you have any questions, please contact our support team at 
-                    <a href="mailto:<%= supportEmail %>"><%= supportEmail %></a>
-                </small>
-            </p> -->
       </div>
     </div>
   </body>

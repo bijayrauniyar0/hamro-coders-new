@@ -7,7 +7,6 @@ import useAuth from '@Hooks/useAuth';
 
 import Login from './Login';
 import Signup from './Signup';
-import EmailVerified from './VerifyEmail';
 
 const AuthenticationComponent = () => {
   const { pathname } = useLocation();
@@ -19,8 +18,6 @@ const AuthenticationComponent = () => {
         return <Login />;
       case '/signup':
         return <Signup />;
-      case '/verify-email':
-        return <EmailVerified />;
       default:
         return <Login />;
     }

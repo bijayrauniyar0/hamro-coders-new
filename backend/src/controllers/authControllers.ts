@@ -6,15 +6,14 @@ import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
 import { generateToken, verifyToken } from '../utils/jwtUtils';
 import {
-  BASE_URL,
   FRONTEND_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   NODE_ENV,
 } from '../constants';
+import { sendVerificationEmail } from '../utils/mailer';
 import path from 'path';
 import ejs from 'ejs';
-import { sendVerificationEmail } from '../utils/mailer';
 
 dotenv.config();
 
@@ -25,6 +24,10 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 const SCOPES = ['profile', 'email'];
+
+const getTemplatePath = (fileName: string) => {
+  return path.join(process.cwd(), 'src', 'templates', fileName);
+};
 export class AuthService {
   name: string;
   email: string;
@@ -35,16 +38,19 @@ export class AuthService {
   sendVerificationEmail = async (): Promise<any> => {
     const token = generateToken({ email: this.email, name: this.name }, 300);
 
-    const verificationLink = `${BASE_URL}/api/user/verify-email?token=${token}`;
-    const verificationTemplate = await ejs.renderFile(
-      path.join(__dirname, '../templates', 'emailVerification.ejs'), // Path to your email template
-      {
-        verificationLink: verificationLink,
-        currentYear: new Date().getFullYear(),
-        userName: this.name,
-        expiryTime: '30 minutes',
-      },
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'templates',
+      'emailVerification.ejs',
     );
+    const verificationLink = `${FRONTEND_URL}/verify-email?token=${token}`;
+    const verificationTemplate = await ejs.renderFile(templatePath, {
+      verificationLink: verificationLink,
+      currentYear: new Date().getFullYear(),
+      userName: this.name,
+      expiryTime: '30 minutes',
+    });
     await sendVerificationEmail(this.email, verificationTemplate);
   };
 }
@@ -106,7 +112,7 @@ export const createUser = async (req: Request, res: Response) => {
       await userService.sendVerificationEmail();
       res.status(201).json({
         message: 'User created successfully. Verification email sent.',
-        user_id: newUser.id,
+        user_id: 20,
       });
     } catch (error) {
       res.status(500).json({ message: 'Failed to send email', details: error });
@@ -244,22 +250,18 @@ export const verifyEmail = async (
     }
     const decoded = verifyToken(token);
     if (typeof decoded !== 'object' || !decoded) {
-      res.sendFile(
-        path.join(__dirname, '../../public/verificationFailed.html'),
-      );
+      res.sendFile(getTemplatePath('verificationFailed.html'));
       return;
     }
     const { email } = decoded;
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      res.sendFile(
-        path.join(__dirname, '../../public/verificationFailed.html'),
-      );
+      res.sendFile(path.join(getTemplatePath('verificationFailed.html')));
       return;
     }
     user.verified = true;
     await user.save();
-    res.sendFile(path.join(__dirname, '../../public/verificationSuccess.html'));
+    res.sendFile(path.join(getTemplatePath('verificationSuccess.html')));
   } catch (error) {
     res.status(500).json({ message: 'Error verifying email', error });
   }
@@ -270,28 +272,76 @@ export const resendVerificationEmail = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { email } = req.body;
-    if (!email) {
-      res.status(400).json({ message: 'Email is required' });
+    const {email: reqEmail, token } = req.body;
+
+    if (!reqEmail && !token) {
+      res.status(400).json({
+        isVerified: false,
+        userFound: false,
+        message: 'Either name & email or token is required.',
+      });
       return;
     }
+    let email = reqEmail;
+    if (token) {
+      const decoded = verifyToken(token);
+      if (typeof decoded !== 'object' || !decoded) {
+        res.status(400).json({
+          isVerified: false,
+          userFound: false,
+          message: 'Invalid token.',
+        });
+        return;
+      }
+      email = decoded.email;
+    }
+
+    // Check if user exists in the database
     const user = await User.findOne({ where: { email } });
+
     if (!user) {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({
+        isVerified: false,
+        userFound: false,
+        message: 'User not found.',
+      });
       return;
     }
+
+    // Check if the user is already verified
     if (user.verified) {
-      res.status(400).json({ message: 'User already verified' });
+      res.status(400).json({
+        isVerified: true,
+        userFound: true,
+        message: 'User already verified.',
+      });
       return;
     }
+
     const userService = new AuthService(user.name, user.email);
-    await userService.sendVerificationEmail();
-    res.status(200).json({
-      message: 'Verification email resent successfully',
+
+    try {
+      await userService.sendVerificationEmail();
+      res.status(200).json({
+        isVerified: false,
+        userFound: true,
+        message: 'Verification email resent successfully!',
+      });
+      return;
+    } catch {
+      res.status(500).json({
+        isVerified: false,
+        userFound: true,
+        message: 'Failed to send verification email.',
+      });
+      return;
+    }
+  } catch {
+    res.status(500).json({
+      isVerified: false,
+      userFound: false,
+      message: 'An unexpected error occurred. Please try again later.',
     });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Error sending verification email', error });
+    return;
   }
 };

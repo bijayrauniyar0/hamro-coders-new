@@ -6,6 +6,7 @@ import {
   googleAuthRedirect,
   loginController,
   logoutController,
+  resendVerificationEmail,
   verifyEmail,
 } from '../controllers/authControllers';
 import { authenticate } from '../middlewares/authenticate';
@@ -18,6 +19,7 @@ authRouter.post('/signup/', createUser);
 authRouter.post('/login/', loginController);
 authRouter.get('/check-login/', authenticate, checkLogin);
 authRouter.post('/log-out/', authenticate, logoutController);
-authRouter.get('/verify-email', verifyEmail);
+authRouter.post('/verify-email', verifyEmail);
+authRouter.post('/resend-verification-mail', resendVerificationEmail);
 
 export default authRouter;

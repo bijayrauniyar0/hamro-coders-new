@@ -31,10 +31,10 @@ function App() {
     data: loggedInUserDetails,
     refetch: checkLoggedInUser,
   } = useQuery({
-    queryKey: ['checkLogin', isAuthenticated],
+    queryKey: ['checkLogin'],
     queryFn: () => checkLogin(),
     select: ({ data }) => data?.user,
-    enabled: true,
+    enabled: false,
   });
 
   useEffect(() => {
