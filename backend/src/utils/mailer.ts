@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { EMAIL_ID, EMAIL_PW } from '../constants';
 
 export const sendVerificationEmail = async (
   email: string,
@@ -10,12 +11,12 @@ export const sendVerificationEmail = async (
     port: 465,
     secure: true, // true for port 465, false for 587
     auth: {
-      user: process.env.EMAIL_ID, // your Zoho email
-      pass: process.env.EMAIL_PW, // app password if 2FA is enabled
+      user: EMAIL_ID, // your Zoho email
+      pass: EMAIL_PW, // app password if 2FA is enabled
     },
   });
   const info = await transporter.sendMail({
-    from: process.env.EMAIL_ID, // sender address
+    from: EMAIL_ID, // sender address
     to: email,
     subject: 'Verify your email',
     html: `

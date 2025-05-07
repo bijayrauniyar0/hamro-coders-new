@@ -6,12 +6,13 @@ import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
 import { UserService } from './userController';
 import { generateToken, verifyToken } from '../utils/jwtUtils';
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NODE_ENV } from '../constants';
 
 dotenv.config();
 
 const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID!,
-  process.env.GOOGLE_CLIENT_SECRET!,
+  GOOGLE_CLIENT_ID!,
+  GOOGLE_CLIENT_SECRET!,
   'http://localhost:9000/api/auth/google/callback',
 );
 
@@ -71,7 +72,7 @@ export const googleAuthCallback = async (req: Request, res: Response) => {
     // Store in cookie or session
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -151,7 +152,7 @@ export const loginController = async (
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -191,7 +192,7 @@ export const checkLogin = async (req: Request, res: Response) => {
   } catch {
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'lax', // or 'none' for cross-origin
     });
     res.status(401).json({
@@ -218,7 +219,7 @@ export const logoutController = async (
   try {
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'lax',
     });
     res.status(200).json({ message: 'Logout successful' });

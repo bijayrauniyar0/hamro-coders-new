@@ -11,13 +11,12 @@ import analyticsRouter from './routes/analyticsRoutes';
 import './models/testSectionLinkModel';
 import authRouter from './routes/authRoutes';
 import cookieParser from 'cookie-parser';
-
-const PORT = process.env.PORT || 9000;
+import { FRONTEND_URL, PORT } from './constants';
 
 const app = express();
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: FRONTEND_URL,
     credentials: true,
   }),
 );

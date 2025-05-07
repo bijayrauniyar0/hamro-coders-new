@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import { generateToken, verifyToken } from '../utils/jwtUtils';
 import { sendVerificationEmail } from '../utils/mailer';
 import path from 'path';
+import { BASE_URL } from '../constants';
 
 export class UserService {
   email: string;
@@ -17,7 +18,7 @@ export class UserService {
   sendVerificationEmail = async (): Promise<any> => {
     const token = generateToken({ email: this.email, name: this.name }, 300);
 
-    const verificationLink = `http://localhost:9000/api/user/verify-email?token=${token}`;
+    const verificationLink = `${BASE_URL}/api/user/verify-email?token=${token}`;
     await sendVerificationEmail(this.email, this.name, verificationLink);
   };
 }
@@ -103,7 +104,7 @@ export const verifyEmail = async (
     const { token } = req.query;
     if (!token) {
       res.status(400).json({ message: 'Token is required' });
-      return; 
+      return;
     }
     const decoded = verifyToken(token);
     if (typeof decoded !== 'object' || !decoded) {
