@@ -30,3 +30,7 @@ export const getMcqAnswers = async (params: Record<string, any>) => {
     params,
   });
 };
+
+export const getAllTestsList = () => {
+  return api.get('/api/streams/mock-tests');
+};
