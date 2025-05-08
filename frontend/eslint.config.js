@@ -1,6 +1,7 @@
 import pluginJs from '@eslint/js';
 import pluginPrettier from 'eslint-plugin-prettier';
 import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -16,12 +17,14 @@ export default [
     plugins: {
       prettier: pluginPrettier.rules,
       'simple-import-sort': simpleImportSort,
+      'react-hooks': pluginReactHooks,
+
+      // 'react-hooks': 'eslint-plugin-react-hooks',
     },
     rules: {
       semi: ['error', 'always'],
       'no-unused-vars': 'error',
       '@typescript-eslint/no-unused-vars': 'off',
-      'no-console': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
       'react/react-in-jsx-scope': 'off',
       'react/jsx-props-no-spreading': 'off',
@@ -36,6 +39,11 @@ export default [
       'no-undef': 'off',
       'import/no-unresolved': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      // React Hooks rules// Ensure dependencies are listed correctly in useEffect, useCallback, etc.
+      // Add plugin-specific rules directly here if needed
+      'no-console': 'error',
       'simple-import-sort/imports': [
         'error',
         {
