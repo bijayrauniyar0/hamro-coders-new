@@ -1,14 +1,15 @@
 import express from 'express';
-import { authenticate } from '../middlewares/authenticate';
 import {
+  getAllMockTests,
   getMockTestsListByStream,
   getStreams,
 } from '../controllers/streamController';
 
 const streamRouter = express.Router();
 
-streamRouter.get('/', authenticate, getStreams);
+streamRouter.get('/', getStreams);
 streamRouter.get('/mock-tests/:stream_id/', getMockTestsListByStream);
+streamRouter.get('/mock-tests/', getAllMockTests);
 // streamRouter.get('/tests/meta-data/:test_id/', getTestsMetaData);
 
 export default streamRouter;
