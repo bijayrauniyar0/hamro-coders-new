@@ -119,7 +119,7 @@ export default function FileUpload({
         //   @ts-ignore
         onClick={onFileUpload}
       >
-        <Icon name="cloud_upload" className="text-3xl text-[#14428B]" />
+        <Icon name="cloud_upload" className="text-3xl text-primary-700" />
         <p className="text-xs font-medium text-gray-500">
           {placeholder || 'Please upload picture (jpeg, png file format)'}
         </p>
@@ -170,7 +170,11 @@ export default function FileUpload({
                     />
                   </div>
                 ) : (
-                  <img className='h-8 w-8 object-cover aspect-square' src={previewURL} alt="" />
+                  <img
+                    className="aspect-square h-8 w-8 object-cover"
+                    src={previewURL}
+                    alt=""
+                  />
                 )}
               </div>
               <FlexColumn className="w-[85%]">
