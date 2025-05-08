@@ -12,7 +12,7 @@ interface IGenerateRouteProps {
   fallback?: ReactNode;
 }
 
-const generateRoutes = ({
+const GenerateRoutes = ({
   routes,
   fallback = <Fallback />,
 }: IGenerateRouteProps) => {
@@ -70,4 +70,4 @@ const generateRoutes = ({
   );
 };
 
-export default generateRoutes;
+export default GenerateRoutes;
