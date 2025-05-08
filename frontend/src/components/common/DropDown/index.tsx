@@ -188,8 +188,8 @@ function Dropdown({
           <Searchbar
             value={searchTextData}
             onChange={handleChangeData}
-            isSmall
-            className="searchbar-dropdown !py-3 focus:!border-grey-600"
+            // isSmall
+            className="searchbar-dropdown !py-3 focus:!border-grey-600 !rounded-t-sm"
             wrapperStyle="!h-auto"
           />
         ) : null}
