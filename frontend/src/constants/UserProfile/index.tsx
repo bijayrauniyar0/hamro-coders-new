@@ -17,6 +17,8 @@ export const avatars: { [key: string]: string } = {
   hacker1,
   anonymous,
 };
-export const getAvatar = (avatarKey: string) => {
+
+export type AvatarKeyType = keyof typeof avatars;
+export const getAvatar = (avatarKey: AvatarKeyType) => {
   return avatars[avatarKey] || anonymous;
 };
