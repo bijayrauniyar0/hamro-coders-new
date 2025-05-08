@@ -1,8 +1,10 @@
 import { z } from 'zod';
 
+import { emailSchema } from '..';
+
 export const signupSchemaStepOne = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
+  email: emailSchema,
   number: z
     .string()
     .optional()
