@@ -26,14 +26,14 @@ const AuthenticationComponent = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/streams');
+      navigate('/');
     }
-  }, []);
+  }, [pathname, navigate, isAuthenticated]);
   return (
     <div className="grid h-screen grid-cols-12 bg-primary-50">
       <div className="col-span-12 md:col-span-6 lg:col-span-5 xl:col-span-4">
         <FlexRow
-          className="group relative left-16 top-7 cursor-pointer items-center gap-2 text-primary-700"
+          className="group absolute left-12 top-7 cursor-pointer items-center gap-2 text-primary-700"
           onClick={() => navigate('/')}
         >
           <ArrowLeft className="h-5 w-5 transition-transform duration-200 ease-in-out group-hover:-translate-x-2" />
