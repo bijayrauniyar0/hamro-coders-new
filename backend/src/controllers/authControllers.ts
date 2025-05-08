@@ -9,6 +9,7 @@ import {
   FRONTEND_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI,
   NODE_ENV,
 } from '../constants';
 import { sendVerificationEmail } from '../utils/mailer';
@@ -20,7 +21,7 @@ dotenv.config();
 const oauth2Client = new google.auth.OAuth2(
   GOOGLE_CLIENT_ID!,
   GOOGLE_CLIENT_SECRET!,
-  'http://localhost:9000/api/auth/google/callback',
+  GOOGLE_REDIRECT_URI!,
 );
 
 const SCOPES = ['profile', 'email'];
@@ -180,37 +181,14 @@ export const loginController = async (
 };
 
 export const checkLogin = async (req: Request, res: Response) => {
-  const token = req.cookies.token; // token is stored in cookie
-  if (!token) {
+  const user = req.user;
+  if (!user) {
     res.status(401).json({ isAuthenticated: false });
     return;
   }
-
-  try {
-    const decoded = verifyToken(token);
-    if (!decoded || typeof decoded === 'string' || !('id' in decoded)) {
-      res.status(401).json({ isAuthenticated: false });
-      return;
-    }
-    const userData = await User.findOne({
-      where: { id: decoded.id },
-      attributes: { exclude: ['password', 'created_at', 'updated_at'] },
-    });
-    res.status(200).json({ isAuthenticated: true, user: userData });
-
-    return;
-  } catch {
-    res.clearCookie('token', {
-      httpOnly: true,
-      secure: NODE_ENV === 'production',
-      sameSite: 'lax', // or 'none' for cross-origin
-    });
-    res.status(401).json({
-      isAuthenticated: false,
-      message: 'Session expired. Please log in again.',
-    });
-    return;
-  }
+  res.status(200).json({
+    isAuthenticated: true,
+  });
 };
 
 export const getCurrentUser = (req: Request, res: Response) => {
@@ -272,7 +250,7 @@ export const resendVerificationEmail = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const {email: reqEmail, token } = req.body;
+    const { email: reqEmail, token } = req.body;
 
     if (!reqEmail && !token) {
       res.status(400).json({

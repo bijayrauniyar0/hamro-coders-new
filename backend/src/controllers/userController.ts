@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
 
-
 // Get all users
 export const getAllUsers = async (_: Request, res: Response) => {
   try {
@@ -25,9 +24,6 @@ export const getUserProfile = async (
       where: { id: user.id },
       attributes: { exclude: ['password', 'created_at', 'updated_at'] },
     });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
     res.status(200).json(userData);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user', error });
@@ -77,4 +73,3 @@ export const deleteUser = async (req: Request, res: Response): Promise<any> => {
     res.status(500).json({ message: 'Error deleting user', error });
   }
 };
-
