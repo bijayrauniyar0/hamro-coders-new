@@ -15,5 +15,5 @@ export default function useAuth() {
     }
   }, []); // Empty dependency array ensures it runs only once on mount
 
-  return { isAuthenticated: isAuth };
+  return isAuth;
 }

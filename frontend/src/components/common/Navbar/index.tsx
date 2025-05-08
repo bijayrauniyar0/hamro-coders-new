@@ -4,7 +4,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import AccountMenu from '@Components/common/Navbar/AccountMenu';
+import { Button } from '@Components/radix/Button';
 import { navbarData } from '@Constants/navbarData';
+import useAuth from '@Hooks/useAuth';
 
 import Icon from '../Icon';
 
@@ -14,6 +16,7 @@ const Navbar = () => {
   const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [width, setWidth] = useState(window.innerWidth);
+  const isAuthenticated = useAuth();
 
   const closeBurgerMenu = () => {
     setBurgerMenuOpen(false);
@@ -34,7 +37,6 @@ const Navbar = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
   return (
     <>
       <header className="sticky right-0 top-0 z-[10] flex w-full items-center justify-between bg-white px-4 py-1 shadow-custom xl:px-7">
@@ -66,8 +68,16 @@ const Navbar = () => {
           </div>
         )}
         <FlexRow className="flex items-center gap-3 max-sm:gap-2">
-          <Notification />
-          <AccountMenu />
+          {isAuthenticated ? (
+            <>
+              <Notification />
+              <AccountMenu />
+            </>
+          ) : (
+            <Button className="!h-fit !rounded-full py-3 max-md:hidden">
+              Login
+            </Button>
+          )}
           {width <= 768 && (
             <Icon
               name="menu"
@@ -113,11 +123,37 @@ const Navbar = () => {
                       }
                       to={navbarItem.link}
                     >
-                      {navbarItem.name}
+                      <FlexRow className="items-center gap-2">
+                        <navbarItem.icon className="!h-5 !w-5 text-primary-700" />
+                        {navbarItem.name}
+                      </FlexRow>
                     </NavLink>
                   );
                 })}
               </FlexColumn>
+              {!isAuthenticated && (
+                <FlexColumn className="w-full gap-6 px-6">
+                  <Button
+                    className="!h-fit w-full !rounded-full py-3"
+                    onClick={() => {
+                      navigate('/login');
+                      closeBurgerMenu();
+                    }}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="!h-fit w-full !rounded-full py-3"
+                    onClick={() => {
+                      navigate('/sign-up');
+                      closeBurgerMenu();
+                    }}
+                  >
+                    Sign Up
+                  </Button>
+                </FlexColumn>
+              )}
             </FlexColumn>
           </motion.div>
         )}

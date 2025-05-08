@@ -22,15 +22,15 @@ import TestimonialCard from './TestimonialCard';
 const platformMetrics = [
   {
     title: 'Exam Categories',
-    value: '50+',
+    value: '5+',
   },
   {
     title: 'Questions',
-    value: '10,000+',
+    value: '5,000+',
   },
   {
     title: 'Students',
-    value: '25,000+',
+    value: '200+',
   },
 ];
 const Home = () => {
@@ -59,7 +59,7 @@ const Home = () => {
               className="select-none object-contain md:w-[60%] lg:max-w-[35rem]"
             /> */}
           </FlexRow>
-          <Grid className="z-10 mx-auto grid-cols-3 gap-2 text-center max-md:w-full md:w-4/5 md:gap-6 lg:w-1/2 lg:gap-8">
+          <Grid className="z-[9] mx-auto grid-cols-3 gap-2 text-center max-md:w-full md:w-4/5 md:gap-6 lg:w-1/2 lg:gap-8">
             {platformMetrics.map(metric => (
               <div key={metric.title}>
                 <p className="lg:text-xl2 text-lg font-bold text-primary-600 md:text-xl lg:text-3xl">

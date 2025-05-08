@@ -16,7 +16,7 @@ const generateRoutes = ({
   routes,
   fallback = <Fallback />,
 }: IGenerateRouteProps) => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useAuth();
   return (
     <Suspense fallback={fallback}>
       <Routes>

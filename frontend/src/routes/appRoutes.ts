@@ -3,7 +3,7 @@ import PageNotFound from '@Components/common/PageNotFound';
 import Streams from '@Components/Streams';
 import Tests from '@Components/Streams/TestsComponent';
 import AuthenticationComponent from '@Components/UserAuthentication';
-import EmailVerified from '@Components/UserAuthentication/Signup/VerifyEmail';
+import EmailVerification from '@Components/UserAuthentication/Verification';
 import AboutUsPage from '@Views/AboutUs';
 import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
@@ -25,8 +25,8 @@ const appRoutes: IRoute[] = [
   },
   {
     name: 'Email Verified',
-    path: '/email-verification',
-    component: EmailVerified,
+    path: '/email-verification/:token',
+    component: EmailVerification,
     authenticated: false,
   },
   {
