@@ -74,7 +74,10 @@ const Navbar = () => {
               <AccountMenu />
             </>
           ) : (
-            <Button className="!h-fit !rounded-full py-3 max-md:hidden">
+            <Button
+              className="!h-fit !rounded-full py-3 max-md:hidden"
+              onClick={() => navigate('/login')}
+            >
               Login
             </Button>
           )}
