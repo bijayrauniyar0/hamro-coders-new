@@ -23,10 +23,15 @@ export class StreamsService {
       throw new Error('Internal server error');
     }
   }
-  async getTestsListByStream(stream_id: number) {
+  async getTestsList(stream_id?: number, attributes?: string[]) {
     try {
+      const whereClause: Record<string, any> = {};
+      if (stream_id) {
+        whereClause.stream_id = stream_id;
+      }
       const tests = await Test.findAll({
-        where: { stream_id },
+        ...(whereClause && { where: whereClause }),
+        ...(attributes && { attributes }),
         include: [
           {
             model: Stream,
@@ -34,10 +39,10 @@ export class StreamsService {
           },
         ],
       });
-      return tests.map(test => ({
-        ...test.toJSON(),
-        stream_name: test.Stream?.name,
-      }));
+      return tests.map(test => {
+        const { Stream, ...restData } = test.toJSON();
+        return { ...restData, stream_name: Stream?.name };
+      });
     } catch (error) {
       throw new Error(error as string);
     }
@@ -72,10 +77,23 @@ export const getMockTestsListByStream = async (req: Request, res: Response) => {
   const { stream_id } = req.params;
   try {
     const streamsService = new StreamsService();
-    const tests = await streamsService.getTestsListByStream(+stream_id);
+    const tests = await streamsService.getTestsList(+stream_id);
     res.status(200).json(tests);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+export const getAllMockTests = async (req: Request, res: Response) => {
+  try {
+    const streamService = new StreamsService();
+    const mockTests = await streamService.getTestsList(undefined, [
+      'id',
+      'title',
+    ]);
+    res.status(200).json(mockTests);
+  } catch (error) {
+    res.status(500).send({ message: 'Internal Server Error', error });
   }
 };
 
