@@ -2,6 +2,7 @@
 import PageNotFound from '@Components/common/PageNotFound';
 import Streams from '@Components/Streams';
 import Tests from '@Components/Streams/TestsComponent';
+import TestimonialForm from '@Components/Testimonial';
 import AuthenticationComponent from '@Components/UserAuthentication';
 import EmailVerification from '@Components/UserAuthentication/Verification';
 import AboutUsPage from '@Views/AboutUs';
@@ -27,6 +28,12 @@ const appRoutes: IRoute[] = [
     name: 'Email Verified',
     path: '/email-verification/:token',
     component: EmailVerification,
+    authenticated: false,
+  },
+  {
+    name: 'Testimonial',
+    path: '/testimonial',
+    component: TestimonialForm,
     authenticated: false,
   },
   {
