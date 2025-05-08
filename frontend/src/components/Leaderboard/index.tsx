@@ -82,7 +82,7 @@ const Leaderboard = () => {
     if (streamsListIsSuccess && !isEmpty(streamsList)) {
       setStreamId(streamsList[0].value);
     }
-  }, [streamsListIsSuccess]);
+  }, [streamsList, streamsListIsSuccess]);
   const {
     data: testsList,
     isLoading: testsListIsLoading,
@@ -111,7 +111,7 @@ const Leaderboard = () => {
     ) {
       setMockTestId(testsList[0].value);
     }
-  }, [testsList, testsListFetchedSuccessfully]);
+  }, [streamsListIsSuccess, testsList, testsListFetchedSuccessfully]);
 
   return (
     <BindContentContainer className="relative flex flex-col gap-4">
@@ -161,7 +161,7 @@ const Leaderboard = () => {
                       if (!val) return;
                       setStreamId(val);
                     }}
-                    className="max-md:w-full lg:min-w-[10rem]"
+                    className="max-lg:w-full lg:min-w-[10rem]"
                   />
                 </FlexColumn>
                 <FlexColumn className="items-start gap-1">
@@ -177,7 +177,7 @@ const Leaderboard = () => {
                       if (!val) return;
                       setMockTestId(val);
                     }}
-                    className="max-md:w-full lg:min-w-[10rem]"
+                    className="max-lg:w-full lg:min-w-[10rem]"
                   />
                 </FlexColumn>
               </div>
