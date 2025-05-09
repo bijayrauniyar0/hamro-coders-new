@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
 
-import { resendVerificationEmail } from '@Services/common';
+import { forgotPassword, resendVerificationEmail } from '@Services/common';
 
 export const useSendVerificationEmail = () => {
   const navigate = useNavigate();
@@ -49,5 +49,21 @@ export const useSendVerificationEmail = () => {
     isPending,
     timerValue,
     handleTimerUpdate,
+  };
+};
+
+export const useSendPasswordResetEmail = () => {
+  const { mutate, isPending, isSuccess } = useMutation({
+    mutationFn: (payload: Record<string, any>) => forgotPassword(payload),
+    onError: ({ response }: any) => {
+      toast.error(
+        response?.data?.message || 'Something went wrong. Please try again.',
+      );
+    },
+  });
+  return {
+    mutate,
+    isPending,
+    isSuccess,
   };
 };
