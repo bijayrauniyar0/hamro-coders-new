@@ -23,8 +23,8 @@ import { User } from '@Store/slices/common';
 import { avatars, getAvatar } from '@Constants/UserProfile';
 import { changePassword, updateUser } from '@Services/common';
 import {
+  passwordValidation,
   signupSchemaStepOne,
-  signupSchemaStepTwo,
 } from '@Validations/Authentication';
 
 export interface IChangePasswordPayload {
@@ -59,7 +59,7 @@ const AccountSettings = ({ handleClose }: IAccountSettingsProps) => {
   } = useForm<typeof defaultValues>({
     defaultValues,
     resolver: zodResolver(
-      formKey === 'profile' ? signupSchemaStepOne : signupSchemaStepTwo,
+      formKey === 'profile' ? signupSchemaStepOne : passwordValidation,
     ),
   });
 
@@ -91,7 +91,7 @@ const AccountSettings = ({ handleClose }: IAccountSettingsProps) => {
 
   useEffect(() => {
     reset(defaultValues);
-  }, [formKey]);
+  }, [defaultValues, formKey, reset]);
 
   const handleFormSubmit = () => {
     if (isEmpty(dirtyFields)) return;
