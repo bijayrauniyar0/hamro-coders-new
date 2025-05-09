@@ -1,14 +1,17 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
 import { FlexRow } from '@Components/common/Layouts';
 import singInImg from '@Assets/images/sign-in.jpg';
 import { useTypedSelector } from '@Store/hooks';
 
+import ForgotPassword from './ForgotPassword';
 import Login from './Login';
+import ResetPassword from './ResetPassword';
 import Signup from './Signup';
 import VerifyEmail from './VerifyEmail';
+import VerifyForgotPassword from './VerifyForgotPassword';
 
 const AuthenticationComponent = () => {
   const { pathname } = useLocation();
@@ -17,18 +20,15 @@ const AuthenticationComponent = () => {
   );
   const navigate = useNavigate();
   const getContent = () => {
-    switch (pathname) {
-      case '/login':
-        return <Login />;
-      case '/signup':
-        return <Signup />;
-      case '/verify-email':
-        return <VerifyEmail />;
-      case '/forgot-password':
-        return <Login />;
-      default:
-        return <Login />;
-    }
+    if (matchPath('/login', pathname)) return <Login />;
+    if (matchPath('/signup', pathname)) return <Signup />;
+    if (matchPath('/verify-email', pathname)) return <VerifyEmail />;
+    if (matchPath('/forgot-password', pathname)) return <ForgotPassword />;
+    if (matchPath('/verify-forgot-password', pathname))
+      return <VerifyForgotPassword />;
+    if (matchPath('/reset-password/:token', pathname)) return <ResetPassword />;
+
+    return <Login />;
   };
 
   useEffect(() => {

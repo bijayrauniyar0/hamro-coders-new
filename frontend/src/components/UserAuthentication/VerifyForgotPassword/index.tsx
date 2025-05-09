@@ -9,7 +9,7 @@ import { Button } from '@Components/radix/Button';
 import { useTypedSelector } from '@Store/hooks';
 import { useSendPasswordResetEmail } from '@Api/UserAuthentication';
 
-export default function ResetLinkSent() {
+export default function VerifyForgotPassword() {
   const navigate = useNavigate();
   const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
   const [timerValue, setTimerValue] = useState(0);

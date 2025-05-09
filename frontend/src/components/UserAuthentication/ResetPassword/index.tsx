@@ -38,7 +38,7 @@ export default function ResetPassword() {
     resolver: zodResolver(passwordValidation),
   });
 
-  const { mutate } = useMutation<any, any, any, unknown>({
+  const { mutate, isPending } = useMutation({
     mutationFn: (payload: Record<string, any>) => resetPassword(payload),
     onSuccess: () => {
       navigate('/auth/login');
@@ -72,13 +72,13 @@ export default function ResetPassword() {
               <InputLabel label="Password" className="mb-1 text-xs" />
               <Input
                 id="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword.password ? 'text' : 'password'}
                 className="w-[4/5] pr-10"
                 placeholder="Enter Password"
                 {...register('password', { required: 'Password is Required' })}
               />
               <Icon
-                name={showPassword ? 'visibility' : 'visibility_off'}
+                name={showPassword.password ? 'visibility' : 'visibility_off'}
                 className="text-black-600 absolute right-2 top-[2.3rem] cursor-pointer"
                 onClick={() =>
                   setShowPassword(prev => ({
@@ -122,11 +122,11 @@ export default function ResetPassword() {
             </FormControl>
             <Button
               className="mt-6 w-full p-3 md:mt-10"
-              // disabled={isSubmitting}
-              // isLoading={isSubmitting}
+              disabled={isPending}
+              isLoading={isPending}
               type="submit"
             >
-              Sign In
+              Reset
             </Button>
           </form>
         </div>

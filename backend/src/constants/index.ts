@@ -15,3 +15,4 @@ export const PORT = process.env.PORT;
 export const NODE_ENV = process.env.NODE_ENV;
 export const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 export const IMAGE_API_KEY = process.env.IMAGE_API_KEY;
+export const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS;

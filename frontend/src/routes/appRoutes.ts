@@ -30,6 +30,21 @@ const appRoutes: IRoute[] = [
     component: AuthenticationComponent,
   },
   {
+    name: 'Verify Forgot Password',
+    path: '/verify-forgot-password',
+    component: AuthenticationComponent,
+  },
+  {
+    name: 'Forgot Password',
+    path: '/forgot-password',
+    component: AuthenticationComponent,
+  },
+  {
+    name: 'Reset Password',
+    path: '/reset-password/:token',
+    component: AuthenticationComponent,
+  },
+  {
     name: 'Email Verified',
     path: '/email-verification/:token',
     component: EmailVerification,

@@ -18,7 +18,15 @@ function App() {
   const { pathname } = useLocation();
   const dispatch = useTypedDispatch();
   const isAuthenticated = useAuth();
-  const routesWithoutNavbar = ['/login', '/signup', '/verify-email', '/mcq'];
+  const routesWithoutNavbar = [
+    '/login',
+    '/signup',
+    '/verify-email',
+    '/mcq',
+    '/forgot-password',
+    '/verify-forgot-password',
+    '/reset-password',
+  ];
   const showNavbar = !routesWithoutNavbar.some(route =>
     pathname.includes(route),
   );
