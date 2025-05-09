@@ -9,7 +9,7 @@ import { Input } from '@Components/common/FormUI';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { setUserProfile } from '@Store/actions/common';
+import { setIsAuthenticated, setUserProfile } from '@Store/actions/common';
 import { useTypedDispatch } from '@Store/hooks';
 import { login } from '@Services/common';
 import { apiURL } from '@Services/index';
@@ -43,6 +43,7 @@ export default function Login() {
       dispatch(setUserProfile(res.data.user));
       toast.success('Login Successful');
       navigate('/');
+      dispatch(setIsAuthenticated(true));
     },
     onError: ({ response }: any) => {
       if (response?.status === 401 && response?.data?.verified === false) {
@@ -126,7 +127,7 @@ export default function Login() {
 
             <FlexColumn className="w-full items-center justify-center gap-8">
               <Button
-                className="mt-6 md:mt-10 w-full p-3"
+                className="mt-6 w-full p-3 md:mt-10"
                 disabled={isSubmitting}
                 isLoading={isSubmitting}
                 type="submit"

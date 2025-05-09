@@ -1,5 +1,6 @@
 import Express from 'express';
 import {
+  checkIfEmailExists,
   checkLogin,
   createUser,
   googleAuthCallback,
@@ -21,5 +22,6 @@ authRouter.get('/check-login/', authenticate, checkLogin);
 authRouter.post('/log-out/', authenticate, logoutController);
 authRouter.post('/verify-email', verifyEmail);
 authRouter.post('/resend-verification-mail', resendVerificationEmail);
+authRouter.post('/check-email', checkIfEmailExists);
 
 export default authRouter;

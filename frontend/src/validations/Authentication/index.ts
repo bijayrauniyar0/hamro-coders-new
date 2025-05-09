@@ -3,7 +3,12 @@ import { z } from 'zod';
 import { emailSchema } from '..';
 
 export const signupSchemaStepOne = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .regex(/^[a-zA-Z0-9\s]+$/, {
+      message: 'Only letters, numbers, and spaces are allowed',
+    }),
   email: emailSchema,
   number: z
     .string()
