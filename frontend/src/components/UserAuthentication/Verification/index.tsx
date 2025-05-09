@@ -61,7 +61,7 @@ export default function EmailVerification() {
     }
   };
   return (
-    <FlexRow className="flex justify-center items-center max-sm:h-[calc(100vh-2.55rem)] h-[calc(100vh-3.15rem)] bg-purple-50 px-2">
+    <FlexRow className="flex h-[calc(100vh-3.15rem)] items-center justify-center bg-purple-50 px-2 max-sm:h-[calc(100vh-2.55rem)]">
       {getVerificationStatus()}
     </FlexRow>
   );
