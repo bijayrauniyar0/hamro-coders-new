@@ -13,6 +13,7 @@ import authRouter from './routes/authRoutes';
 import cookieParser from 'cookie-parser';
 import { FRONTEND_URL, PORT } from './constants';
 import testimonialRouter from './routes/testimonialsRoutes';
+import privateImageRouter from './routes/privateImageRoutes';
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -33,6 +34,7 @@ app.use('/api/notification', notificationRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/testimonial', testimonialRouter);
+app.use('/api/private', privateImageRouter);
 
 sequelize
   .authenticate()
