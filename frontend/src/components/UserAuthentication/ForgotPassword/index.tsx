@@ -1,62 +1,44 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 import ErrorMessage from '@Components/common/ErrorMessage';
-import { Input } from '@Components/common/FormUI';
+import { FormControl, Input } from '@Components/common/FormUI';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { Button } from '@Components/radix/Button';
-import { forgotPassword } from '@Services/common';
-import { passwordValidation } from '@Validations/Authentication';
+import { setUserProfile } from '@Store/actions/common';
+import { useTypedDispatch } from '@Store/hooks';
+import { useSendPasswordResetEmail } from '@Api/UserAuthentication';
 
-import FormControl from '../../common/FormUI/FormControl';
-import Icon from '../../common/Icon';
-
-const defaultValues = {
+const initialState = {
+  email: '',
   password: '',
-  confirm_password: '',
   // keepSignedIn: false,
 };
 
-export default function Login() {
+export default function ForgotPassword() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState({
-    password: false,
-    confirm_password: false,
-  });
-  const { token } = useParams();
-
+  const dispatch = useTypedDispatch();
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    getValues,
+    formState: { errors },
   } = useForm({
-    defaultValues,
-    resolver: zodResolver(passwordValidation),
+    defaultValues: initialState,
   });
 
-  const { mutate } = useMutation({
-    mutationFn: (payload: Record<string, any>) => forgotPassword(payload),
-    onSuccess: () => {
-      toast.success('Password Changed Successfully');
-      navigate('/login');
-    },
-    onError: ({ response }: any) => {
-      const caughtError = response?.data?.message || 'Something went wrong.';
-      toast.error(caughtError || 'Login Failed Something Went Wrong');
-    },
-  });
+  const { mutate, isPending, isSuccess } = useSendPasswordResetEmail();
+  useEffect(() => {
+    if (isSuccess) {
+      const email = getValues('email');
+      dispatch(setUserProfile({ email }));
+      navigate('/verify-forgot-password');
+    }
+  }, [isSuccess, getValues, dispatch, navigate]);
 
-  const onSubmit = (data: typeof defaultValues) => {
-    const { password } = data;
-    const payload = {
-      token,
-      password,
-    };
-    mutate(payload);
+  const onSubmit = (data: Record<string, any>) => {
+    mutate(data);
   };
 
   return (
@@ -70,63 +52,28 @@ export default function Login() {
           </p>
           {/*  ------ form ------ */}
           <form onSubmit={handleSubmit(onSubmit)} className="pb-8 pt-12">
-            <FormControl className="relative mb-2 md:mb-3">
-              <InputLabel label="Password" astric className="mb-1 text-xs" />
+            <FormControl className="mb-4">
+              <InputLabel label="Email" className="mb-1" />
               <Input
-                id="password"
-                type={showPassword.password ? 'text' : 'password'}
-                className="w-[4/5] pr-10"
-                placeholder="Enter Password"
-                {...register('password', { required: 'Password is Required' })}
+                id="email"
+                type="email"
+                placeholder="Enter Email (e.g. bijay@example.com)"
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: 'Invalid email format',
+                  },
+                })}
               />
-              <Icon
-                name={showPassword ? 'visibility' : 'visibility_off'}
-                className="text-black-600 absolute right-2 top-[2.3rem] cursor-pointer"
-                onClick={() =>
-                  setShowPassword(prev => ({
-                    ...prev,
-                    password: !prev.password,
-                  }))
-                }
-              />
-
-              {errors?.password?.message && (
-                <ErrorMessage message={errors.password.message} />
+              {errors?.email?.message && (
+                <ErrorMessage message={errors.email.message} />
               )}
             </FormControl>
-            <FormControl className="relative mb-2 md:mb-3">
-              <InputLabel
-                label="Confirm Password"
-                astric
-                className="mb-1 text-xs"
-              />
-              <Input
-                id="password"
-                type={showPassword.confirm_password ? 'text' : 'password'}
-                className="w-[4/5] pr-10"
-                placeholder="Enter Password"
-                {...register('password', { required: 'Password is Required' })}
-              />
-              <Icon
-                name={showPassword ? 'visibility' : 'visibility_off'}
-                className="text-black-600 absolute right-2 top-[2.3rem] cursor-pointer"
-                onClick={() =>
-                  setShowPassword(prev => ({
-                    ...prev,
-                    confirm_password: !prev.confirm_password,
-                  }))
-                }
-              />
-
-              {errors?.confirm_password?.message && (
-                <ErrorMessage message={errors.confirm_password.message} />
-              )}
-            </FormControl>
-
             <Button
               className="mt-6 w-full p-3 md:mt-10"
-              disabled={isSubmitting}
-              isLoading={isSubmitting}
+              disabled={isPending}
+              isLoading={isPending}
               type="submit"
             >
               Sign In
