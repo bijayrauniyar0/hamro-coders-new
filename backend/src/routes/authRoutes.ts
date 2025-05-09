@@ -22,6 +22,6 @@ authRouter.get('/check-login/', authenticate, checkLogin);
 authRouter.post('/log-out/', authenticate, logoutController);
 authRouter.post('/verify-email', verifyEmail);
 authRouter.post('/resend-verification-mail', resendVerificationEmail);
-authRouter.post('/check-email', checkIfEmailExists);
+authRouter.post('/check-email-exists', checkIfEmailExists);
 
 export default authRouter;

@@ -23,6 +23,10 @@ export const createNewUser = (payload: Record<string, any>) => {
   return api.post('/api/auth/signup/', { ...payload });
 };
 
+export const checkIfEmailExists = (payload: Record<string, any>) => {
+  return api.post('/api/auth/check-email-exists/', { ...payload });
+};
+
 export const resendVerificationEmail = (payload: Record<string, any>) => {
   return api.post('/api/auth/resend-verification-mail/', payload);
 };
