@@ -1,0 +1,1 @@
+export const IMAGE_API_KEY = process.env.IMAGE_API_KEY;

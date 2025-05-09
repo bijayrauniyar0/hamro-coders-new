@@ -7,3 +7,7 @@ export const createTestimonial = (payload: Record<string, any>) => {
     },
   });
 };
+
+export const getTestimonials = (params: Record<string, any>) => {
+  return api.get('/api/testimonial/', { params });
+};

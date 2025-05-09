@@ -1,23 +1,17 @@
 import React from 'react';
-import Slider from 'react-slick';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
 import Footer from '@Components/common/Footer';
 import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
 import BackgroundParticles from '@Components/common/ParticalsAnimation';
 import { Button } from '@Components/radix/Button';
-import {
-  features,
-  Streams,
-  testimonials,
-  testimonialSliderSettings,
-} from '@Constants/Home';
+import { features, Streams } from '@Constants/Home';
 
 import AnimatingSVg from './AnimatingSVG';
 import FeatureCard from './FeaturesCard';
 import Section from './Section';
 import StreamsCard from './StreamsCard';
-import TestimonialCard from './TestimonialCard';
+import Testimonials from './Testimonials';
 
 const platformMetrics = [
   {
@@ -100,24 +94,7 @@ const Home = () => {
               View All Exams
             </Button>
           </Section>
-
-          <div className="z-[9] rounded-lg bg-gradient-to-tl from-primary-50 to-primary-100 px-1 pt-8 shadow-sm">
-            <Section
-              header="What Our Students Say"
-              description="Hear from students who improved their scores and achieved their goals with MockSewa."
-            >
-              <Slider {...testimonialSliderSettings} className="w-full">
-                {testimonials.map((testimonial, i) => (
-                  <div className="px-2" key={i}>
-                    <TestimonialCard
-                      key={(testimonial.name, i)}
-                      testimonial={testimonial}
-                    />
-                  </div>
-                ))}
-              </Slider>
-            </Section>
-          </div>
+          <Testimonials />
 
           <Section
             header="Ready to Elevate Your Exam Preparation?"

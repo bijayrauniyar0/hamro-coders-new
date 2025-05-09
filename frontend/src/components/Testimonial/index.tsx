@@ -66,7 +66,7 @@ const TestimonialForm: React.FC = () => {
     select: ({ data }) => {
       return data.map((test: TestsType) => {
         return {
-          value: test.id,
+          value: `${test.title} (${test.stream_name})`,
           label: `${test.title} (${test.stream_name})`,
           id: test.id,
         };
@@ -82,17 +82,20 @@ const TestimonialForm: React.FC = () => {
       });
     }
   };
-  // eslint-disable-next-line no-unused-vars
-  const { mutate: createNewTestimonial, isPending: testimonialIsCreating } =
-    useMutation({
-      mutationFn: createTestimonial,
-    });
+
+  const {
+    mutate: createNewTestimonial,
+    isPending: testimonialIsCreating,
+    isSuccess: testimonialCreatedSuccessFully,
+    reset: resetTestimonial,
+  } = useMutation({
+    mutationFn: createTestimonial,
+  });
 
   const onSubmit: SubmitHandler<FieldValues> = async () => {
     const payload = getValues();
     createNewTestimonial(payload);
   };
-  const isSuccess = false; // Replace with actual success state
 
   return (
     <BindContentContainer className="flex h-[calc(100vh-4rem)] w-full items-center justify-center max-md:h-[calc(100vh-5rem)] max-sm:my-4">
@@ -107,7 +110,7 @@ const TestimonialForm: React.FC = () => {
           </p>
         </div>
 
-        {isSuccess ? (
+        {testimonialCreatedSuccessFully ? (
           <div className="text-center">
             <div className="mb-4 text-green-500">
               <svg
@@ -132,12 +135,11 @@ const TestimonialForm: React.FC = () => {
               Your testimonial has been submitted successfully. We appreciate
               your feedback!
             </p>
-            <button
-              // onClick={() => setIsSuccess(false)}
-              className="rounded-md bg-purple-600 px-6 py-2 text-white transition duration-300 hover:bg-purple-700"
+            <Button
+              onClick={() => resetTestimonial()}
             >
               Submit Another Testimonial
-            </button>
+            </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -188,6 +190,7 @@ const TestimonialForm: React.FC = () => {
                     onChange={val => {
                       setValue('exam_type', val);
                     }}
+                    choose="value"
                   />
 
                   <ErrorMessage
@@ -254,7 +257,11 @@ const TestimonialForm: React.FC = () => {
             </FlexColumn>
 
             <div className="mt-8 flex justify-center">
-              <Button type="submit" disabled={false}>
+              <Button
+                type="submit"
+                isLoading={testimonialIsCreating}
+                disabled={testimonialIsCreating}
+              >
                 Submit
               </Button>
             </div>
