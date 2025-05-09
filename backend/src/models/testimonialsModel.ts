@@ -59,7 +59,8 @@ Testimonial.init(
   {
     tableName: 'testimonials',
     sequelize,
-    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false,
   },
 );
 
