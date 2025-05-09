@@ -30,7 +30,7 @@ export default defineConfig({
       BASE_URL: process.env.BASE_URL,
       API_URL_V1: process.env.API_URL_V1,
       SITE_NAME: process.env.SITE_NAME,
-      FAST_API: process.env.FAST_API,
+      IMAGE_API_KEY: process.env.IMAGE_API_KEY,
     },
   },
   server: {
