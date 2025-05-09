@@ -18,7 +18,7 @@ export async function refreshAccessToken() {
   }
   try {
     oauth2Client.setCredentials({
-      refresh_token: authToken.refresh_token,
+      refresh_token: cryptoService.decryptRefreshToken(authToken.refresh_token),
     });
     const { credentials } = await oauth2Client.refreshAccessToken();
     if (!credentials || !credentials.access_token || !credentials.expiry_date) {
