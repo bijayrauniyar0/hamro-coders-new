@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
 
-import { verifyEmail } from '@Services/common';
+import { resendVerificationEmail } from '@Services/common';
 
 export const useSendVerificationEmail = () => {
   const navigate = useNavigate();
@@ -13,7 +13,8 @@ export const useSendVerificationEmail = () => {
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (payload: Record<string, any>) => verifyEmail(payload),
+    mutationFn: (payload: Record<string, any>) =>
+      resendVerificationEmail(payload),
     onSuccess: () => {
       toast.success('Verification email sent successfully.');
       setTimerValue(prev => prev + 120);

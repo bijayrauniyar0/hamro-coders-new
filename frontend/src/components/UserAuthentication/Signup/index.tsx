@@ -1,9 +1,7 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-// import NSOIcon from '@Assets/images/login/NSO.svg';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
@@ -24,8 +22,6 @@ import {
   signupSchemaStepTwo,
 } from '@Validations/Authentication';
 
-import VerifyEmail from './VerifyEmail';
-
 const initialState = {
   name: '',
   email: '',
@@ -37,10 +33,10 @@ const initialState = {
 
 export default function Signup() {
   const dispatch = useTypedDispatch();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
-  const [showVerifyEmail, setShowVerifyEmail] = useState<boolean>(false);
   const [formStep, setFormStep] = useState(1);
   const [isTermsChecked, setIsTermsChecked] = useState(false);
 
@@ -69,7 +65,7 @@ export default function Signup() {
           name: watch('name'),
         }),
       );
-      setShowVerifyEmail(true);
+      navigate('/verify-email');
     },
     onError: (error: any) => {
       const caughtError = error?.response?.data?.message;
@@ -97,7 +93,7 @@ export default function Signup() {
   const [inputValue, handleDebouncedChange, setInputValue] = useDebouncedInput({
     init: email,
     onChange: e => setValue('email', e.target.value),
-    ms: 500,
+    ms: 700,
   });
 
   const onSubmit = () => {
@@ -105,6 +101,7 @@ export default function Signup() {
       setFormStep(2);
       return;
     }
+    // eslint-disable-next-line no-unused-vars
     const { confirmPassword, ...values } = watch();
     mutate(values);
   };
@@ -223,66 +220,60 @@ export default function Signup() {
     }
   }
   return (
-    <>
-      {!showVerifyEmail ? (
-        <div className="login-inner grid h-full place-items-center">
-          <div className="login-form w-full space-y-14 overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
-            {/* ------ icon ------ */}
+    <div className="login-inner grid h-full place-items-center">
+      <div className="login-form w-full space-y-14 overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
+        {/* ------ icon ------ */}
 
-            <p className="select-none text-5xl font-semibold text-primary-700">
-              MockSewa
+        <p className="select-none text-5xl font-semibold text-primary-700">
+          MockSewa
+        </p>
+        {/*  ------ form ------ */}
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {getContentAccordingToStep()}
+
+          <FlexColumn className="w-full items-center justify-center gap-8">
+            <FlexRow className="w-full gap-2">
+              {formStep !== 1 && (
+                <IconButton
+                  className="w-[4rem] rounded-lg border p-3 text-primary-700 shadow-sm"
+                  disabled={isSubmitting || isPending}
+                  name="chevron_left"
+                  onClick={() => {
+                    const values = watch();
+                    reset({
+                      ...values,
+                      password: '',
+                      confirmPassword: '',
+                    });
+                    setFormStep(1);
+                  }}
+                />
+              )}
+              <Button
+                className="w-full p-3 ease-in-out"
+                disabled={
+                  (formStep === 2 && !isTermsChecked) ||
+                  isSubmitting ||
+                  isPending
+                }
+                isLoading={isSubmitting || isPending}
+              >
+                {formStep === 1 ? 'Next' : 'Sign Up'}
+              </Button>
+            </FlexRow>
+            <p className="text-center text-sm">
+              Already have an account ?{' '}
+              <NavLink
+                to="/login"
+                className="font-semibold text-primary-700 hover:underline"
+              >
+                Login Here
+              </NavLink>
             </p>
-            {/*  ------ form ------ */}
-
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {getContentAccordingToStep()}
-
-              <FlexColumn className="w-full items-center justify-center gap-8">
-                <FlexRow className="w-full gap-2">
-                  {formStep !== 1 && (
-                    <IconButton
-                      className="w-[4rem] rounded-lg border p-3 text-primary-700 shadow-sm"
-                      disabled={isSubmitting || isPending}
-                      name="chevron_left"
-                      onClick={() => {
-                        const values = watch();
-                        reset({
-                          ...values,
-                          password: '',
-                          confirmPassword: '',
-                        });
-                        setFormStep(1);
-                      }}
-                    />
-                  )}
-                  <Button
-                    className="w-full p-3 ease-in-out"
-                    disabled={
-                      (formStep === 2 && !isTermsChecked) ||
-                      isSubmitting ||
-                      isPending
-                    }
-                    isLoading={isSubmitting || isPending}
-                  >
-                    {formStep === 1 ? 'Next' : 'Sign Up'}
-                  </Button>
-                </FlexRow>
-                <p className="text-center text-sm">
-                  Already have an account ?{' '}
-                  <NavLink
-                    to="/login"
-                    className="font-semibold text-primary-700 hover:underline"
-                  >
-                    Login Here
-                  </NavLink>
-                </p>
-              </FlexColumn>
-            </form>
-          </div>
-        </div>
-      ) : (
-        <VerifyEmail />
-      )}
-    </>
+          </FlexColumn>
+        </form>
+      </div>
+    </div>
   );
 }

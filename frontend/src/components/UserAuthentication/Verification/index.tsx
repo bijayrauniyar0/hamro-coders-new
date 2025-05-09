@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 
+import { FlexRow } from '@Components/common/Layouts';
 import useAuth from '@Hooks/useAuth';
 import { verifyEmail } from '@Services/common';
 
@@ -23,6 +24,9 @@ export default function EmailVerification() {
       onSuccess: () => {
         setTimeout(() => {
           setVerificationStatus('success');
+        }, 1000);
+        setTimeout(() => {
+          navigate('/login');
         }, 2000);
       },
       onError: (error: any) => {
@@ -30,7 +34,8 @@ export default function EmailVerification() {
         if (caughtError.verificationStatus === 'failed') {
           setTimeout(() => {
             setVerificationStatus('error');
-          }, 2000);
+          }, 1000);
+          return;
         }
       },
     });
@@ -39,12 +44,12 @@ export default function EmailVerification() {
     if (token) {
       mutateVerifyEmail({ token });
     }
-  }, [token]);
+  }, [mutateVerifyEmail, token]);
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   const getVerificationStatus = () => {
     if (isEmailVerifying || verificationStatus === 'pending') {
@@ -55,5 +60,9 @@ export default function EmailVerification() {
       return <VerificationFailed />;
     }
   };
-  return <>{getVerificationStatus()}</>;
+  return (
+    <FlexRow className="flex justify-center items-center max-sm:h-[calc(100vh-2.55rem)] h-[calc(100vh-3.15rem)] bg-purple-50 px-2">
+      {getVerificationStatus()}
+    </FlexRow>
+  );
 }

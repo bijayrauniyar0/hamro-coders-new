@@ -8,6 +8,7 @@ import { useTypedSelector } from '@Store/hooks';
 
 import Login from './Login';
 import Signup from './Signup';
+import VerifyEmail from './VerifyEmail';
 
 const AuthenticationComponent = () => {
   const { pathname } = useLocation();
@@ -21,6 +22,8 @@ const AuthenticationComponent = () => {
         return <Login />;
       case '/signup':
         return <Signup />;
+      case '/verify-email':
+        return <VerifyEmail />;
       default:
         return <Login />;
     }

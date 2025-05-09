@@ -25,7 +25,7 @@ export default function VerifyEmail() {
     return () => {
       window.removeEventListener('beforeunload', listener);
     };
-  }, []);
+  }, [navigate, userProfile?.email]);
 
   const {
     mutate: sendVerificationEmail,

@@ -52,6 +52,7 @@ export default function Login() {
         );
         dispatch(setUserProfile({ email: watch('email') }));
         navigate('/verify-email');
+        return;
       }
       const caughtError = response?.data?.message || 'Something went wrong.';
       toast.error(caughtError || 'Login Failed Something Went Wrong');

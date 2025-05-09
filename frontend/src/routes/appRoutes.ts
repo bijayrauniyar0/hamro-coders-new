@@ -25,6 +25,11 @@ const appRoutes: IRoute[] = [
     component: AuthenticationComponent,
   },
   {
+    name: 'Verify Email',
+    path: '/verify-email',
+    component: AuthenticationComponent,
+  },
+  {
     name: 'Email Verified',
     path: '/email-verification/:token',
     component: EmailVerification,

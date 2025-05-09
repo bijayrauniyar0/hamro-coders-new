@@ -26,9 +26,6 @@ const oauth2Client = new google.auth.OAuth2(
 
 const SCOPES = ['profile', 'email'];
 
-const getTemplatePath = (fileName: string) => {
-  return path.join(process.cwd(), 'src', 'templates', fileName);
-};
 export class AuthService {
   name: string;
   email: string;
@@ -45,7 +42,7 @@ export class AuthService {
       'templates',
       'emailVerification.ejs',
     );
-    const verificationLink = `${FRONTEND_URL}/verify-email?token=${token}`;
+    const verificationLink = `${FRONTEND_URL}/email-verification/${token}`;
     const verificationTemplate = await ejs.renderFile(templatePath, {
       verificationLink: verificationLink,
       currentYear: new Date().getFullYear(),
@@ -217,29 +214,43 @@ export const logoutController = async (
 };
 
 export const verifyEmail = async (
-  req: Request<unknown, unknown, unknown, { token: string }>,
+  req: Request<unknown, unknown, { token: string }, unknown>,
   res: Response,
 ) => {
   try {
-    const { token } = req.query;
+    const { token } = req.body;
     if (!token) {
       res.status(400).json({ message: 'Token is required' });
       return;
     }
     const decoded = verifyToken(token);
     if (typeof decoded !== 'object' || !decoded) {
-      res.sendFile(getTemplatePath('verificationFailed.html'));
+      res
+        .status(400)
+        .json({ message: 'Invalid token', verificationStatus: 'failed' });
       return;
     }
     const { email } = decoded;
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      res.sendFile(path.join(getTemplatePath('verificationFailed.html')));
+      res
+        .status(400)
+        .json({ message: 'Invalid User', verificationStatus: 'failed' });
       return;
     }
     user.verified = true;
-    await user.save();
-    res.sendFile(path.join(getTemplatePath('verificationSuccess.html')));
+    const isUserVerified = await user.save();
+    if (!isUserVerified) {
+      res
+        .status(400)
+        .json({ message: 'Error Verifying Email', verificationStatus: 'failed' });
+
+      return;
+    }
+    res.status(200).json({
+      message: 'Email verified successfully',
+      verificationStatus: 'success',
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error verifying email', error });
   }
