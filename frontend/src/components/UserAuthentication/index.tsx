@@ -24,6 +24,8 @@ const AuthenticationComponent = () => {
         return <Signup />;
       case '/verify-email':
         return <VerifyEmail />;
+      case '/forgot-password':
+        return <Login />;
       default:
         return <Login />;
     }

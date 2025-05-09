@@ -18,8 +18,8 @@ import { useTypedDispatch } from '@Store/hooks';
 import useDebouncedInput from '@Hooks/useDebouncedInput';
 import { checkIfEmailExists, createNewUser } from '@Services/common';
 import {
+  passwordValidation,
   signupSchemaStepOne,
-  signupSchemaStepTwo,
 } from '@Validations/Authentication';
 
 const initialState = {
@@ -51,7 +51,7 @@ export default function Signup() {
   } = useForm({
     defaultValues: initialState,
     resolver: zodResolver(
-      formStep === 1 ? signupSchemaStepOne : signupSchemaStepTwo,
+      formStep === 1 ? signupSchemaStepOne : passwordValidation,
     ),
   });
   const email = watch('email');

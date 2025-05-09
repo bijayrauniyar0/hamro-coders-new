@@ -51,6 +51,10 @@ export const login = (payload: Record<string, any>) => {
   return api.post('/api/auth/login/', { ...payload });
 };
 
+export const forgotPassword = (payload: Record<string, any>) => {
+  return api.post('/api/auth/forgot-password/', { ...payload });
+};
+
 export const getNotificationCount = () => {
   return authenticated(api).get('/api/notification/unread-count/');
 };

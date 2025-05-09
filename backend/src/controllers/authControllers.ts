@@ -12,7 +12,7 @@ import {
   GOOGLE_REDIRECT_URI,
   NODE_ENV,
 } from '../constants';
-import { sendVerificationEmail } from '../utils/mailer';
+import { sendEmail } from '../utils/mailer';
 import path from 'path';
 import ejs from 'ejs';
 
@@ -33,8 +33,14 @@ export class AuthService {
     this.name = name;
     this.email = email;
   }
+  private generateToken = (payload: object, expiresIn: number) => {
+    return generateToken(payload, expiresIn);
+  };
   sendVerificationEmail = async (): Promise<any> => {
-    const token = generateToken({ email: this.email, name: this.name }, 300);
+    const token = this.generateToken(
+      { email: this.email, name: this.name },
+      300,
+    );
 
     const templatePath = path.join(
       process.cwd(),
@@ -49,9 +55,30 @@ export class AuthService {
       userName: this.name,
       expiryTime: '30 minutes',
     });
-    await sendVerificationEmail(this.email, verificationTemplate);
+    await sendEmail(this.email, verificationTemplate);
+  };
+  sendPasswordResetEmail = async (): Promise<any> => {
+    const token = this.generateToken(
+      { email: this.email, name: this.name },
+      1200,
+    );
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'templates',
+      'forgotPassword.ejs',
+    );
+    const resetLink = `${FRONTEND_URL}/reset-password/${token}`;
+    const resetTemplate = await ejs.renderFile(templatePath, {
+      resetLink: resetLink,
+      currentYear: new Date().getFullYear(),
+      userName: this.name,
+      expiryTime: '10 minutes',
+    });
+    await sendEmail(this.email, resetTemplate);
   };
 }
+
 export const googleAuthRedirect = (req: Request, res: Response) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -241,9 +268,10 @@ export const verifyEmail = async (
     user.verified = true;
     const isUserVerified = await user.save();
     if (!isUserVerified) {
-      res
-        .status(400)
-        .json({ message: 'Error Verifying Email', verificationStatus: 'failed' });
+      res.status(400).json({
+        message: 'Error Verifying Email',
+        verificationStatus: 'failed',
+      });
 
       return;
     }
@@ -351,6 +379,74 @@ export const checkIfEmailExists = async (
     } else {
       res.status(200).json({ exists: false });
     }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ message: 'Email is required' });
+      return;
+    }
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    const userService = new AuthService(user.name, user.email);
+
+    try {
+      await userService.sendPasswordResetEmail();
+      res.status(200).json({
+        isVerified: false,
+        userFound: true,
+        message: 'Password Reset email sent successfully!',
+      });
+      return;
+    } catch {
+      res.status(500).json({
+        isVerified: false,
+        userFound: true,
+        message: 'Failed to send password reset link.',
+      });
+      return;
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+export const resetForgotPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      res.status(400).json({ message: 'Token and password are required' });
+      return;
+    }
+    const decoded = verifyToken(token);
+    if (typeof decoded !== 'object' || !decoded) {
+      res.status(400).json({ message: 'Invalid token' });
+      return;
+    }
+    const { email } = decoded;
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+    res.status(200).json({ message: 'Password reset successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
   }
