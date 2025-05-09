@@ -12,6 +12,7 @@ import './models/testSectionLinkModel';
 import authRouter from './routes/authRoutes';
 import cookieParser from 'cookie-parser';
 import { FRONTEND_URL, PORT } from './constants';
+import testimonialRouter from './routes/testimonialsRoutes';
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -31,6 +32,7 @@ app.use('/api/leaderboard', userScoresRouter);
 app.use('/api/notification', notificationRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/testimonial', testimonialRouter);
 
 sequelize
   .authenticate()
