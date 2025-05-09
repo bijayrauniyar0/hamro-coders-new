@@ -32,7 +32,6 @@ export const uploadFileToDrive = async (file: File, file_name?: string) => {
 
 export const streamImageFromDrive = async (fileId: string) => {
   try {
-    // Fetch the file content
     const drive = await getDriveInstance();
     const file = await drive.files.get(
       { fileId, alt: 'media' },
