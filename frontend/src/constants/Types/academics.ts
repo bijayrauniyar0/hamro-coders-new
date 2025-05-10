@@ -1,3 +1,5 @@
+import { LucideIcon } from 'lucide-react';
+
 export type StreamsType = {
   name: string;
   id: number;
@@ -18,3 +20,31 @@ export type TestsType = {
   id: number;
   stream_id: number;
 } & ITestBoxProps;
+
+export type TestInfoKey =
+  | 'duration'
+  | 'full_marks'
+  | 'pass_marks'
+  | 'negative_marking'
+  | 'total_questions';
+
+export interface TestMetaDataItem {
+  id: number;
+  label: string;
+  value_key: TestInfoKey;
+  icon: LucideIcon;
+  icon_color: string;
+}
+
+export type TestInfoProps = {
+  title: string;
+  description: string;
+  duration: string;
+  total_questions: number;
+  full_marks: number;
+  negative_marking: string;
+  stream_name: string;
+  rating: number;
+  students_count: number;
+  bookmark?: boolean;
+};
