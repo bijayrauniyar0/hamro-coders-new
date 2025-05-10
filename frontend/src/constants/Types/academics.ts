@@ -2,16 +2,16 @@ export type StreamsType = {
   name: string;
   id: number;
   tests_count: number;
-};
-
-export type TestsType = {
-  id: number;
-  stream_id: number;
-  title: string;
-  stream_name: string;
+  students_count: number;
 };
 
 export interface ITestBoxProps {
   title: string;
   stream_name: string;
+  students_count: number;
 }
+
+export type TestsType = {
+  id: number;
+  stream_id: number;
+} & ITestBoxProps;

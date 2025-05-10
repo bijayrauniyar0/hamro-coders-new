@@ -4,7 +4,7 @@ import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
 import { ITestBoxProps } from '@Constants/Types/academics';
 
-const TestBox = ({ title, stream_name }: ITestBoxProps) => {
+const TestBox = ({ title, stream_name, students_count }: ITestBoxProps) => {
   return (
     <div className="group overflow-hidden rounded-xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:border-primary-200 hover:shadow-lg">
       <FlexColumn className="items-start gap-4 px-6 py-5">
@@ -29,7 +29,9 @@ const TestBox = ({ title, stream_name }: ITestBoxProps) => {
 
         <div className="flex items-center">
           <Users size={14} className="mr-1 text-gray-400" />
-          <span className="text-xs text-gray-500">45 students</span>
+          <span className="text-xs text-gray-500">
+            {students_count} students
+          </span>
         </div>
 
         <div className="flex w-full items-center justify-between border-t border-gray-100 pt-4">

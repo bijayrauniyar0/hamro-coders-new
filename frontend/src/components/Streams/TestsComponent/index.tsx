@@ -10,10 +10,8 @@ import hasErrorBoundary from '@Components/common/hasErrorBoundary';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import Searchbar from '@Components/common/SearchBar';
-// import Modes from '@Components/Modes';
 import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
-// import { useTypedSelector } from '@Store/hooks';
 import { TestsType } from '@Constants/Types/academics';
 import { getTestsByStreams } from '@Services/academics';
 
@@ -21,12 +19,6 @@ import TestBox from './TestBox';
 
 const MockTests = () => {
   const [searchValue, setSearchValue] = useState('');
-  // const [isModesOpen, setIsModesOpen] = useState(false);
-  // const [selectedTest, setSelectedTest] = useState<number>();
-
-  // const selectedMode = useTypedSelector(
-  //   state => state.commonSlice.selectedMode,
-  // );
 
   const { stream_id } = useParams();
   const navigate = useNavigate();
@@ -79,12 +71,12 @@ const MockTests = () => {
                     key={test.id}
                     onClick={() => {
                       navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
-                      // setIsModesOpen(true);
                     }}
                   >
                     <TestBox
                       title={test.title}
                       stream_name={test.stream_name}
+                      students_count={test.students_count}
                     />
                   </motion.button>
                 );
@@ -93,16 +85,6 @@ const MockTests = () => {
           </FlexColumn>
         )}
       </FlexColumn>
-      {/* {isModesOpen && (
-        <Modes
-          onClose={() => setIsModesOpen(false)}
-          handleNextClick={() =>
-            navigate(
-              `/mcq/streams/${stream_id}/?test_id=${selectedTest}&mode=${selectedMode}`,
-            )
-          }
-        />
-      )} */}
     </BindContentContainer>
   );
 };
