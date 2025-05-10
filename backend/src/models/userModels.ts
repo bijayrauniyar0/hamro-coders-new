@@ -42,6 +42,11 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    oauth_provider: {
+      type: DataTypes.ENUM('local', 'google'),
+      allowNull: false,
+      defaultValue: 'local',
+    },
     verified: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -50,7 +55,6 @@ User.init(
   },
   {
     sequelize,
-    modelName: 'User',
     tableName: 'users',
     timestamps: true,
     updatedAt: 'updated_at',
