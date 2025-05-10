@@ -1,5 +1,6 @@
 // import ModesPage from '@Views/Modes';
 import PageNotFound from '@Components/common/PageNotFound';
+import MockTestDetails from '@Components/MockTestDetails';
 import Streams from '@Components/Streams';
 import Tests from '@Components/Streams/MockTestsComponent';
 import TestimonialForm from '@Components/Testimonial';
@@ -88,8 +89,13 @@ const appRoutes: IRoute[] = [
     authenticated: false,
   },
   {
+    name: 'Mock Test',
+    path: '/streams/mock-test/:stream_id/',
+    component: MockTestDetails,
+  },
+  {
     name: 'MCQ',
-    path: '/mcq/:stream_id/*',
+    path: '/mcq/:stream_id/',
     component: MCQPage,
     authenticated: true,
   },
