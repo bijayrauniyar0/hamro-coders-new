@@ -39,3 +39,33 @@ export const authenticate = async (
     res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
+
+export const maybeAuthenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  const token = req.cookies?.token;
+
+  if (!token) {
+    return next(); // No token — proceed as guest
+  }
+
+  try {
+    const decoded = verifyToken(token);
+
+    if (decoded && typeof decoded === 'object' && 'id' in decoded) {
+      const user = await User.findByPk(decoded.id, {
+        attributes: { exclude: ['password'] },
+      });
+
+      if (user) {
+        req.user = user;
+      }
+    }
+  } catch {
+    // Don't throw or return — just skip setting req.user
+  }
+
+  next(); // Always continue to controller
+};

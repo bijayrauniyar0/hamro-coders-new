@@ -4,8 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
 
 import { setUserProfile } from '@Store/actions/common';
-import { useTypedDispatch } from '@Store/hooks';
-import useAuth from '@Hooks/useAuth';
+import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
 import { getUserProfile } from '@Services/common';
 
 import Navbar from './components/common/Navbar';
@@ -17,7 +16,9 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const { pathname } = useLocation();
   const dispatch = useTypedDispatch();
-  const isAuthenticated = useAuth();
+  const isAuthenticated = useTypedSelector(
+    state => state.commonSlice.isAuthenticated,
+  );
   const routesWithoutNavbar = [
     '/login',
     '/signup',
