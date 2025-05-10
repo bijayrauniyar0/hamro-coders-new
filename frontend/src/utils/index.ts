@@ -123,7 +123,6 @@ export const getElapsedTimeInSeconds = (startTime: Date) => {
   return elapsedSeconds;
 };
 
-
 export const formatDate = (date: string) => {
   const createdAt = new Date(date);
   const now = new Date();
@@ -145,4 +144,13 @@ export const formatDate = (date: string) => {
       year: 'numeric',
     });
   }
+};
+
+export const getFormattedDate = (date: string) => {
+  const createdAt = new Date(date);
+  return createdAt.toLocaleDateString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+  });
 };
