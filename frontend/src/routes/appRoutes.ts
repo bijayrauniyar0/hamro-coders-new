@@ -94,15 +94,15 @@ const appRoutes: IRoute[] = [
     authenticated: true,
   },
   {
-    name: 'Page Not Found',
-    path: '*',
-    component: PageNotFound,
-  },
-  {
     name: 'About Us',
     path: '/about-us',
     component: AboutUsPage,
     authenticated: false,
+  },
+  {
+    name: 'Page Not Found',
+    path: '*',
+    component: PageNotFound,
   },
 ];
 

@@ -59,10 +59,10 @@ export const getNotificationCount = () => {
   return authenticated(api).get('/api/notification/unread-count/');
 };
 
-export const getNotifications = () => {
-  return authenticated(api).get('/api/notification/');
+export const getNotifications = (params: Record<string, any>) => {
+  return authenticated(api).get('/api/notification/', { params });
 };
-export const markNotificationAsRead = (notificationId: string) => {
+export const markNotificationAsRead = (notificationId: number) => {
   return authenticated(api).post(`/api/notification/${notificationId}/`);
 };
 export const markAllNotificationsAsRead = () => {
