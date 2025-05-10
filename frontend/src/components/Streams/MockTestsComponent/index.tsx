@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { cardVariants, containerVariants } from '@Animations/index';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
@@ -12,6 +13,7 @@ import NoDataAvailable from '@Components/common/NoDataAvailable';
 import Searchbar from '@Components/common/SearchBar';
 import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
+import { useTypedSelector } from '@Store/hooks';
 import { TestsType } from '@Constants/Types/academics';
 import { getTestsByStreams } from '@Services/academics';
 import { toggleBookmark } from '@Services/bookmark';
@@ -20,9 +22,13 @@ import TestBox from './MockTestBox';
 
 const MockTests = () => {
   const [searchValue, setSearchValue] = useState('');
+  const queryClient = useQueryClient();
 
   const { stream_id } = useParams();
   const navigate = useNavigate();
+  const isAuthenticated = useTypedSelector(
+    state => state.commonSlice.isAuthenticated,
+  );
 
   const { data: mockTestsData, isLoading: mockTestsDataIsLoading } = useQuery({
     queryKey: ['mockTests'],
@@ -41,6 +47,9 @@ const MockTests = () => {
   const { mutate: updateBookmark } = useMutation({
     mutationFn: (mockTestId: number) => {
       return toggleBookmark(mockTestId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mockTests'] });
     },
   });
 
@@ -84,6 +93,11 @@ const MockTests = () => {
                         navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
                       }}
                       onBookMarkClick={() => {
+                        if (!isAuthenticated) {
+                          toast.error('Please login to bookmark the test');
+                          navigate('/login');
+                          return;
+                        }
                         updateBookmark(test.id);
                       }}
                     />
