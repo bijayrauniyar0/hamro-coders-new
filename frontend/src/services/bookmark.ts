@@ -1,7 +1,7 @@
 import { api, authenticated } from '.';
 
 export const toggleBookmark = async (mock_test_id: number) => {
-  return authenticated(api).post(`/api/bookmarks/${mock_test_id}`);
+  return authenticated(api).post(`/api/bookmarks/toggle/${mock_test_id}`);
 };
 
 export const getBookmarks = async () => {

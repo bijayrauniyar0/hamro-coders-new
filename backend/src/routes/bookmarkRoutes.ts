@@ -8,6 +8,6 @@ import { authenticate } from '../middlewares/authenticate';
 const bookmarkRouter = express.Router();
 
 bookmarkRouter.get('/', authenticate, getAllBookmarks);
-bookmarkRouter.post('/toggle/', authenticate, toggleBookmark);
+bookmarkRouter.post('/toggle/:mock_test_id', authenticate, toggleBookmark);
 
 export default bookmarkRouter;

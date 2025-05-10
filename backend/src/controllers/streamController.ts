@@ -3,6 +3,7 @@ import Test from '../models/mockTestModel';
 import { Request, Response } from 'express';
 import UserScores from '../models/userScoresModels';
 import MockTest from '../models/mockTestModel';
+import Bookmark from '../models/bookmarksModel';
 
 export class StreamsService {
   async getStreams() {
@@ -105,9 +106,21 @@ export const getMockTestsListByStream = async (req: Request, res: Response) => {
             },
           ],
         });
+        let bookmark = false;
+        if (req.user) {
+          const bookmarks = await Bookmark.findOne({
+            where: {
+              user_id: req.user.id,
+              mock_test_id: test.id,
+            },
+          });
+          bookmark = !!bookmarks;
+        }
+
         return {
           ...test,
           students_count: studentsCount,
+          bookmark,
         };
       }),
     );

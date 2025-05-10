@@ -44,12 +44,13 @@ export const getAllBookmarks = async (req: Request, res: Response) => {
 export const toggleBookmark = async (req: Request, res: Response) => {
   try {
     const userId = req.user.id;
-    const { mock_test_id } = req.body;
-
+    const { mock_test_id } = req.params;
+    if (!mock_test_id) {
+      res.status(400).json({ message: 'Mock test ID is required' });
+    }
     const existingBookmark = await Bookmark.findOne({
       where: { user_id: userId, mock_test_id },
     });
-
     if (existingBookmark) {
       await existingBookmark.destroy();
       res.status(200).json({ message: 'Bookmark removed' });
@@ -60,8 +61,11 @@ export const toggleBookmark = async (req: Request, res: Response) => {
       user_id: userId,
       mock_test_id,
     });
-
-    res.status(201).json(newBookmark);
+    if (!newBookmark) {
+      res.status(500).json({ message: 'Failed to add bookmark' });
+      return;
+    }
+    res.status(201).json({ message: 'Bookmark added' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
   }
