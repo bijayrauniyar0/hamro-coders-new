@@ -344,7 +344,6 @@ export const getPerformanceTrend = async (
 
     const rangeStarts = [getStartDate(3), getStartDate(2), getStartDate(1)];
 
-    // console.log(rangeStarts, '000000-----------------------');
     const scores = await UserScores.findAll({
       where: {
         user_id: user.id,
