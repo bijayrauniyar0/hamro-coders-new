@@ -2,25 +2,7 @@
 import { Request, Response } from 'express';
 import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
-import { generateToken, verifyToken } from '../utils/jwtUtils';
-import { sendVerificationEmail } from '../utils/mailer';
-import path from 'path';
 
-export class UserService {
-  email: string;
-  name: string;
-
-  constructor(name: string, email: string) {
-    this.email = email;
-    this.name = name;
-  }
-  sendVerificationEmail = async (): Promise<any> => {
-    const token = generateToken({ email: this.email, name: this.name }, 300);
-
-    const verificationLink = `http://localhost:9000/api/user/verify-email?token=${token}`;
-    await sendVerificationEmail(this.email, this.name, verificationLink);
-  };
-}
 // Get all users
 export const getAllUsers = async (_: Request, res: Response) => {
   try {
@@ -42,9 +24,6 @@ export const getUserProfile = async (
       where: { id: user.id },
       attributes: { exclude: ['password', 'created_at', 'updated_at'] },
     });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
     res.status(200).json(userData);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user', error });
@@ -92,69 +71,5 @@ export const deleteUser = async (req: Request, res: Response): Promise<any> => {
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ message: 'Error deleting user', error });
-  }
-};
-
-export const verifyEmail = async (
-  req: Request<unknown, unknown, unknown, { token: string }>,
-  res: Response,
-) => {
-  try {
-    const { token } = req.query;
-    if (!token) {
-      res.status(400).json({ message: 'Token is required' });
-      return; 
-    }
-    const decoded = verifyToken(token);
-    if (typeof decoded !== 'object' || !decoded) {
-      res.sendFile(
-        path.join(__dirname, '../../public/verificationFailed.html'),
-      );
-      return;
-    }
-    const { email } = decoded;
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      res.sendFile(
-        path.join(__dirname, '../../public/verificationFailed.html'),
-      );
-      return;
-    }
-    user.verified = true;
-    await user.save();
-    res.sendFile(path.join(__dirname, '../../public/verificationSuccess.html'));
-  } catch (error) {
-    res.status(500).json({ message: 'Error verifying email', error });
-  }
-};
-
-export const resendVerificationEmail = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      res.status(400).json({ message: 'Email is required' });
-      return;
-    }
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-    if (user.verified) {
-      res.status(400).json({ message: 'User already verified' });
-      return;
-    }
-    const userService = new UserService(user.name, user.email);
-    await userService.sendVerificationEmail();
-    res.status(200).json({
-      message: 'Verification email resent successfully',
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: 'Error sending verification email', error });
   }
 };

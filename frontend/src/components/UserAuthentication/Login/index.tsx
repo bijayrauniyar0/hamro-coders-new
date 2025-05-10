@@ -6,11 +6,10 @@ import { useMutation } from '@tanstack/react-query';
 
 import ErrorMessage from '@Components/common/ErrorMessage';
 import { Input } from '@Components/common/FormUI';
-import Checkbox from '@Components/common/FormUI/CheckBox';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { setUserProfile } from '@Store/actions/common';
+import { setIsAuthenticated, setUserProfile } from '@Store/actions/common';
 import { useTypedDispatch } from '@Store/hooks';
 import { login } from '@Services/common';
 import { apiURL } from '@Services/index';
@@ -44,6 +43,7 @@ export default function Login() {
       dispatch(setUserProfile(res.data.user));
       toast.success('Login Successful');
       navigate('/');
+      dispatch(setIsAuthenticated(true));
     },
     onError: ({ response }: any) => {
       if (response?.status === 401 && response?.data?.verified === false) {
@@ -52,6 +52,7 @@ export default function Login() {
         );
         dispatch(setUserProfile({ email: watch('email') }));
         navigate('/verify-email');
+        return;
       }
       const caughtError = response?.data?.message || 'Something went wrong.';
       toast.error(caughtError || 'Login Failed Something Went Wrong');
@@ -66,8 +67,8 @@ export default function Login() {
   };
 
   return (
-    <div className="login-form-wrapper h-full">
-      <div className="login-inner grid h-full place-items-center">
+    <div className="h-full">
+      <div className="grid h-full place-items-center">
         <div className="login-form w-full overflow-hidden p-7 text-center sm:min-w-[25.25rem] sm:px-12 lg:px-16">
           {/* ------ icon ------ */}
 
@@ -95,7 +96,7 @@ export default function Login() {
               )}
             </FormControl>
 
-            <FormControl className="relative mb-3">
+            <FormControl className="relative mb-2 md:mb-3">
               <InputLabel label="Password" className="mb-1 text-xs" />
               <Input
                 id="password"
@@ -116,12 +117,7 @@ export default function Login() {
             </FormControl>
 
             {/* ---- remember-me ---- */}
-            <div className="flex items-center justify-between gap-2">
-              <Checkbox
-                label="Remember me"
-                labelClassName="!text-gray-800  !mb-0"
-                // onClick={(0)}
-              />
+            <div className="flex items-center justify-end gap-2">
               <p
                 className="body-md-semibold cursor-pointer px-2 py-3 text-primary-800"
                 onClick={() => navigate('/forgot-password')}
@@ -132,7 +128,7 @@ export default function Login() {
 
             <FlexColumn className="w-full items-center justify-center gap-8">
               <Button
-                className="mt-10 w-full p-3"
+                className="mt-6 w-full p-3 md:mt-10"
                 disabled={isSubmitting}
                 isLoading={isSubmitting}
                 type="submit"

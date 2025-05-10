@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../../utils/jwtUtils';
+import User from '../../models/userModels';
 
-// Middleware to authenticate routes
-export const authenticate = (
+export const authenticate = async (
   req: Request,
   res: Response,
   next: NextFunction,
-): void => {
+): Promise<void> => {
   const token = req.cookies?.token;
 
   if (!token) {
@@ -16,10 +16,26 @@ export const authenticate = (
 
   try {
     const decoded = verifyToken(token);
-    req.user = decoded as Record<string, any>; // Attach decoded user data to the request object
-    return next(); // Proceed to the next middleware
+
+    if (!decoded || typeof decoded !== 'object' || !('id' in decoded)) {
+      res.status(401).json({ message: 'Invalid token format' });
+      return;
+    }
+
+    // Optional: fetch full user info (exclude password)
+    const user = await User.findByPk(decoded.id, {
+      attributes: { exclude: ['password'] },
+    });
+
+    if (!user) {
+      res.status(401).json({ message: 'User not found' });
+      return;
+    }
+
+    req.user = user; // Add user to request
+    next();
   } catch {
+    res.clearCookie('token');
     res.status(401).json({ message: 'Invalid or expired token' });
-    return;
   }
 };

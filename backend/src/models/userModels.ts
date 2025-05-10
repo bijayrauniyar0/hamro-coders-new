@@ -36,12 +36,11 @@ User.init(
     number: {
       type: DataTypes.STRING,
       allowNull: true,
-      unique: true,
+      unique: false,
     },
     avatar: {
       type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: 'bear',
+      allowNull: true,
     },
     verified: {
       type: DataTypes.BOOLEAN,

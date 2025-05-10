@@ -1,8 +1,15 @@
 import { z } from 'zod';
 
+import { emailSchema } from '..';
+
 export const signupSchemaStepOne = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
+  name: z
+    .string()
+    .min(1, 'Name is required')
+    .regex(/^[a-zA-Z0-9\s]+$/, {
+      message: 'Only letters, numbers, and spaces are allowed',
+    }),
+  email: emailSchema,
   number: z
     .string()
     .optional()
@@ -11,7 +18,7 @@ export const signupSchemaStepOne = z.object({
     }),
 });
 
-export const signupSchemaStepTwo = z
+export const passwordValidation = z
   .object({
     password: z.string().min(6, 'Password must be at least 6 characters long'),
     confirmPassword: z

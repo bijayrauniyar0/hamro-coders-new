@@ -58,6 +58,12 @@ body {
     opacity: 0.3;
   }
 }
+@media screen and (max-width: 1024px) {
+  .slick-slide {
+    transform: scale(0.7);
+    opacity: 0.3;
+  }
+}
 
 .slick-center {
   opacity: 1 !important;

@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 
 import { setUserProfile } from '@Store/actions/common';
 import { useTypedDispatch } from '@Store/hooks';
 import useAuth from '@Hooks/useAuth';
-import { checkLogin } from '@Services/common';
+import { getUserProfile } from '@Services/common';
 
 import Navbar from './components/common/Navbar';
 import appRoutes from './routes/appRoutes';
@@ -18,47 +17,30 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const { pathname } = useLocation();
   const dispatch = useTypedDispatch();
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const routesWithoutNavbar = ['/login', '/signup', '/verify-email', '/mcq'];
+  const isAuthenticated = useAuth();
+  const routesWithoutNavbar = [
+    '/login',
+    '/signup',
+    '/verify-email',
+    '/mcq',
+    '/forgot-password',
+    '/verify-forgot-password',
+    '/reset-password',
+  ];
   const showNavbar = !routesWithoutNavbar.some(route =>
     pathname.includes(route),
   );
-  const {
-    isSuccess: isUserLoggedIn,
-    isError: errorUserLogin,
-    error: loginError,
-    data: loggedInUserDetails,
-    refetch: checkLoggedInUser,
-  } = useQuery({
+  const { isSuccess: isUserDataFetched, data: loggedInUserDetails } = useQuery({
     queryKey: ['checkLogin', isAuthenticated],
-    queryFn: () => checkLogin(),
-    select: ({ data }) => data?.user,
-    enabled: true,
+    queryFn: () => getUserProfile(),
+    select: ({ data }) => data,
+    enabled: Boolean(isAuthenticated),
   });
-
   useEffect(() => {
-    if (isAuthenticated) {
-      checkLoggedInUser();
-    }
-  }, [isAuthenticated]);
-  useEffect(() => {
-    if (errorUserLogin) {
-      const axiosError = loginError as AxiosError;
-      if (axiosError?.response?.status === 401) {
-        navigate('/login');
-        dispatch(setUserProfile({}));
-        return;
-      }
-    }
-  }, [errorUserLogin]);
-
-  useEffect(() => {
-    if (isUserLoggedIn && loggedInUserDetails) {
+    if (isUserDataFetched && loggedInUserDetails) {
       dispatch(setUserProfile(loggedInUserDetails));
     }
-  }, [isUserLoggedIn, loggedInUserDetails, dispatch, setUserProfile]);
-
+  }, [loggedInUserDetails, dispatch, isUserDataFetched]);
   return (
     <>
       {showNavbar && <Navbar />}

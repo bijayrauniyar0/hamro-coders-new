@@ -4,45 +4,81 @@ import { findOrCreateGoogleUser } from '../services/authService';
 import dotenv from 'dotenv';
 import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
-import { UserService } from './userController';
 import { generateToken, verifyToken } from '../utils/jwtUtils';
+import {
+  FRONTEND_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URI,
+  NODE_ENV,
+} from '../constants';
+import { sendEmail } from '../utils/mailer';
+import path from 'path';
+import ejs from 'ejs';
 
 dotenv.config();
 
 const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID!,
-  process.env.GOOGLE_CLIENT_SECRET!,
-  'http://localhost:9000/api/auth/google/callback',
+  GOOGLE_CLIENT_ID!,
+  GOOGLE_CLIENT_SECRET!,
+  GOOGLE_REDIRECT_URI!,
 );
 
 const SCOPES = ['profile', 'email'];
 
 export class AuthService {
-  async createUser({
-    name,
-    email,
-    password,
-    number,
-  }: {
-    name: string;
-    email: string;
-    password: string;
-    number: string;
-  }) {
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      number,
-    });
-
-    if (!newUser) {
-      throw new Error('User creation failed');
-    }
-    return newUser;
+  name: string;
+  email: string;
+  constructor(name: string, email: string) {
+    this.name = name;
+    this.email = email;
   }
+  private generateToken = (payload: object, expiresIn: number) => {
+    return generateToken(payload, expiresIn);
+  };
+  sendVerificationEmail = async (): Promise<any> => {
+    const token = this.generateToken(
+      { email: this.email, name: this.name },
+      300,
+    );
+
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'templates',
+      'emailVerification.ejs',
+    );
+    const verificationLink = `${FRONTEND_URL}/email-verification/${token}`;
+    const verificationTemplate = await ejs.renderFile(templatePath, {
+      verificationLink: verificationLink,
+      currentYear: new Date().getFullYear(),
+      userName: this.name,
+      expiryTime: '30 minutes',
+    });
+    await sendEmail(this.email, verificationTemplate);
+  };
+  sendPasswordResetEmail = async (): Promise<any> => {
+    const token = this.generateToken(
+      { email: this.email, name: this.name },
+      1200,
+    );
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'templates',
+      'resetPassword.ejs',
+    );
+    const resetLink = `${FRONTEND_URL}/reset-password/${token}`;
+    const resetTemplate = await ejs.renderFile(templatePath, {
+      resetLink: resetLink,
+      currentYear: new Date().getFullYear(),
+      userName: this.name,
+      expiryTime: '10 minutes',
+    });
+    await sendEmail(this.email, resetTemplate);
+  };
 }
+
 export const googleAuthRedirect = (req: Request, res: Response) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -71,11 +107,11 @@ export const googleAuthCallback = async (req: Request, res: Response) => {
     // Store in cookie or session
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-    res.redirect('http://localhost:3030/');
+    res.redirect(FRONTEND_URL!);
   } catch (err) {
     res.status(500).send({ message: 'Google Auth failed', err });
   }
@@ -96,12 +132,12 @@ export const createUser = async (req: Request, res: Response) => {
       res.status(400).json({ message: 'User creation failed' });
       return;
     }
-    const userService = new UserService(name, email);
+    const userService = new AuthService(name, email);
     try {
       await userService.sendVerificationEmail();
       res.status(201).json({
         message: 'User created successfully. Verification email sent.',
-        user_id: newUser.id,
+        user_id: 20,
       });
     } catch (error) {
       res.status(500).json({ message: 'Failed to send email', details: error });
@@ -151,7 +187,7 @@ export const loginController = async (
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -169,37 +205,14 @@ export const loginController = async (
 };
 
 export const checkLogin = async (req: Request, res: Response) => {
-  const token = req.cookies.token; // token is stored in cookie
-  if (!token) {
+  const user = req.user;
+  if (!user) {
     res.status(401).json({ isAuthenticated: false });
     return;
   }
-
-  try {
-    const decoded = verifyToken(token);
-    if (!decoded || typeof decoded === 'string' || !('id' in decoded)) {
-      res.status(401).json({ isAuthenticated: false });
-      return;
-    }
-    const userData = await User.findOne({
-      where: { id: decoded.id },
-      attributes: { exclude: ['password', 'created_at', 'updated_at'] },
-    });
-    res.status(200).json({ isAuthenticated: true, user: userData });
-
-    return;
-  } catch {
-    res.clearCookie('token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax', // or 'none' for cross-origin
-    });
-    res.status(401).json({
-      isAuthenticated: false,
-      message: 'Session expired. Please log in again.',
-    });
-    return;
-  }
+  res.status(200).json({
+    isAuthenticated: true,
+  });
 };
 
 export const getCurrentUser = (req: Request, res: Response) => {
@@ -218,11 +231,220 @@ export const logoutController = async (
   try {
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'lax',
     });
     res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
     res.status(500).json({ message: 'Error logging out', error });
+  }
+};
+
+export const verifyEmail = async (
+  req: Request<unknown, unknown, { token: string }, unknown>,
+  res: Response,
+) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      res.status(400).json({ message: 'Token is required' });
+      return;
+    }
+    const decoded = verifyToken(token);
+    if (typeof decoded !== 'object' || !decoded) {
+      res
+        .status(400)
+        .json({ message: 'Invalid token', verificationStatus: 'failed' });
+      return;
+    }
+    const { email } = decoded;
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res
+        .status(400)
+        .json({ message: 'Invalid User', verificationStatus: 'failed' });
+      return;
+    }
+    user.verified = true;
+    const isUserVerified = await user.save();
+    if (!isUserVerified) {
+      res.status(400).json({
+        message: 'Error Verifying Email',
+        verificationStatus: 'failed',
+      });
+
+      return;
+    }
+    res.status(200).json({
+      message: 'Email verified successfully',
+      verificationStatus: 'success',
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error verifying email', error });
+  }
+};
+
+export const resendVerificationEmail = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email: reqEmail, token } = req.body;
+
+    if (!reqEmail && !token) {
+      res.status(400).json({
+        isVerified: false,
+        userFound: false,
+        message: 'Either name & email or token is required.',
+      });
+      return;
+    }
+    let email = reqEmail;
+    if (token) {
+      const decoded = verifyToken(token);
+      if (typeof decoded !== 'object' || !decoded) {
+        res.status(400).json({
+          isVerified: false,
+          userFound: false,
+          message: 'Invalid token.',
+        });
+        return;
+      }
+      email = decoded.email;
+    }
+
+    // Check if user exists in the database
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      res.status(404).json({
+        isVerified: false,
+        userFound: false,
+        message: 'User not found.',
+      });
+      return;
+    }
+
+    // Check if the user is already verified
+    if (user.verified) {
+      res.status(400).json({
+        isVerified: true,
+        userFound: true,
+        message: 'User already verified.',
+      });
+      return;
+    }
+
+    const userService = new AuthService(user.name, user.email);
+
+    try {
+      await userService.sendVerificationEmail();
+      res.status(200).json({
+        isVerified: false,
+        userFound: true,
+        message: 'Verification email resent successfully!',
+      });
+      return;
+    } catch {
+      res.status(500).json({
+        isVerified: false,
+        userFound: true,
+        message: 'Failed to send verification email.',
+      });
+      return;
+    }
+  } catch {
+    res.status(500).json({
+      isVerified: false,
+      userFound: false,
+      message: 'An unexpected error occurred. Please try again later.',
+    });
+    return;
+  }
+};
+
+export const checkIfEmailExists = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ message: 'Email is required' });
+      return;
+    }
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      res.status(200).json({ exists: true });
+    } else {
+      res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ message: 'Email is required' });
+      return;
+    }
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    const userService = new AuthService(user.name, user.email);
+
+    try {
+      await userService.sendPasswordResetEmail();
+      res.status(200).json({
+        message: 'Password Reset email sent successfully!',
+      });
+      return;
+    } catch (error) {
+      res.status(500).json({
+        message: 'Failed to send password reset link.',
+        error,
+      });
+      return;
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+export const resetForgotPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      res.status(400).json({ message: 'Token and password are required' });
+      return;
+    }
+    const decoded = verifyToken(token);
+    if (typeof decoded !== 'object' || !decoded) {
+      res.status(400).json({ message: 'Invalid token' });
+      return;
+    }
+    const { email } = decoded;
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+    res.status(200).json({ message: 'Password reset successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };

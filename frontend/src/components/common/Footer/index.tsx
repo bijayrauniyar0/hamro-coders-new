@@ -3,8 +3,6 @@ import {
   Facebook,
   Instagram,
   Mail,
-  MapPin,
-  Phone,
   Twitter,
 } from 'lucide-react';
 
@@ -74,14 +72,14 @@ const Footer = () => {
                   <Mail size={16} />
                   <span className='text-md md:text-md lg:text-base '>support@mocksewa.com</span>
                 </FlexRow>
-                <FlexRow className="items-center gap-2">
+                {/* <FlexRow className="items-center gap-2">
                   <Phone size={16} />
                   <span className='text-md md:text-md lg:text-base '>+1 (555) 123-4567</span>
                 </FlexRow>
                 <FlexRow className="items-center gap-2">
                   <MapPin size={16} />
                   <span className='text-md md:text-md lg:text-base '>123 Test Lane, Examville</span>
-                </FlexRow>
+                </FlexRow> */}
               </FlexColumn>
             </FlexColumn>
           </Grid>

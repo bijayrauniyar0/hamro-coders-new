@@ -23,6 +23,18 @@ export const createNewUser = (payload: Record<string, any>) => {
   return api.post('/api/auth/signup/', { ...payload });
 };
 
+export const checkIfEmailExists = (payload: Record<string, any>) => {
+  return api.post('/api/auth/check-email-exists/', { ...payload });
+};
+
+export const resendVerificationEmail = (payload: Record<string, any>) => {
+  return api.post('/api/auth/resend-verification-mail/', payload);
+};
+
+export const verifyEmail = (payload: Record<string, any>) => {
+  return api.post('/api/auth/verify-email/', payload);
+};
+
 export const updateUser = (payload: Partial<User>) => {
   return authenticated(api).patch('/api/user/update/profile/', {
     ...payload,
@@ -37,6 +49,10 @@ export const changePassword = (payload: IChangePasswordPayload) => {
 
 export const login = (payload: Record<string, any>) => {
   return api.post('/api/auth/login/', { ...payload });
+};
+
+export const forgotPassword = (payload: Record<string, any>) => {
+  return api.post('/api/auth/forgot-password/', { ...payload });
 };
 
 export const getNotificationCount = () => {

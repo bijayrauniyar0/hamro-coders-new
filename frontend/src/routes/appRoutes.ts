@@ -2,7 +2,9 @@
 import PageNotFound from '@Components/common/PageNotFound';
 import Streams from '@Components/Streams';
 import Tests from '@Components/Streams/TestsComponent';
+import TestimonialForm from '@Components/Testimonial';
 import AuthenticationComponent from '@Components/UserAuthentication';
+import EmailVerification from '@Components/UserAuthentication/Verification';
 import AboutUsPage from '@Views/AboutUs';
 import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
@@ -26,6 +28,33 @@ const appRoutes: IRoute[] = [
     name: 'Verify Email',
     path: '/verify-email',
     component: AuthenticationComponent,
+  },
+  {
+    name: 'Verify Forgot Password',
+    path: '/verify-forgot-password',
+    component: AuthenticationComponent,
+  },
+  {
+    name: 'Forgot Password',
+    path: '/forgot-password',
+    component: AuthenticationComponent,
+  },
+  {
+    name: 'Reset Password',
+    path: '/reset-password/:token',
+    component: AuthenticationComponent,
+  },
+  {
+    name: 'Email Verified',
+    path: '/email-verification/:token',
+    component: EmailVerification,
+    authenticated: false,
+  },
+  {
+    name: 'Testimonial',
+    path: '/testimonial',
+    component: TestimonialForm,
+    authenticated: false,
   },
   {
     name: 'Leaderboard',

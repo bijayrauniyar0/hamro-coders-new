@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@Components/radix/DropDownMenu';
-import { setUserProfile } from '@Store/actions/common';
+import { setIsAuthenticated, setUserProfile } from '@Store/actions/common';
 import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
 import { avatars } from '@Constants/UserProfile';
 import { logoutUser } from '@Services/common';
@@ -32,6 +32,7 @@ const AccountMenu = () => {
       toast.success('Logged Out Successfully');
       dispatch(setUserProfile({}));
       navigate('/login');
+      dispatch(setIsAuthenticated(false));
     },
   });
   const handleLogout = () => {

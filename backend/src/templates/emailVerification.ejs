@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Your Email - Mock Sewa</title>
+    <style>
+      /* Base styles */
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      }
+
+      .header {
+        background-color: #886db0;
+        color: #ffffff;
+        padding: 24px;
+        text-align: start;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .content {
+        padding: 30px 24px;
+      }
+
+      .button {
+        display: block;
+        background-color: #886db0;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 14px 24px;
+        border-radius: 4px;
+        margin: 30px auto;
+        text-align: center;
+        font-weight: bold;
+        width: 200px;
+      }
+
+      .footer {
+        background-color: #f5f7fa;
+        padding: 20px 24px;
+        text-align: center;
+        font-size: 12px;
+        color: #666666;
+      }
+
+      .social-links {
+        margin: 15px 0;
+      }
+
+      .social-icon {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background-color: #886db0;
+        border-radius: 50%;
+        margin: 0 5px;
+        color: white;
+        text-align: center;
+        line-height: 32px;
+        font-size: 16px;
+        text-decoration: none;
+      }
+
+      .divider {
+        border-top: 1px solid #eeeeee;
+        margin: 20px 0;
+      }
+
+      /* Responsive adjustments */
+      @media screen and (max-width: 480px) {
+        .container {
+          width: 100%;
+          border-radius: 0;
+        }
+
+        .button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body
+  style="
+    margin: 0;
+    padding: 24px 0px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+  "
+>    <div class="container">
+      <div class="header">
+        <div class="logo">Mock Sewa</div>
+      </div>
+
+      <div class="content">
+        <h2>Verify Your Email Address</h2>
+
+        <p>Hello <%= userName %>,</p>
+
+        <p>
+          Thank you for registering with Mock Sewa. To complete your
+          registration and access our services, please verify your email address
+          by clicking the button below:
+        </p>
+
+        <a href="<%= verificationLink %>" class="button" style="color: white"
+          >Verify My Email</a
+        >
+
+        <p>
+          If you did not create an account with Mock Sewa, please ignore this
+          email or contact our support team if you have concerns.
+        </p>
+
+        <div class="divider"></div>
+
+        <p>
+          This verification link will expire in
+          <strong style="color: #886db0"><%= expiryTime %></strong>.
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>© <%= currentYear %> Mock Sewa. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>

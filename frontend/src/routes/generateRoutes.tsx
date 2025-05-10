@@ -12,11 +12,11 @@ interface IGenerateRouteProps {
   fallback?: ReactNode;
 }
 
-const generateRoutes = ({
+const GenerateRoutes = ({
   routes,
   fallback = <Fallback />,
 }: IGenerateRouteProps) => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useAuth();
   return (
     <Suspense fallback={fallback}>
       <Routes>
@@ -70,4 +70,4 @@ const generateRoutes = ({
   );
 };
 
-export default generateRoutes;
+export default GenerateRoutes;

@@ -2,12 +2,13 @@
 import React from 'react';
 
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import { Testimonial } from '@Constants/Home';
+import { TestimonialType } from '@Constants/Home';
 
+// import { Testimonial } from '@Constants/Home';
 import { FullStar, HalfStar } from './Star';
 
 interface Props {
-  testimonial: Testimonial;
+  testimonial: TestimonialType;
 }
 
 const renderStars = (rating: number) => {
@@ -25,21 +26,25 @@ const renderStars = (rating: number) => {
 
 const TestimonialCard: React.FC<Props> = ({ testimonial }) => {
   return (
-    <FlexColumn className="gap-4 rounded-lg bg-white p-4 shadow-md md:shadow-lg md:p-8">
+    <FlexColumn className="gap-4 rounded-lg bg-white p-4 shadow-md md:p-8 max-sm:w-[calc(100vw-7rem)] md:shadow-lg md:min-w-[18rem] lg:min-w-[22rem] xl:min-w-[25rem]">
       <FlexRow className="items-center gap-4">
         <img
-          src={testimonial.imageUrl}
-          alt={testimonial.name}
+          src={testimonial.profile_photo}
+          alt={testimonial.full_name}
           className="h-8 w-8 rounded-full md:h-12 md:w-12"
         />
         <div>
           <p className="text-md font-bold leading-4 md:text-base md:leading-normal">
-            {testimonial.name}
+            {testimonial.full_name}
           </p>
-          <p className="text-sm text-gray-600 md:text-md">{testimonial.role}</p>
+          <p className="text-sm text-gray-600 md:text-md">
+            {testimonial.exam_type}
+          </p>
         </div>
       </FlexRow>
-      <p className="text-gray-700 text-sm md:text-md md:h-[5rem]">&quot;{testimonial.message}&quot;</p>
+      <p className="text-sm text-gray-700 md:text-md">
+        &quot;{testimonial.testimonial}&quot;
+      </p>
       <div className="flex">{renderStars(testimonial.rating)}</div>
     </FlexColumn>
   );

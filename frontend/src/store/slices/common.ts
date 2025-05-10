@@ -10,15 +10,14 @@ export type User = {
 
 type CommonState = {
   isModesOpen: boolean;
-  selectedMode?: string;
   userProfile: Partial<User>;
   [key: string]: any;
 };
 
 const initialState: CommonState = {
   isModesOpen: false,
-  selectedMode: 'ranked',
   userProfile: {},
+  isAuthenticated: false,
 };
 
 const setIsModesOpen = (state: CommonState, action: PayloadAction<boolean>) => {
@@ -34,11 +33,6 @@ const setGameDetails = (
   return { ...state, ...payload };
 };
 
-const setSelectedMode = (state: CommonState, action: PayloadAction<string>) => {
-  const { payload } = action;
-  state.selectedMode = payload;
-};
-
 const setUserProfile = (
   state: CommonState,
   action: PayloadAction<Partial<User>>,
@@ -47,14 +41,22 @@ const setUserProfile = (
   state.userProfile = payload;
 };
 
+const setIsAuthenticated = (
+  state: CommonState,
+  action: PayloadAction<boolean>,
+) => {
+  const { payload } = action;
+  state.isAuthenticated = payload;
+};
+
 const commonSlice = createSlice({
   name: 'common',
   initialState,
   reducers: {
     setIsModesOpen,
     setGameDetails,
-    setSelectedMode,
     setUserProfile,
+    setIsAuthenticated,
   },
 });
 

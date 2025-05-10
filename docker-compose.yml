@@ -48,18 +48,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network # Ensure the database is on the app-network
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL} # Set pgAdmin email (you can change this)
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD} # Set pgAdmin password (you can change this)
-    ports:
-      - "5050:80" # Access pgAdmin at localhost:5050
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    networks:
-      - app-network
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL} # Set pgAdmin email (you can change this)
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD} # Set pgAdmin password (you can change this)
+  #   ports:
+  #     - "5050:80" # Access pgAdmin at localhost:5050
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
+  #   networks:
+  #     - app-network
 
 networks:
   app-network:
@@ -67,4 +67,4 @@ networks:
 
 volumes:
   postgres_data:
-  pgadmin_data:
+  # pgadmin_data:

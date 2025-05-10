@@ -5,7 +5,6 @@ import {
   updateUser,
   deleteUser,
   getUserProfile,
-  verifyEmail,
 } from '../controllers/userController';
 import { authenticate } from '../middlewares/authenticate';
 import { getMockTestsTakenByUser } from '../controllers/userScoresController';
@@ -17,7 +16,6 @@ userRouter.get('/', authenticate, getAllUsers);
 userRouter.patch('/update/profile/', authenticate, updateUser);
 userRouter.patch('/change-password/', authenticate, updateUser);
 userRouter.delete('/:id/', authenticate, deleteUser);
-userRouter.get('/verify-email', verifyEmail);
 userRouter.get('/me/mock-tests/', authenticate, getMockTestsTakenByUser);
 
 export default userRouter;

@@ -1,19 +1,35 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+
+import { setIsAuthenticated } from '@Store/actions/common';
+import { useTypedDispatch } from '@Store/hooks';
+import { checkLogin } from '@Services/common';
 
 export default function useAuth() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const dispatch = useTypedDispatch();
 
+  const {
+    isSuccess: isUserLoggedIn,
+    error,
+    data: loggedInUserDetails,
+  } = useQuery({
+    queryKey: ['checkLogin'],
+    queryFn: () => checkLogin(),
+    select: ({ data }) => data?.isAuthenticated,
+    retry: false,
+  });
   useEffect(() => {
-    const token = document.cookie
-      .split(';')
-      .find(cookie => cookie.trim().startsWith('token='));
-    // If token exists, set isAuth to true
-    if (token) {
+    const checkLoginError = error as AxiosError;
+    if (isUserLoggedIn && loggedInUserDetails) {
       setIsAuth(true);
-    } else {
+      dispatch(setIsAuthenticated(true));
+    } else if (checkLoginError?.response?.status === 401) {
       setIsAuth(false);
+      dispatch(setIsAuthenticated(false));
     }
-  }, []); // Empty dependency array ensures it runs only once on mount
+  }, [dispatch, error, isUserLoggedIn, loggedInUserDetails]);
 
-  return { isAuthenticated: isAuth };
+  return isAuth;
 }
