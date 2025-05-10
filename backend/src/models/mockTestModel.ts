@@ -8,7 +8,7 @@ class MockTest extends Model {
   public stream_id!: number;
   public title!: string;
   public time_limit!: number;
-  public Stream?: Stream;
+  public Stream!: Stream;
   public getSections!: BelongsToManyGetAssociationsMixin<Section>;
 }
 
