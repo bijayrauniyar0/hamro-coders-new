@@ -66,7 +66,7 @@ export class AuthService {
       process.cwd(),
       'src',
       'templates',
-      'forgotPassword.ejs',
+      'resetPassword.ejs',
     );
     const resetLink = `${FRONTEND_URL}/reset-password/${token}`;
     const resetTemplate = await ejs.renderFile(templatePath, {
@@ -404,16 +404,13 @@ export const forgotPassword = async (
     try {
       await userService.sendPasswordResetEmail();
       res.status(200).json({
-        isVerified: false,
-        userFound: true,
         message: 'Password Reset email sent successfully!',
       });
       return;
-    } catch {
+    } catch (error) {
       res.status(500).json({
-        isVerified: false,
-        userFound: true,
         message: 'Failed to send password reset link.',
+        error,
       });
       return;
     }

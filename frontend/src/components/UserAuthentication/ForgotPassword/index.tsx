@@ -12,8 +12,6 @@ import { useSendPasswordResetEmail } from '@Api/UserAuthentication';
 
 const initialState = {
   email: '',
-  password: '',
-  // keepSignedIn: false,
 };
 
 export default function ForgotPassword() {
@@ -76,7 +74,7 @@ export default function ForgotPassword() {
               isLoading={isPending}
               type="submit"
             >
-              Sign In
+              Send Reset Link
             </Button>
           </form>
         </div>

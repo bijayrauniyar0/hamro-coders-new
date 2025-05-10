@@ -41,7 +41,7 @@ export default function ResetPassword() {
   const { mutate, isPending } = useMutation({
     mutationFn: (payload: Record<string, any>) => resetPassword(payload),
     onSuccess: () => {
-      navigate('/auth/login');
+      navigate('/login');
       toast.success('Password reset successful. Please login.');
     },
     onError: ({ response }: any) => {

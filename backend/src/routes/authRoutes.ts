@@ -25,7 +25,7 @@ authRouter.post('/log-out/', authenticate, logoutController);
 authRouter.post('/verify-email', verifyEmail);
 authRouter.post('/resend-verification-mail', resendVerificationEmail);
 authRouter.post('/check-email-exists', checkIfEmailExists);
-authRouter.get('/forgot-password', forgotPassword);
-authRouter.get('/reset-forgot-password', resetForgotPassword);
+authRouter.post('/forgot-password/', forgotPassword);
+authRouter.post('/reset-forgot-password/', resetForgotPassword);
 
 export default authRouter;
