@@ -130,8 +130,7 @@ export const MCQProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const payload = {
       score,
-      test_id,
-      mode: 'ranked',
+      mock_test_id: +test_id!,
       elapsed_time: getElapsedTimeInSeconds(startTimeRef.current),
     };
 

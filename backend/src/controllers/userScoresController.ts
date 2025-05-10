@@ -2,36 +2,15 @@ import { Request, Response } from 'express';
 import UserScores from '../models/userScoresModels';
 import User from '../models/userModels';
 import { Op } from 'sequelize';
-import {
-  getStartDate,
-  getStartOfDay,
-  getStartOfMonth,
-  getStartOfWeek,
-} from '../utils/index';
+import { getStartDate } from '../utils/index';
 import Notification from '../models/notificationModel';
 import {
   AggregatedScore,
-  FilterScoresByDateProps,
   LeaderboardQuery,
   Rank,
-  RankUserByDateProps,
   ScoreFilter,
 } from '../constants/Types/leaderboard';
 import MockTest from '../models/mockTestModel';
-
-const PERIODS = ['daily', 'weekly', 'monthly'] as const;
-type Period = (typeof PERIODS)[number];
-
-const filterUserByDate = ({
-  scores,
-  startDate,
-  endDate,
-}: FilterScoresByDateProps): UserScores[] => {
-  return scores.filter(score => {
-    const createdAt = new Date(score.created_at).getTime();
-    return createdAt >= startDate.getTime() && createdAt <= endDate.getTime();
-  });
-};
 
 export class LeaderboardService {
   async getUserScores({
@@ -79,35 +58,6 @@ export class LeaderboardService {
     return Object.values(aggregated);
   };
 
-  private getAggregatedRanks(
-    scores: UserScores[],
-    endDate: Date,
-  ): Record<Period, Rank[]> {
-    const periods: Record<Period, Date> = {
-      daily: getStartOfDay(),
-      weekly: getStartOfWeek(),
-      monthly: getStartOfMonth(),
-    };
-
-    const ranks: Record<Period, Rank[]> = {
-      daily: [],
-      weekly: [],
-      monthly: [],
-    };
-
-    PERIODS.forEach(period => {
-      const filtered = filterUserByDate({
-        scores,
-        startDate: periods[period],
-        endDate,
-      });
-      const aggregated = this.aggregateScores(filtered);
-      ranks[period] = this.getRanks(aggregated);
-    });
-
-    return ranks;
-  }
-
   private getRanks = (scores: AggregatedScore[]): Rank[] => {
     const rankedScores = scores
       .sort((a, b) => b.total_score - a.total_score)
@@ -128,32 +78,16 @@ export class LeaderboardService {
     return this.getRanks(aggregatedScores);
   }
 
-  async getRankedUsersByDate({
-    mock_test_id,
-    endDate = new Date(),
-  }: RankUserByDateProps) {
-    const scores = await this.getUserScores({
-      mock_test_id,
-      startDate:
-        getStartOfMonth() < getStartOfWeek()
-          ? getStartOfMonth()
-          : getStartOfWeek(),
-      endDate,
-    });
-    return this.getAggregatedRanks(scores, endDate);
-  }
-
   async createSurpassedUserNotification(
     users: Rank[],
     test: string,
-    period: string,
     userName: string = 'Unknown',
   ) {
     await Promise.all(
       users.map(async (user: Rank) => {
         await Notification.create({
           user_id: user.user_id,
-          message: `You have been surpassed by ${userName} in the ${period} leaderboard in ${test} test.`,
+          message: `You have been surpassed by ${userName} in ${test} test.`,
           is_read: false,
         });
       }),
@@ -168,32 +102,26 @@ const getUserRank = (ranks: Rank[], userId: number) => {
 
 const compareAndNotify = async (
   leaderboardService: LeaderboardService,
-  oldRanks: Record<Period, Rank[]>,
-  newRanks: Record<Period, Rank[]>,
+  oldRanks: Rank[],
+  newRanks: Rank[],
   userId: number,
   test: string,
   userName: string,
 ) => {
-  await Promise.all(
-    PERIODS.map(async period => {
-      const previousRank = getUserRank(oldRanks[period], userId);
-      const newRank = getUserRank(newRanks[period], userId);
-      const surpassedUsers = oldRanks[period].filter(
-        ({ rank, user_id }) =>
-          rank >= newRank && rank <= previousRank && user_id !== userId,
-      );
-      // console.log(surpassedUsers, 'suprasssed--------------------------');
-
-      if (surpassedUsers.length > 0) {
-        await leaderboardService.createSurpassedUserNotification(
-          surpassedUsers,
-          test,
-          period,
-          userName,
-        );
-      }
-    }),
+  const previousRank = getUserRank(oldRanks, userId);
+  const newRank = getUserRank(newRanks, userId);
+  const surpassedUsers = oldRanks.filter(
+    ({ rank, user_id }) =>
+      rank >= newRank && rank <= previousRank && user_id !== userId,
   );
+
+  if (surpassedUsers.length > 0) {
+    await leaderboardService.createSurpassedUserNotification(
+      surpassedUsers,
+      test,
+      userName,
+    );
+  }
 };
 
 export const createScoreEntry = async (req: Request, res: Response) => {
@@ -201,10 +129,10 @@ export const createScoreEntry = async (req: Request, res: Response) => {
     const { mock_test_id, score, elapsed_time } = req.body;
     const user = req.user;
     const leaderboardService = new LeaderboardService();
-    const oldRanks = await leaderboardService.getRankedUsersByDate({
+    const oldRanks = await leaderboardService.getRankedUsers({
       mock_test_id,
+      startDate: 'all_time',
     });
-
     await UserScores.create({
       user_id: user.id,
       score,
@@ -212,8 +140,9 @@ export const createScoreEntry = async (req: Request, res: Response) => {
       elapsed_time,
     });
 
-    const newRanks = await leaderboardService.getRankedUsersByDate({
+    const newRanks = await leaderboardService.getRankedUsers({
       mock_test_id,
+      startDate: 'all_time',
     });
 
     const test = await MockTest.findByPk(mock_test_id);
@@ -221,9 +150,9 @@ export const createScoreEntry = async (req: Request, res: Response) => {
       leaderboardService,
       oldRanks,
       newRanks,
-      user?.id,
+      user.id,
       test?.title || 'Unknown',
-      user?.name,
+      user.name,
     );
 
     res.status(201).json({ message: 'Score added successfully' });
