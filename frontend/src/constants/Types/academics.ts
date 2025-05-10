@@ -9,6 +9,9 @@ export interface ITestBoxProps {
   title: string;
   stream_name: string;
   students_count: number;
+  bookmark?: boolean;
+  onViewClick?: () => void;
+  onBookMarkClick?: () => void;
 }
 
 export type TestsType = {

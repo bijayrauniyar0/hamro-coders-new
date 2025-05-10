@@ -1,7 +1,7 @@
 // import ModesPage from '@Views/Modes';
 import PageNotFound from '@Components/common/PageNotFound';
 import Streams from '@Components/Streams';
-import Tests from '@Components/Streams/TestsComponent';
+import Tests from '@Components/Streams/MockTestsComponent';
 import TestimonialForm from '@Components/Testimonial';
 import AuthenticationComponent from '@Components/UserAuthentication';
 import EmailVerification from '@Components/UserAuthentication/Verification';
