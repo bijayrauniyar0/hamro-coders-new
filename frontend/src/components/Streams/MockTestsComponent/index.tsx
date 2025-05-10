@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { cardVariants, containerVariants } from '@Animations/index';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
@@ -14,8 +14,9 @@ import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
 import { TestsType } from '@Constants/Types/academics';
 import { getTestsByStreams } from '@Services/academics';
+import { toggleBookmark } from '@Services/bookmark';
 
-import TestBox from './TestBox';
+import TestBox from './MockTestBox';
 
 const MockTests = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -29,12 +30,19 @@ const MockTests = () => {
     enabled: !!stream_id,
     select: ({ data }) => data as TestsType[],
   });
+
   const filteredTests = useMemo(() => {
     if (!mockTestsData) return [];
     return mockTestsData.filter(({ title }: TestsType) =>
       title?.toLowerCase()?.includes(searchValue.toLowerCase()),
     );
   }, [mockTestsData, searchValue]);
+
+  const { mutate: updateBookmark } = useMutation({
+    mutationFn: (mockTestId: number) => {
+      return toggleBookmark(mockTestId);
+    },
+  });
 
   return (
     <BindContentContainer>
@@ -66,17 +74,18 @@ const MockTests = () => {
             >
               {filteredTests?.map(test => {
                 return (
-                  <motion.button
-                    variants={cardVariants}
-                    key={test.id}
-                    onClick={() => {
-                      navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
-                    }}
-                  >
+                  <motion.button variants={cardVariants} key={test.id}>
                     <TestBox
                       title={test.title}
                       stream_name={test.stream_name}
                       students_count={test.students_count}
+                      bookmark={test.bookmark}
+                      onViewClick={() => {
+                        navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
+                      }}
+                      onBookMarkClick={() => {
+                        updateBookmark(test.id);
+                      }}
                     />
                   </motion.button>
                 );
