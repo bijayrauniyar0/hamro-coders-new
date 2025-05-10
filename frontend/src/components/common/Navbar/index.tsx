@@ -6,6 +6,7 @@ import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import AccountMenu from '@Components/common/Navbar/AccountMenu';
 import { Button } from '@Components/radix/Button';
 import MockSewaLogo from '@Assets/images/logos/mocksewa2.png';
+import { useTypedSelector } from '@Store/hooks';
 import { navbarData } from '@Constants/navbarData';
 import useAuth from '@Hooks/useAuth';
 
@@ -17,7 +18,10 @@ const Navbar = () => {
   const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [width, setWidth] = useState(window.innerWidth);
-  const isAuthenticated = useAuth();
+  useAuth();
+  const isAuthenticated = useTypedSelector(
+    state => state.commonSlice.isAuthenticated,
+  );
 
   const closeBurgerMenu = () => {
     setBurgerMenuOpen(false);
