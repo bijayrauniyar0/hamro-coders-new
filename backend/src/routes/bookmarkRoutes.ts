@@ -9,3 +9,5 @@ const bookmarkRouter = express.Router();
 
 bookmarkRouter.get('/', authenticate, getAllBookmarks);
 bookmarkRouter.post('/toggle/', authenticate, toggleBookmark);
+
+export default bookmarkRouter;
