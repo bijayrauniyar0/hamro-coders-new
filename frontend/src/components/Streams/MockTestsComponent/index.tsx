@@ -90,7 +90,8 @@ const MockTests = () => {
                       students_count={test.students_count}
                       bookmark={test.bookmark}
                       onViewClick={() => {
-                        navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
+                        navigate(`/streams/mock-test/${stream_id}/?test_id=${test.id}`);
+                        // navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
                       }}
                       onBookMarkClick={() => {
                         if (!isAuthenticated) {
