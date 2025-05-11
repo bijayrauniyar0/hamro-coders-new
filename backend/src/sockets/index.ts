@@ -2,6 +2,11 @@ import { Server } from 'socket.io';
 import { socketAuthMiddleware } from '../middlewares/authenticate';
 import ChatController from '../controllers/discussionController';
 
+type SocketSendMessageType = {
+  mock_test_id: string;
+  message: string;
+  messageId: string;
+};
 export const initializeSocket = (io: Server) => {
   io.use(socketAuthMiddleware);
 
@@ -12,13 +17,17 @@ export const initializeSocket = (io: Server) => {
 
     socket.on(
       'sendMessage',
-      ({ mock_test_id, message }: { mock_test_id: string; message: string }) => {
-        ChatController.handleSendMessage(socket, mock_test_id, message);
+      ({ mock_test_id, message, messageId }: SocketSendMessageType) => {
+        ChatController.handleSendMessage(socket, mock_test_id, message, messageId);
       },
     );
 
     socket.on('disconnect', () => {
       ChatController.handleDisconnect(socket);
     });
+  });
+  io.on('connection_error', err => {
+    // eslint-disable-next-line no-console
+    console.error('Socket connection error:', err.message);
   });
 };

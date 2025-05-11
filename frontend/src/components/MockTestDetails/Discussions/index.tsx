@@ -1,50 +1,112 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SendHorizonal as SendHorizontal } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 import { io } from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
 
-import { Input } from '@Components/common/FormUI';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { useTypedSelector } from '@Store/hooks';
+import { ChatMessage, ChatMessageUserType } from '@Constants/Types/academics';
+import { getAllUsersInDiscussion } from '@Services/discussion';
 import { apiURL } from '@Services/index';
 
+import MessageInputBox from './MessageInputBox';
+import MessageList from './MessagesList';
+
+const socket = io(apiURL, { withCredentials: true });
+
 const Discussions = () => {
-  const [message, setMessage] = useState<string>('');
-  const socket = io(apiURL, { withCredentials: true });
   const [searchParams] = useSearchParams();
   const mock_test_id = searchParams.get('test_id');
-  const [historyMessages, setHistoryMessages] = useState<any[]>([]);
-  const [newMessages, setNewMessages] = useState<any[]>([]);
+  const [newMessages, setNewMessages] = useState<ChatMessage[]>([]);
   const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const joinRoom = useRef(false);
+
+  const { data: userInChatList, isLoading: userInChatListLoading } = useQuery<
+    AxiosResponse<ChatMessageUserType[]>,
+    Error,
+    ChatMessageUserType[]
+  >({
+    queryKey: ['userInChatList', mock_test_id],
+    queryFn: () => getAllUsersInDiscussion(mock_test_id || ''),
+    select: res => res?.data,
+    enabled: !!mock_test_id,
+  });
+
+  const handleReceiveMessage = useCallback((data: ChatMessage) => {
+    setNewMessages(prev => {
+      const index = prev.findIndex(msg => msg.messageId === data.messageId);
+      if (index !== -1) {
+        const updated = [...prev];
+        updated[index] = { ...updated[index], status: 'delivered' };
+        return updated;
+      } else {
+        return [...prev, data];
+      }
+    });
+  }, []);
 
   useEffect(() => {
-    socket.emit('joinRoom', mock_test_id);
+    if (!joinRoom.current && mock_test_id) {
+      socket.emit('joinRoom', mock_test_id);
+      joinRoom.current = true;
+    }
 
-    socket.on('receiveMessage', data => {
-      setNewMessages(prevMessages => [
-        ...prevMessages,
-        {
-          isMe: data.user === 'User1',
-          image: 'https://via.placeholder.com/150',
-          message: data.message,
-        },
-      ]);
-    });
-    socket.on('historyMessages', data => {
-      setHistoryMessages(data);
-    });
+    socket.on('receiveMessage', handleReceiveMessage);
+
     return () => {
-      socket.disconnect();
+      socket.off('receiveMessage', handleReceiveMessage);
     };
-  }, [socket, mock_test_id]);
+  }, [handleReceiveMessage, mock_test_id]);
 
   const sendMessage = (message: string) => {
-    socket.emit('sendMessage', {
+    const messageId = uuidv4();
+    const messagePayload = {
       mock_test_id,
-      message: message,
-      user: 'User1',
-    });
+      message,
+      user: userProfile.id,
+      status: 'sending',
+      messageId,
+    };
+
+    socket.emit('sendMessage', messagePayload);
+
+    setNewMessages(prev => [
+      ...prev,
+      {
+        message,
+        messageId,
+        status: 'sent',
+        user: {
+          id: userProfile.id,
+          name: userProfile.name,
+          avatar: userProfile.avatar,
+        },
+      },
+    ]);
   };
+
+  useEffect(() => {
+    if (userInChatList && userInChatList.length > 0) {
+      const initialMessages = userInChatList.map(user => ({
+        message: '',
+        messageId: uuidv4(),
+        status: 'sent',
+        user,
+      }));
+      setNewMessages(initialMessages);
+    }
+  }, [userInChatList]);
+
+  const memoizedMessages = useMemo(() => {
+    return newMessages;
+  }, [newMessages]);
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white shadow-md">
@@ -52,45 +114,13 @@ const Discussions = () => {
         <p className="text-md text-gray-700 lg:text-base">Discussions</p>
       </div>
       <div className="h-[calc(100vh-14rem)] overflow-y-auto">
-        <FlexColumn className="items-start gap-3 px-4 py-4">
-          {[...historyMessages, ...newMessages].map((discussion: any, index) => {
-            const isMe = discussion.user_id === userProfile.id;
-            return (
-              <FlexRow
-                key={`discussion-${index}`}
-                className={`w-full ${isMe ? 'justify-end' : 'justify-start'}`}
-              >
-                <FlexRow className="items-center gap-4">
-                  {!isMe && (
-                    <img
-                      src="https://randomuser.me/api/portraits/men/10.jpg"
-                      alt=""
-                      className="h-8 w-8 rounded-full"
-                    />
-                  )}
-                  <div
-                    className={`rounded-full px-2 py-1 ${isMe ? 'bg-blue-100' : 'bg-gray-100'}`}
-                  >
-                    <p className="text-sm lg:text-md">{discussion.message}</p>
-                  </div>
-                </FlexRow>
-              </FlexRow>
-            );
-          })}
-        </FlexColumn>
+        <MessageList messages={memoizedMessages} />
       </div>
-      <FlexRow className="items-center gap-2 px-4 py-4">
-        <Input
-          className="!h-fit rounded-full !p-0 !px-4 !py-1 text-md"
-          placeholder="Aa"
-          value={message}
-          onChange={e => setMessage(e.target.value)}
-        />
-        <SendHorizontal
-          className="text-primary-600"
-          onClick={() => sendMessage(message)}
-        />
-      </FlexRow>
+      <MessageInputBox
+        onSend={sendMessage}
+        userList={userInChatList || []}
+        userInChatListLoading={userInChatListLoading}
+      />
     </div>
   );
 };

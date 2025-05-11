@@ -14,6 +14,7 @@ import { FRONTEND_URL } from './constants';
 import testimonialRouter from './routes/testimonialsRoutes';
 import privateImageRouter from './routes/privateImageRoutes';
 import bookmarkRouter from './routes/bookmarkRoutes';
+import discussionRouter from './routes/discussionRoutes';
 
 const app = express();
 
@@ -37,6 +38,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/testimonial', testimonialRouter);
 app.use('/api/private', privateImageRouter);
 app.use('/api/bookmarks', bookmarkRouter);
-
+app.use('/api/discussions', discussionRouter);
 
 export default app;

@@ -9,6 +9,9 @@ class Discussion extends Model {
   public mock_test_id!: string;
   public message!: string;
   public user_id!: string;
+  public created_at!: Date;
+  public User!: User;
+  public MockTest!: MockTest;
 }
 Discussion.init(
   {

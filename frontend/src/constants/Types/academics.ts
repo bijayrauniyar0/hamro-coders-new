@@ -48,3 +48,15 @@ export type TestInfoProps = {
   students_count: number;
   bookmark?: boolean;
 };
+
+export type ChatMessageUserType = {
+  id?: number;
+  name?: string;
+  avatar?: string;
+};
+export type ChatMessage = {
+  user: ChatMessageUserType;
+  message: string;
+  status?: string;
+  messageId?: string;
+};
