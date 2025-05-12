@@ -17,7 +17,7 @@ import { getAllUsersInDiscussion } from '@Services/discussion';
 import { apiURL } from '@Services/index';
 
 import MessageInputBox from './MessageInputBox';
-import MessageList from './MessagesList';
+import MessageList from './MessageList';
 
 const socket = io(apiURL, { withCredentials: true });
 
@@ -40,15 +40,30 @@ const Discussions = () => {
   });
 
   const handleReceiveMessage = useCallback((data: ChatMessage) => {
+    setNewMessages(prev => [...prev, data]);
+  }, []);
+
+  const handleMessageDelivered = useCallback((messageId: string) => {
     setNewMessages(prev => {
-      const index = prev.findIndex(msg => msg.messageId === data.messageId);
+      const index = prev.findIndex(msg => msg.messageId === messageId);
       if (index !== -1) {
         const updated = [...prev];
         updated[index] = { ...updated[index], status: 'delivered' };
         return updated;
-      } else {
-        return [...prev, data];
       }
+      return prev;
+    });
+  }, []);
+
+  const handleMessageError = useCallback((messageId: string) => {
+    setNewMessages(prev => {
+      const index = prev.findIndex(msg => msg.messageId === messageId);
+      if (index !== -1) {
+        const updated = [...prev];
+        updated[index] = { ...updated[index], status: 'error' };
+        return updated;
+      }
+      return prev;
     });
   }, []);
 
@@ -59,22 +74,26 @@ const Discussions = () => {
     }
 
     socket.on('receiveMessage', handleReceiveMessage);
+    socket.on('messageError', handleMessageError);
+    socket.on('messageDelivered', handleMessageDelivered);
 
     return () => {
       socket.off('receiveMessage', handleReceiveMessage);
     };
-  }, [handleReceiveMessage, mock_test_id]);
+  }, [
+    handleMessageDelivered,
+    handleMessageError,
+    handleReceiveMessage,
+    mock_test_id,
+  ]);
 
   const sendMessage = (message: string) => {
     const messageId = uuidv4();
     const messagePayload = {
       mock_test_id,
       message,
-      user: userProfile.id,
-      status: 'sending',
       messageId,
     };
-
     socket.emit('sendMessage', messagePayload);
 
     setNewMessages(prev => [
@@ -82,27 +101,14 @@ const Discussions = () => {
       {
         message,
         messageId,
-        status: 'sent',
-        user: {
+        status: 'sending',
+        User: {
           id: userProfile.id,
-          name: userProfile.name,
-          avatar: userProfile.avatar,
         },
+        created_at: new Date().toISOString(),
       },
     ]);
   };
-
-  useEffect(() => {
-    if (userInChatList && userInChatList.length > 0) {
-      const initialMessages = userInChatList.map(user => ({
-        message: '',
-        messageId: uuidv4(),
-        status: 'sent',
-        user,
-      }));
-      setNewMessages(initialMessages);
-    }
-  }, [userInChatList]);
 
   const memoizedMessages = useMemo(() => {
     return newMessages;
@@ -113,9 +119,7 @@ const Discussions = () => {
       <div className="px-4 py-4">
         <p className="text-md text-gray-700 lg:text-base">Discussions</p>
       </div>
-      <div className="h-[calc(100vh-14rem)] overflow-y-auto">
-        <MessageList messages={memoizedMessages} />
-      </div>
+      <MessageList messages={memoizedMessages} />
       <MessageInputBox
         onSend={sendMessage}
         userList={userInChatList || []}

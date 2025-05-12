@@ -6,17 +6,9 @@ import { Request, Response } from 'express';
 import { Op } from 'sequelize';
 
 export class ChatController {
-  // Handles a user joining a room and retrieving historical messages
   static async handleJoinRoom(socket: Socket, mock_test_id: string) {
     try {
       socket.join(mock_test_id);
-
-      const messages = await Discussion.findAll({
-        where: { mock_test_id: +mock_test_id },
-        order: [['created_at', 'ASC']],
-      });
-
-      socket.emit('historyMessages', messages);
     } catch {
       // Handle error
     }
@@ -41,12 +33,16 @@ export class ChatController {
       });
       const messagePayload = {
         message: newMessage.message,
-        user: userData,
+        User: userData,
         messageId,
+        status: 'delivered',
+        created_at: newMessage.created_at,
+        id: newMessage.id,
       };
       socket.to(mock_test_id).emit('receiveMessage', messagePayload);
+      socket.emit('messageDelivered', messageId);
     } catch {
-      // Handle error
+      socket.emit('messageError', messageId);
     }
   }
   static handleDisconnect(socket: Socket) {
@@ -76,6 +72,38 @@ export const getAllUsersInChat = async (req: Request, res: Response) => {
       group: ['User.id'],
     });
     res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error', err });
+  }
+};
+export const getHistoryDiscussions = async (req: Request, res: Response) => {
+  try {
+    const { mock_test_id } = req.params;
+    const page = parseInt(req.query.page as string) || 1;
+    const page_size = parseInt(req.query.page_size as string) || 20; // default 20 per page
+    const offset = (page - 1) * page_size;
+
+    const { rows: discussions, count: total } =
+      await Discussion.findAndCountAll({
+        where: { mock_test_id: +mock_test_id },
+        attributes: ['message', 'created_at', 'id'],
+        include: [
+          {
+            model: User,
+            attributes: ['id', 'name', 'avatar'],
+          },
+        ],
+        order: [['created_at', 'DESC']],
+        offset,
+        limit: page_size,
+      });
+
+    res.status(200).json({
+      results: discussions,
+      page,
+      total,
+      next_page: total > page * page_size ? page + 1 : null,
+    });
   } catch (err) {
     res.status(500).json({ message: 'Internal server error', err });
   }

@@ -77,11 +77,13 @@ export default function DataTable({
   dataCountCategory,
   exportMode = false,
   sortByKey = false,
-  enabled= true,
+  enabled = true,
 }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const defaultData = React.useMemo(() => [], []);
-  const [isIntersecting, _, viewRef] = useIntersectionObserver();
+  const [isIntersecting, _, viewRef] = useIntersectionObserver({
+    threshold: 1,
+  });
 
   const { sortOrderKey, sortDir, sortBy } = useSortingConfig(
     sorting[0]?.id,
@@ -246,7 +248,7 @@ export default function DataTable({
                       }}
                     >
                       <div
-                        className={`flex justify-start bg-center text-xs md:text-sm !font-medium leading-normal text-matt-200`}
+                        className={`flex justify-start bg-center text-xs !font-medium leading-normal text-matt-200 md:text-sm`}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,

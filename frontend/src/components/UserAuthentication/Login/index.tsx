@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -32,6 +32,8 @@ export default function Login() {
     register,
     handleSubmit,
     watch,
+    setError,
+    clearErrors,
     formState: { isSubmitting, errors },
   } = useForm({
     defaultValues: initialState,
@@ -47,17 +49,25 @@ export default function Login() {
     },
     onError: ({ response }: any) => {
       if (response?.status === 401 && response?.data?.verified === false) {
-        toast.error(
-          'User not verified. Please check your email for verification.',
-        );
         dispatch(setUserProfile({ email: watch('email') }));
         navigate('/verify-email');
         return;
       }
-      const caughtError = response?.data?.message || 'Something went wrong.';
-      toast.error(caughtError || 'Login Failed Something Went Wrong');
+      const caughtError = response?.data?.message;
+      if (caughtError) {
+        setError('email', {
+          type: 'manual',
+          message: caughtError,
+        });
+      }
     },
   });
+  const email = watch('email');
+  useEffect(() => {
+    if (errors?.email?.type === 'manual') {
+      clearErrors('email');
+    }
+  }, [email, errors, clearErrors]);
 
   const onSubmit = (data: Record<string, any>) => {
     mutate(data);
@@ -116,10 +126,9 @@ export default function Login() {
               )}
             </FormControl>
 
-            {/* ---- remember-me ---- */}
             <div className="flex items-center justify-end gap-2">
               <p
-                className="body-md-semibold cursor-pointer px-2 py-3 text-primary-800"
+                className="body-md-semibold cursor-pointer px-2 text-primary-800"
                 onClick={() => navigate('/forgot-password')}
               >
                 Forgot Password ?

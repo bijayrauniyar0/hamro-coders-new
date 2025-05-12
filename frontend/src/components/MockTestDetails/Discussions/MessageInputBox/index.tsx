@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { SendHorizonal as SendHorizontal } from 'lucide-react';
 import getCaretCoordinates from 'textarea-caret';
 
 import { FlexRow } from '@Components/common/Layouts';
 import Textarea from '@Components/radix/TextArea';
+import { UserMention } from '@Constants/Types/academics';
 
 import MentionDropdown from '../MentionDropdown';
 
@@ -27,6 +28,32 @@ const MessageInputBox = ({
     const newInput = e.target.value;
     setCursorPosition(e.target?.selectionStart ?? newInput?.length);
   };
+
+  // const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   const newInput = e.target.value;
+  //   const caretPos = e.target.selectionStart ?? newInput.length;
+
+  //   setMessage(newInput);
+  //   setCursorPosition(caretPos);
+  // };
+  function getMatchedUsers(newInput: string) {
+    const mentionRegex = /@([\w\s]+)/g; // supports spaces like @john doe
+    const matches = Array.from(newInput.matchAll(mentionRegex)).map(m =>
+      m[1].toLowerCase().trim(),
+    );
+
+    if (!userList || userInChatListLoading) return [];
+
+    return userList
+      .filter(user => {
+        if (!user.name) return false;
+        return matches.includes(user.name?.toLowerCase().trim());
+      })
+      .map(user => ({
+        id: user.id,
+        name: user.name,
+      }));
+  }
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newInput = e.target.value;
@@ -69,7 +96,7 @@ const MessageInputBox = ({
   const handleUserSelect = (user: any) => {
     const mentionStartIndex = message.lastIndexOf('@');
     const beforeMention = message.slice(0, mentionStartIndex);
-    const newInput = `${beforeMention}@${user.name} `;
+    const newInput = `${beforeMention}@[${user.name}](${user.id}) `;
     setMessage(newInput);
     setIsDropdownVisible(false);
 
@@ -81,6 +108,13 @@ const MessageInputBox = ({
       setCursorPosition(newPos);
     }, 0);
   };
+  const updatedMessage = useMemo(() => {
+    const mentionRegex = /@\[(.*?)\]\((.*?)\)/g;
+    return message.replace(mentionRegex, (_, __, id) => {
+      const user = userList.find(u => u.id === Number(id));
+      return user ? `@${user.name}` : '';
+    });
+  }, [message, userList]);
 
   return (
     <>
@@ -95,7 +129,7 @@ const MessageInputBox = ({
         <Textarea
           className="!h-[2rem] resize-none rounded-full !p-0 !px-4 !py-1 text-md"
           placeholder="Aa"
-          value={message}
+          value={updatedMessage}
           onChange={handleMessageChange}
           ref={inputRef}
           onClick={handleCursorUpdate}

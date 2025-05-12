@@ -51,7 +51,7 @@ const Navbar = () => {
           className="min-w-[9rem] cursor-pointer items-center gap-2"
           onClick={() => navigate('/')}
         >
-          <img src={MockSewaLogo} alt="MS" className="aspect-auto w-8" />
+          <img src={MockSewaLogo} alt="MS" className="aspect-auto w-8" loading="lazy"/>
           <p className="text-xl font-bold text-primary-700">MockSewa</p>
         </FlexRow>
         {width > 768 && (

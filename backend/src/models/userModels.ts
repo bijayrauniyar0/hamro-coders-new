@@ -11,6 +11,7 @@ class User extends Model {
   public number!: string;
   public avatar!: string;
   public verified!: boolean;
+  public oauth_provider!: string;
 }
 
 User.init(

@@ -15,6 +15,7 @@ import testimonialRouter from './routes/testimonialsRoutes';
 import privateImageRouter from './routes/privateImageRoutes';
 import bookmarkRouter from './routes/bookmarkRoutes';
 import discussionRouter from './routes/discussionRoutes';
+import './models/discussionMentions';
 
 const app = express();
 

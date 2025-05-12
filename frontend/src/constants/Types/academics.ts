@@ -50,13 +50,20 @@ export type TestInfoProps = {
 };
 
 export type ChatMessageUserType = {
-  id?: number;
-  name?: string;
-  avatar?: string;
+  id: number;
+  name: string;
+  avatar: string;
 };
 export type ChatMessage = {
-  user: ChatMessageUserType;
+  User: Partial<ChatMessageUserType>;
   message: string;
   status?: string;
+  id?: number;
   messageId?: string;
+  created_at: string;
+};
+
+export type UserMention = {
+  id: number;
+  name: string;
 };

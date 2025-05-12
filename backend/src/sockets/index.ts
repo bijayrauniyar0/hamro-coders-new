@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import { socketAuthMiddleware } from '../middlewares/authenticate';
 import ChatController from '../controllers/discussionController';
 
-type SocketSendMessageType = {
+export type SocketSendMessageType = {
   mock_test_id: string;
   message: string;
   messageId: string;
@@ -18,7 +18,12 @@ export const initializeSocket = (io: Server) => {
     socket.on(
       'sendMessage',
       ({ mock_test_id, message, messageId }: SocketSendMessageType) => {
-        ChatController.handleSendMessage(socket, mock_test_id, message, messageId);
+        ChatController.handleSendMessage(
+          socket,
+          mock_test_id,
+          message,
+          messageId,
+        );
       },
     );
 
