@@ -31,12 +31,11 @@ User.init(
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     number: {
       type: DataTypes.STRING,
       allowNull: true,
-      unique: false,
     },
     avatar: {
       type: DataTypes.STRING,
