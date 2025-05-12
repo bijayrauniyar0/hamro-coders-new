@@ -76,7 +76,7 @@ export const theme = {
       'fade-down': 'fade-down .5s both',
       'fade-up-hide': 'fade-up-hide .5s both',
       'slide-x': 'slide-left-right 1s ease-in-out infinite',
-      'slide-y': 'slide-top-bottom 1s ease-in-out infinite',
+      'slide-y': 'slide-top-bottom 0.6s ease-in-out infinite',
     },
     keyframes: {
       'slide-left-right': {
@@ -84,8 +84,8 @@ export const theme = {
         '50%': { transform: 'translateX(100%)' },
       },
       'slide-top-bottom': {
-        '0%, 100%': { transform: 'translateY(0%)' },
-        '50%': { transform: 'translateY(100%)' },
+        '0%, 100%': { transform: 'translateY(-25%)' },
+        '50%': { transform: 'translateY(25%)' },
       },
       loader: {
         to: {

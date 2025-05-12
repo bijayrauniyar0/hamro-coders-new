@@ -4,6 +4,7 @@ import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { getAvatarImg } from '@Utils/checkAvatar';
 // import { formatDate } from '@Utils/index';
 import { ChatMessage } from '@Constants/Types/academics';
+import { getAvatar } from '@Constants/UserProfile';
 
 type MessageItemProps = {
   discussion: ChatMessage;
@@ -56,6 +57,9 @@ const MessageItem = memo(({ discussion, isMe }: MessageItemProps) => {
             src={getAvatarImg(discussion.User?.avatar || '')}
             alt=""
             className="h-8 w-8 rounded-full"
+            onError={() => (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+              event.currentTarget.src = getAvatar('bear');
+            }}
           />
         )}
         <FlexColumn className="w-full items-start gap-1">
