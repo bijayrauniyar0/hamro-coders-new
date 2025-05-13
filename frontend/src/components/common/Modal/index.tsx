@@ -33,15 +33,15 @@ export default function Modal({
     <Dialog open={show} onOpenChange={onClose}>
       <DialogContent
         className={cn(
-          'max-w-[calc(100vw-2rem)] overflow-hidden bg-white sm:max-w-[42rem] !rounded-xl',
+          'max-w-[calc(100vw-2rem)] overflow-hidden !rounded-lg bg-white !p-0 md:max-w-[42rem]',
           className,
         )}
       >
-        <DialogHeader>
+        <DialogHeader className="px-6 pt-6">
           <DialogTitle className="heading-6 text-left">{title}</DialogTitle>
           <DialogDescription>{subtitle}</DialogDescription>
         </DialogHeader>
-        <div className="scrollbar !overflow-x-hidden max-h-[calc(100dvh-10rem)] overflow-y-auto">
+        <div className="scrollbar h-full max-h-[calc(100dvh-8rem)] overflow-y-auto px-6 pb-6">
           {children}
         </div>
       </DialogContent>

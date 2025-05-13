@@ -36,7 +36,7 @@ function App() {
     pathname.includes(route),
   );
   const { isSuccess: isUserDataFetched, data: loggedInUserDetails } = useQuery({
-    queryKey: ['checkLogin', isAuthenticated],
+    queryKey: ['getUserProfile', isAuthenticated],
     queryFn: () => getUserProfile(),
     select: ({ data }) => data,
     enabled: Boolean(isAuthenticated),

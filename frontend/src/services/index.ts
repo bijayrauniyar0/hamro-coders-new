@@ -1,10 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
-import { io } from 'socket.io-client';
 
 const { API_URL_V1 } = process.env;
 
 export const apiURL = API_URL_V1;
-export const socket = io(apiURL, { withCredentials: true });
 
 export const api = axios.create({
   baseURL: API_URL_V1,

@@ -1,22 +1,8 @@
 import { ReactElement } from 'react';
 
-export type ModalContentsType =
-  | 'sign-up-success'
-  | 'add-user'
-  | 'edit-user'
-  | 'add-role'
-  | 'edit-role'
-  | 'add-category'
-  | 'edit-category'
-  | 'upload-data'
-  | 'account-setting'
-  | 'upload-temporary-layer'
-  | 'forgot-password'
-  | 'attribute-table'
-  | 'add-attribute'
-  | 'select-icon'
-  | 'upload-icon'
-  | null;
+import AccountSettings from '@Components/UserProfile/AccountSettings';
+
+export type ModalContentsType = 'edit-profile' | null;
 
 type ModalReturnType = {
   title: string;
@@ -27,6 +13,12 @@ type ModalReturnType = {
 
 export function getModalContent(content: ModalContentsType): ModalReturnType {
   switch (content) {
+    case 'edit-profile':
+      return {
+        title: 'Edit Profile',
+        content: <AccountSettings />,
+      };
+
     default:
       return {
         title: '',

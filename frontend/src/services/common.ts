@@ -1,5 +1,4 @@
-import { IChangePasswordPayload } from '@Components/common/Navbar/AccountMenu/AccountSettings';
-import { User } from '@Store/common';
+import { UserProfileUpdate } from '@Api/User';
 
 import { api, authenticated } from '.';
 
@@ -35,13 +34,15 @@ export const verifyEmail = (payload: Record<string, any>) => {
   return api.post('/api/auth/verify-email/', payload);
 };
 
-export const updateUser = (payload: Partial<User>) => {
-  return authenticated(api).patch('/api/user/update/profile/', {
-    ...payload,
+export const updateUser = (payload: UserProfileUpdate) => {
+  return authenticated(api).patch('/api/user/update/profile/', payload, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 };
 
-export const changePassword = (payload: IChangePasswordPayload) => {
+export const changePassword = (payload: Record<string, string>) => {
   return authenticated(api).patch('/api/user/change-password/', {
     ...payload,
   });

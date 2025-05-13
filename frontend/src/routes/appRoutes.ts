@@ -6,15 +6,14 @@ import Tests from '@Components/Streams/MockTestsComponent';
 import TestimonialForm from '@Components/Testimonial';
 import AuthenticationComponent from '@Components/UserAuthentication';
 import EmailVerification from '@Components/UserAuthentication/Verification';
+import UserProfile from '@Components/UserProfile';
 import AboutUsPage from '@Views/AboutUs';
 import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
 import MCQPage from '@Views/MCQPage';
 import MyStatsPage from '@Views/MyStatsPage';
-import UserProfileEditor from '@Views/Test';
 
 import { IRoute } from './type';
-import UserProfile from '@Components/UserProfile';
 
 const appRoutes: IRoute[] = [
   {
@@ -117,11 +116,11 @@ const appRoutes: IRoute[] = [
     path: '/user-profile',
     component: UserProfile,
   },
-  {
-    name: 'Modes',
-    path: '/test',
-    component: UserProfileEditor,
-  },
+  // {
+  //   name: 'Modes',
+  //   path: '/test',
+  //   component: UserProfileEditor,
+  // },
 ];
 
 export default appRoutes;

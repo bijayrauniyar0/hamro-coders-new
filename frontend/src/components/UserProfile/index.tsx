@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
 import HeaderSwitchTab from '@Components/common/HeaderSwitchTab';
-import { FlexColumn, FlexRow } from '@Components/common/Layouts';
+import { FlexColumn } from '@Components/common/Layouts';
 
 import ProfileTopBox from './ProfileTopBox';
 

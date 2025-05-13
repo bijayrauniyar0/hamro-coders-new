@@ -154,3 +154,15 @@ export const getFormattedDate = (date: string) => {
     year: 'numeric',
   });
 };
+
+export const getInitialsFromName = (name: string = '') => {
+  const nameParts = name.split(' ');
+  if (nameParts.length === 1) {
+    return nameParts[0].charAt(0).toUpperCase();
+  } else if (nameParts.length > 1) {
+    const firstInitial = nameParts[0].charAt(0).toUpperCase();
+    const lastInitial = nameParts[nameParts.length - 1].charAt(0).toUpperCase();
+    return `${firstInitial}${lastInitial}`;
+  }
+  return '';
+};
