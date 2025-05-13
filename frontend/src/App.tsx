@@ -3,9 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
 
-// import Modal from '@Components/common/Modal';
+import Modal from '@Components/common/Modal';
 import useAuthStore from '@Store/auth';
-// import { getModalContent } from '@Constants/modalContent';
+import { useCommonStore } from '@Store/common';
+import { getModalContent } from '@Constants/modalContent';
 import { getUserProfile } from '@Services/common';
 
 import Navbar from './components/common/Navbar';
@@ -18,6 +19,10 @@ function App() {
   const { pathname } = useLocation();
   const setUserProfile = useAuthStore(state => state.setUserProfile);
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const showModal = useCommonStore(state => state.showModal);
+  const modalContent = useCommonStore(state => state.modalContent);
+  const setModalContent = useCommonStore(state => state.setModalContent);
+  const toggleModal = useCommonStore(state => state.toggleModal);
   const routesWithoutNavbar = [
     '/login',
     '/signup',
@@ -41,9 +46,16 @@ function App() {
       setUserProfile(loggedInUserDetails);
     }
   }, [loggedInUserDetails, isUserDataFetched, setUserProfile]);
+
+  const handleModalClose = () => {
+    toggleModal();
+    setTimeout(() => {
+      setModalContent(null);
+    }, 150);
+  };
   return (
     <>
-      {/* <Modal
+      <Modal
         show={showModal}
         className={getModalContent(modalContent)?.className || ''}
         title={getModalContent(modalContent)?.title}
@@ -51,7 +63,7 @@ function App() {
         hideCloseButton={!!getModalContent(modalContent)?.hideCloseButton}
       >
         {getModalContent(modalContent)?.content}
-      </Modal> */}
+      </Modal>
       {showNavbar && <Navbar />}
       <div className="absolute right-0 top-4 w-1/4">
         <ToastContainer />

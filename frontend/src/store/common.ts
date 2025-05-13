@@ -1,26 +1,28 @@
 /* eslint-disable no-unused-vars */
 import { create } from 'zustand';
 
-export type User = {
-  id: number;
-  name: string;
-  email: string;
-  number: string;
-  avatar: string;
+import { ModalContentsType } from '@Constants/modalContent';
+
+interface CommonState {
+  showModal: boolean;
+  modalContent: ModalContentsType;
+  toggleModal: (payload?: ModalContentsType) => void;
+  setModalContent: (payload: ModalContentsType) => void;
+}
+
+const initialState: CommonState = {
+  showModal: false,
+  modalContent: null,
+  toggleModal: () => {},
+  setModalContent: () => {},
 };
 
-type CommonState = {
-  userProfile: Partial<User>;
-  isAuthenticated: boolean;
-  setUserProfile: (user: Partial<User>) => void;
-  setIsAuthenticated: (status: boolean) => void;
-};
-
-const useCommonStore = create<CommonState>(set => ({
-  userProfile: {},
-  isAuthenticated: false,
-  setUserProfile: user => set({ userProfile: user }),
-  setIsAuthenticated: status => set({ isAuthenticated: status }),
+export const useCommonStore = create<CommonState>()(set => ({
+  ...initialState,
+  toggleModal: payload =>
+    set(state => ({
+      showModal: !!payload,
+      modalContent: payload || state.modalContent,
+    })),
+  setModalContent: payload => set(() => ({ modalContent: payload || null })),
 }));
-
-export default useCommonStore;
