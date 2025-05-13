@@ -3,7 +3,8 @@ import { cn } from '@Utils/index';
 interface IHeaderSwitchTabProps {
   headerOptions: Record<string, any>;
   activeTab?: string;
-  onChange?: any;
+  // eslint-disable-next-line no-unused-vars
+  onChange?: (val: string) => void;
   className?: string;
 }
 

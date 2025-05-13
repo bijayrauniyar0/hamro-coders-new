@@ -6,8 +6,7 @@ import ErrorMessage from '@Components/common/ErrorMessage';
 import { FormControl, Input } from '@Components/common/FormUI';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { Button } from '@Components/radix/Button';
-import { setUserProfile } from '@Store/actions/common';
-import { useTypedDispatch } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { useSendPasswordResetEmail } from '@Api/UserAuthentication';
 
 const initialState = {
@@ -16,7 +15,7 @@ const initialState = {
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
-  const dispatch = useTypedDispatch();
+  const setUserProfile = useAuthStore(state => state.setUserProfile);
   const {
     register,
     handleSubmit,
@@ -30,10 +29,10 @@ export default function ForgotPassword() {
   useEffect(() => {
     if (isSuccess) {
       const email = getValues('email');
-      dispatch(setUserProfile({ email }));
+      setUserProfile({ email });
       navigate('/verify-forgot-password');
     }
-  }, [isSuccess, getValues, dispatch, navigate]);
+  }, [isSuccess, getValues, navigate, setUserProfile]);
 
   const onSubmit = (data: Record<string, any>) => {
     mutate(data);

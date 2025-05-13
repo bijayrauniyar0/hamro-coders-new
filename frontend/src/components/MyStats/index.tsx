@@ -5,8 +5,7 @@ import BindContentContainer from '@Components/common/BindContentContainer';
 import DropDown from '@Components/common/DropDown';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import isEmpty from '@Utils/isEmpty';
-import { setMockTestId } from '@Store/actions/analytics';
-import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
+import useAnalyticsStore from '@Store/analytics';
 import { timePeriodDropDownOptions } from '@Constants/MyStats';
 import { IPerformanceTrendProps } from '@Constants/Types/myStats';
 import { getMockTestTakenByUser } from '@Services/userStats';
@@ -19,10 +18,8 @@ import Stats from './Stats';
 const MyStats = () => {
   const [timePeriodFilter, setTimePeriodFilter] =
     useState<IPerformanceTrendProps['time_period']>('last_7_days');
-  const dispatch = useTypedDispatch();
-  const mockTestFilter = useTypedSelector(
-    state => state.analyticsSlice.mockTestId,
-  );
+  const mockTestFilter = useAnalyticsStore(state => state.mockTestId);
+  const setMockTestId = useAnalyticsStore(state => state.setMockTestId);
   const {
     data: testTakenByUserList,
     isLoading: isTestTakenByUserListLoading,
@@ -35,9 +32,9 @@ const MyStats = () => {
 
   useEffect(() => {
     if (mockTestTakenByUserIsSuccess && !isEmpty(testTakenByUserList)) {
-      dispatch(setMockTestId(testTakenByUserList[0]?.id));
+      setMockTestId(testTakenByUserList[0]?.id);
     }
-  }, [mockTestTakenByUserIsSuccess]);
+  }, [mockTestTakenByUserIsSuccess, setMockTestId, testTakenByUserList]);
 
   return (
     <>
@@ -82,7 +79,7 @@ const MyStats = () => {
                     isLoading={isTestTakenByUserListLoading}
                     onChange={mockTest => {
                       if (!mockTest) return;
-                      dispatch(setMockTestId(mockTest));
+                      setMockTestId(mockTest);
                     }}
                     choose="value"
                     className="w-[9rem]"

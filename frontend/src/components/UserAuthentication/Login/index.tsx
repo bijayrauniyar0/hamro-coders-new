@@ -9,8 +9,7 @@ import { Input } from '@Components/common/FormUI';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { setIsAuthenticated, setUserProfile } from '@Store/actions/common';
-import { useTypedDispatch } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { login } from '@Services/common';
 import { apiURL } from '@Services/index';
 
@@ -25,7 +24,8 @@ const initialState = {
 
 export default function Login() {
   const navigate = useNavigate();
-  const dispatch = useTypedDispatch();
+  const setUserProfile = useAuthStore(state => state.setUserProfile);
+  const setIsAuthenticated = useAuthStore(state => state.setIsAuthenticated);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
@@ -42,14 +42,14 @@ export default function Login() {
   const { mutate } = useMutation<any, any, any, unknown>({
     mutationFn: (payload: Record<string, any>) => login(payload),
     onSuccess: (res: any) => {
-      dispatch(setUserProfile(res.data.user));
+      setUserProfile(res.data.user);
       toast.success('Login Successful');
       navigate('/');
-      dispatch(setIsAuthenticated(true));
+      setIsAuthenticated(true);
     },
     onError: ({ response }: any) => {
       if (response?.status === 401 && response?.data?.verified === false) {
-        dispatch(setUserProfile({ email: watch('email') }));
+        setUserProfile({ email: watch('email') });
         navigate('/verify-email');
         return;
       }

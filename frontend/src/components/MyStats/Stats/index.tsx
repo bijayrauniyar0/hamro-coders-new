@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { Grid } from '@Components/common/Layouts';
-import { useTypedSelector } from '@Store/hooks';
+import useAnalyticsStore from '@Store/analytics';
 import { statsData } from '@Constants/MyStats';
 import { IFilters } from '@Constants/Types/myStats';
 import { getUserStats } from '@Services/userStats';
@@ -12,7 +12,7 @@ import { MyStatsSkeleton } from '../MyStatsSkeleton';
 import StatsCard from './StatsCard';
 
 const Stats = ({ timePeriodFilter }: IFilters) => {
-  const mockTestId = useTypedSelector(state => state.analyticsSlice.mockTestId);
+  const mockTestId = useAnalyticsStore(state => state.mockTestId);
   const { data: userStats, isLoading: userStatsIsLoading } = useQuery({
     queryKey: ['userStats', timePeriodFilter],
     queryFn: () =>

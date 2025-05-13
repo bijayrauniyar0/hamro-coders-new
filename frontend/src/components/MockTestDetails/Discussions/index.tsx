@@ -11,7 +11,7 @@ import { AxiosResponse } from 'axios';
 import { io } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { ChatMessage, ChatMessageUserType } from '@Constants/Types/academics';
 import { getAllUsersInDiscussion } from '@Services/discussion';
 import { apiURL } from '@Services/index';
@@ -25,7 +25,7 @@ const Discussions = () => {
   const [searchParams] = useSearchParams();
   const mock_test_id = searchParams.get('test_id');
   const [newMessages, setNewMessages] = useState<ChatMessage[]>([]);
-  const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const userProfile = useAuthStore(state => state.userProfile);
   const joinRoom = useRef(false);
 
   const { data: userInChatList, isLoading: userInChatListLoading } = useQuery<

@@ -13,14 +13,14 @@ import { ArrowDown } from 'lucide-react';
 
 import Spinner from '@Components/common/Spinner';
 import { Button } from '@Components/radix/Button';
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { ChatMessage } from '@Constants/Types/academics';
 import { getHistoryMessages } from '@Services/discussion';
 
 import MessageItem from '../MessageItem';
 
 const MessageList = ({ messages }: { messages: ChatMessage[] }) => {
-  const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const userProfile = useAuthStore(state => state.userProfile);
   const [searchParams] = useSearchParams();
   const mock_test_id = searchParams.get('test_id');
 

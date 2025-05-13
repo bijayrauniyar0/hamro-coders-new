@@ -3,7 +3,7 @@ import React from 'react';
 import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { getFallBackImage } from '@Utils/index';
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 
 type ScoreRowProps = {
   image: string;
@@ -21,7 +21,7 @@ const ScoreRow = ({
   previous_rank,
   user_id,
 }: ScoreRowProps) => {
-  const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const userProfile = useAuthStore(state => state.userProfile);
   return (
     <FlexRow
       className={`w-full select-none items-center justify-between rounded-lg border border-gray-300 bg-[#fbfbfb] px-2 py-2 shadow-sm md:px-4 ${userProfile?.id === user_id ? 'sticky bottom-0 top-0 bg-primary-100' : ''}`}

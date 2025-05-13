@@ -18,8 +18,8 @@ import {
   DropdownMenuTrigger,
 } from '@Components/radix/DropDownMenu';
 import isEmpty from '@Utils/isEmpty';
-import { useTypedSelector } from '@Store/hooks';
-import { User } from '@Store/slices/common';
+import useAuthStore from '@Store/auth';
+import { User } from '@Store/common';
 import { avatars, getAvatar } from '@Constants/UserProfile';
 import { changePassword, updateUser } from '@Services/common';
 import {
@@ -36,7 +36,7 @@ interface IAccountSettingsProps {
 }
 const AccountSettings = ({ handleClose }: IAccountSettingsProps) => {
   const queryClient = useQueryClient();
-  const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const { userProfile } = useAuthStore();
   const [isMouseOverEye, setIsMouseOverEye] = useState(false);
   const [formKey, setFormKey] = useState('profile');
   const defaultValues = {
@@ -91,7 +91,7 @@ const AccountSettings = ({ handleClose }: IAccountSettingsProps) => {
 
   useEffect(() => {
     reset(defaultValues);
-  }, [defaultValues, formKey, reset]);
+  }, [formKey, reset]);
 
   const handleFormSubmit = () => {
     if (isEmpty(dirtyFields)) return;

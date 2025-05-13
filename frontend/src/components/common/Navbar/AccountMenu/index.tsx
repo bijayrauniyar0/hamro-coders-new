@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
@@ -12,34 +12,38 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@Components/radix/DropDownMenu';
-import { setIsAuthenticated, setUserProfile } from '@Store/actions/common';
-import { useTypedDispatch, useTypedSelector } from '@Store/hooks';
-import { avatars } from '@Constants/UserProfile';
+import useAuthStore from '@Store/auth';
 import { logoutUser } from '@Services/common';
 
 import AccountSettings from './AccountSettings';
 
 const AccountMenu = () => {
   const navigate = useNavigate();
-  const dispatch = useTypedDispatch();
   const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
   const [isAccountSettingsOpen, setAccountSettingsOpen] = useState(false);
-  const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const { setUserProfile, userProfile, setIsAuthenticated } = useAuthStore();
 
   const { mutate: logout, isPending: isLogoutLoading } = useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
       toast.success('Logged Out Successfully');
-      dispatch(setUserProfile({}));
+      setUserProfile({});
       navigate('/login');
-      dispatch(setIsAuthenticated(false));
+      setIsAuthenticated(false);
     },
   });
   const handleLogout = () => {
     logout();
   };
-  // const userProfile = useTypedSelector(state => state?.common?.userProfile);
-  const isGoogleAvatar = userProfile?.avatar?.includes('googleusercontent');
+  const userAvatar = useMemo(() => {
+    return (
+      <img
+        src={userProfile.avatar}
+        alt="profile"
+        className="w-full rounded-full"
+      />
+    );
+  }, [userProfile?.avatar]);
   return (
     <>
       <DropdownMenu
@@ -48,15 +52,7 @@ const AccountMenu = () => {
       >
         <DropdownMenuTrigger className="outline-none">
           <div className="h-[2.2rem] w-[2.2rem] items-center justify-center rounded-full sm:h-[2.5rem] sm:w-[2.5rem]">
-            <img
-              src={
-                isGoogleAvatar
-                  ? 'https://lh3.googleusercontent.com/a/ACg8ocLvivv69D4yHaQDuhQF6Dx3hc77hOHGij1JL4XZTrSfDJjDV-Q=s96-c'
-                  : avatars[userProfile?.avatar || 'bear']
-              }
-              alt="profile"
-              className="w-full rounded-full"
-            />
+            {userAvatar}
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -65,15 +61,7 @@ const AccountMenu = () => {
         >
           <FlexRow className="items-center gap-3 border-b-[1px] border-[#D7D7D7] px-3 py-2">
             <div className="h-[2.2rem] w-[2.2rem] items-center justify-center rounded-full sm:h-[2.5rem] sm:w-[2.5rem]">
-              <img
-                src={
-                  isGoogleAvatar
-                    ? 'https://lh3.googleusercontent.com/a/ACg8ocLvivv69D4yHaQDuhQF6Dx3hc77hOHGij1JL4XZTrSfDJjDV-Q=s96-c'
-                    : avatars[userProfile?.avatar || 'bear']
-                }
-                alt="profile"
-                className="w-full rounded-full"
-              />
+              {userAvatar}
             </div>
             <p className="line-clamp-1 text-sm font-bold uppercase text-[#475467] sm:text-base">
               {userProfile?.name || ''}

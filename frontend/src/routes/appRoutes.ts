@@ -11,8 +11,10 @@ import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
 import MCQPage from '@Views/MCQPage';
 import MyStatsPage from '@Views/MyStatsPage';
+import UserProfileEditor from '@Views/Test';
 
 import { IRoute } from './type';
+import UserProfile from '@Components/UserProfile';
 
 const appRoutes: IRoute[] = [
   {
@@ -109,6 +111,16 @@ const appRoutes: IRoute[] = [
     name: 'Page Not Found',
     path: '*',
     component: PageNotFound,
+  },
+  {
+    name: 'User Profile',
+    path: '/user-profile',
+    component: UserProfile,
+  },
+  {
+    name: 'Modes',
+    path: '/test',
+    component: UserProfileEditor,
   },
 ];
 

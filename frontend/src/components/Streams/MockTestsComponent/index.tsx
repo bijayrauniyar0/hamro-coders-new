@@ -13,7 +13,7 @@ import NoDataAvailable from '@Components/common/NoDataAvailable';
 import Searchbar from '@Components/common/SearchBar';
 import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { TestsType } from '@Constants/Types/academics';
 import { getTestsByStreams } from '@Services/academics';
 import { toggleBookmark } from '@Services/bookmark';
@@ -26,9 +26,7 @@ const MockTests = () => {
 
   const { stream_id } = useParams();
   const navigate = useNavigate();
-  const isAuthenticated = useTypedSelector(
-    state => state.commonSlice.isAuthenticated,
-  );
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   const { data: mockTestsData, isLoading: mockTestsDataIsLoading } = useQuery({
     queryKey: ['mockTests'],
@@ -90,7 +88,9 @@ const MockTests = () => {
                       students_count={test.students_count}
                       bookmark={test.bookmark}
                       onViewClick={() => {
-                        navigate(`/streams/mock-test/${stream_id}/?test_id=${test.id}`);
+                        navigate(
+                          `/streams/mock-test/${stream_id}/?test_id=${test.id}`,
+                        );
                         // navigate(`/mcq/${stream_id}/?test_id=${test.id}`);
                       }}
                       onBookMarkClick={() => {

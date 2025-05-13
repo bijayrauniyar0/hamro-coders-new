@@ -5,12 +5,12 @@ import { CircleCheckBig } from 'lucide-react';
 import CountdownTimer from '@Components/common/CountdownTimer';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { useSendVerificationEmail } from '@Api/UserAuthentication';
 
 export default function VerifyEmail() {
   const navigate = useNavigate();
-  const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const userProfile = useAuthStore(state => state.userProfile);
 
   useEffect(() => {
     if (!userProfile?.email) {

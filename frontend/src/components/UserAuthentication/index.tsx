@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 
 import { FlexRow } from '@Components/common/Layouts';
 import singInImg from '@Assets/images/sign-in.jpg';
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 
 import ForgotPassword from './ForgotPassword';
 import Login from './Login';
@@ -15,9 +15,7 @@ import VerifyForgotPassword from './VerifyForgotPassword';
 
 const AuthenticationComponent = () => {
   const { pathname } = useLocation();
-  const isAuthenticated = useTypedSelector(
-    state => state.commonSlice.isAuthenticated,
-  );
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const navigate = useNavigate();
   const getContent = () => {
     if (matchPath('/login', pathname)) return <Login />;

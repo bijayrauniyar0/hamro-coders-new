@@ -1,5 +1,5 @@
 import { IChangePasswordPayload } from '@Components/common/Navbar/AccountMenu/AccountSettings';
-import { User } from '@Store/slices/common';
+import { User } from '@Store/common';
 
 import { api, authenticated } from '.';
 

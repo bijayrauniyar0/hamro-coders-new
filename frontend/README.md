@@ -5,7 +5,7 @@ Welcome to my custom React TypeScript Starter Kit! 🚀 This kit is designed to 
 ## Features
 
 - **TypeScript**: Strong typing with TypeScript to help catch errors early and improve code quality.
-- **Radix UI (shadcn)**: Pre-configured with Radix UI components, providing a set of accessible and customizable      components.
+- **Radix UI (shadcn)**: Pre-configured with Radix UI components, providing a set of accessible and customizable components.
 - **React Router**: App routes setup using React Router for easy navigation across your application.
 - **Material Symbols**: Icon setup using Material Symbols (Materialized Icons) for consistent and beautiful icons.
 - **Redux Toolkit**: State management using Redux Toolkit, offering an intuitive API and simplified Redux setup.
@@ -42,34 +42,39 @@ If you prefer to use npm instead of Yarn, please follow these steps:
    git clone https://github.com/yourusername/react-typescript-starter-kit.git
    cd react-typescript-starter-kit
 ```
+
 2. **Install dependencies:**
+
 ```bash
     Copy code
     yarn install
 
 ```
+
 3. **Start the development server:**
+
 ```bash
     Copy code
     yarn dev
 ```
+
 The app should now be running on http://localhost:3000.
 
 ## Project Structure
 
 ```bash src
-├── assets/                
-|    └── styles/          
-|    └── images/           
-├── components/            
-│   ├── common/            
-│   └── radix/             
-├── views/                 
-├── routes/                
-├── services/              
-├── store/                       
-└── utils/     
-```            
+├── assets/
+|    └── styles/
+|    └── images/
+├── components/
+│   ├── common/
+│   └── radix/
+├── views/
+├── routes/
+├── services/
+├── store/
+└── utils/
+```
 
 ## Available Scripts
 
@@ -109,6 +114,7 @@ export default appRoutes;
 
 
 ```
+
 ## Redux Setup
 
 This project utilizes Redux for state management, providing a predictable way to manage application state. The Redux store, hooks, and slices are set up to enhance the overall development experience.
@@ -117,13 +123,14 @@ This project utilizes Redux for state management, providing a predictable way to
 
 The Redux store is configured in the `store` directory, where you can define your slices and combine them to create the root reducer.
 
-``` bash
+```bash
 /store
-├── hooks.ts                
-├── index.ts                
-├── slices                  
+├── hooks.ts
+├── index.ts
+├── slices
 
 ```
+
 ### Custom Typed Hooks
 
 To simplify the usage of Redux in your components, custom typed hooks are created for dispatching actions and selecting state.
@@ -142,11 +149,10 @@ import { useTypedDispatch, useTypedSelector } from '@/store/hooks';
 import { someAction } from '@/store/slices/someSlice';
 
 const MyComponent = () => {
-  const dispatch = useTypedDispatch();
-  const someData = useTypedSelector((state) => state.someSlice.data);
+  const someData = useTypedSelector(state => state.someSlice.data);
 
   const handleClick = () => {
-    dispatch(someAction());
+    someAction();
   };
 
   return (
@@ -158,7 +164,6 @@ const MyComponent = () => {
 };
 
 export default MyComponent;
-
 ```
 
 ## Husky Setup
@@ -202,9 +207,13 @@ The `Icon` component is a reusable component designed to render Material Icons w
 Here is the example usage
 
 ```jsx
-<Icon name="home" className="custom-class" onClick={() => alert('Icon clicked!')} />
-
+<Icon
+  name="home"
+  className="custom-class"
+  onClick={() => alert('Icon clicked!')}
+/>
 ```
+
 ## Button Component
 
 The `Button` component is built using Radix UI and is designed to provide a customizable and accessible button interface. It leverages the `class-variance-authority` for handling variants and sizes.
@@ -212,6 +221,7 @@ The `Button` component is built using Radix UI and is designed to provide a cust
 ### Features
 
 - **Variants**: Supports multiple button styles, including:
+
   - **Default**: Primary styled button.
   - **Destructive**: Styled for destructive actions.
   - **Outline**: Button with a border.
@@ -239,11 +249,11 @@ The `Button` component accepts the following props:
 Here's an example of how to use the `Button` component:
 
 ```jsx
-import { Button } from "@/components/Button";
+import { Button } from '@/components/Button';
 
 <Button variant="default" size="lg" onClick={() => alert('Button clicked!')}>
   Click Me
-</Button>
+</Button>;
 ```
 
 ## Input Component
@@ -264,7 +274,6 @@ The `Input` component accepts all standard HTML input attributes, such as:
   - Border and background.
   - Padding and font size.
   - Focus and disabled states.
-  
 - **Accessibility**: The component is designed to be keyboard navigable and works with screen readers.
 
 ### Usage
@@ -272,10 +281,9 @@ The `Input` component accepts all standard HTML input attributes, such as:
 Here's an example of how to use the `Input` component:
 
 ```jsx
-import { Input } from "@/components/Input";
+import { Input } from '@/components/Input';
 
-<Input type="text" placeholder="Enter your text here" />
-
+<Input type="text" placeholder="Enter your text here" />;
 ```
 
 ## Tooltip Component
@@ -304,21 +312,20 @@ The `Tooltip` component accepts the following props:
 Here's an example of how to use the `Tooltip` component:
 
 ```jsx
-import ToolTip from "@/components/ToolTip";
+import ToolTip from '@/components/ToolTip';
 
 <ToolTip
   name="info"
   message="This is additional information."
-  iconClick={() => console.log("Icon clicked!")}
+  iconClick={() => console.log('Icon clicked!')}
   className="text-gray-500 hover:text-black"
   messageStyle="bg-blue-500"
-/>
-
+/>;
 ```
 
 ### Searchbar Component
 
-The `Searchbar` component provides a customizable search input field with an integrated icon for enhanced user interaction. 
+The `Searchbar` component provides a customizable search input field with an integrated icon for enhanced user interaction.
 
 #### Props
 
@@ -342,11 +349,11 @@ The `Searchbar` component accepts the following props:
 Here's an example of how to use the `Searchbar` component:
 
 ```jsx
-import Searchbar from "@/components/Searchbar";
+import Searchbar from '@/components/Searchbar';
 
 const App = () => {
-  const handleChange = (value) => {
-    console.log("Search value:", value);
+  const handleChange = value => {
+    console.log('Search value:', value);
   };
 
   return (
@@ -360,11 +367,10 @@ const App = () => {
 };
 
 export default App;
-
 ```
 
-
 ## Contributing
+
 If you have suggestions or improvements, feel free to open an issue or submit a pull request. Contributions are welcome!
 
 ## License

@@ -6,7 +6,7 @@ import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import AccountMenu from '@Components/common/Navbar/AccountMenu';
 import { Button } from '@Components/radix/Button';
 import MockSewaLogo from '@Assets/images/logos/mocksewa2.png';
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { navbarData } from '@Constants/navbarData';
 import useAuth from '@Hooks/useAuth';
 
@@ -19,9 +19,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [width, setWidth] = useState(window.innerWidth);
   useAuth();
-  const isAuthenticated = useTypedSelector(
-    state => state.commonSlice.isAuthenticated,
-  );
+  const isAuthenticated = useAuthStore();
 
   const closeBurgerMenu = () => {
     setBurgerMenuOpen(false);
@@ -51,7 +49,12 @@ const Navbar = () => {
           className="min-w-[9rem] cursor-pointer items-center gap-2"
           onClick={() => navigate('/')}
         >
-          <img src={MockSewaLogo} alt="MS" className="aspect-auto w-8" loading="lazy"/>
+          <img
+            src={MockSewaLogo}
+            alt="MS"
+            className="aspect-auto w-8"
+            loading="lazy"
+          />
           <p className="text-xl font-bold text-primary-700">MockSewa</p>
         </FlexRow>
         {width > 768 && (
