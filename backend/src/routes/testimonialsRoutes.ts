@@ -1,5 +1,5 @@
 import express from 'express';
-import multer from 'multer';
+// import multer from 'multer';
 import {
   createTestimonial,
   getTestimonials,
@@ -8,13 +8,14 @@ import {
 const testimonialRouter = express.Router();
 
 // Set up multer to handle file uploads (store in memory for now)
-const upload = multer({
-  dest: '/',
-  limits: { fileSize: 1024 * 1024 },
-});
+// const upload = multer({
+//   dest: '/',
+//   limits: { fileSize: 1024 * 1024 },
+// });
 
 // POST /testimonial — with image upload field named "profile-photo"
-testimonialRouter.post('/', upload.single('profile_photo'), createTestimonial);
+// testimonialRouter.post('/', upload.single('profile_photo'), createTestimonial);
+testimonialRouter.post('/', createTestimonial);
 testimonialRouter.get('/', getTestimonials);
 
 export default testimonialRouter;

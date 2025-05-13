@@ -8,6 +8,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.27.0",
     "@sequelize/core": "^7.0.0-alpha.43",
     "@sequelize/postgres": "^7.0.0-alpha.43",
     "axios": "^1.9.0",

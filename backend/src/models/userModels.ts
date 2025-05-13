@@ -12,6 +12,7 @@ class User extends Model {
   public avatar!: string;
   public verified!: boolean;
   public oauth_provider!: string;
+  public blob_name!: string;
 }
 
 User.init(
@@ -39,6 +40,10 @@ User.init(
       allowNull: true,
     },
     avatar: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    blob_name: {
       type: DataTypes.STRING,
       allowNull: true,
     },

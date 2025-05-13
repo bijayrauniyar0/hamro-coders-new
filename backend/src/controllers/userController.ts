@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
+import { AzureBlobService } from '../services/azureBlobService';
 
 // Get all users
 export const getAllUsers = async (_: Request, res: Response) => {
@@ -34,6 +35,19 @@ export const getUserProfile = async (
 export const updateUser = async (req: Request, res: Response): Promise<any> => {
   try {
     const { password, old_password, ...restValues } = req.body;
+    const { file } = req;
+    let fileResponse;
+    const azureService = new AzureBlobService();
+
+    if (file) {
+      const filePath = file.path;
+      const blobName = `users/${Date.now()}-${file.originalname}`;
+      const url = await azureService.uploadProfilePic(filePath, blobName);
+      fileResponse = {
+        url,
+        blobName,
+      };
+    }
     const payload: Partial<User> = { ...restValues };
     const user: User | null = await User.findByPk(req.user.id);
     if (!user) {
@@ -51,6 +65,10 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
         return res.status(401).json({ message: 'Invalid old password' });
       }
       user.password = bcrypt.hashSync(password, 10);
+    }
+    if (fileResponse) {
+      payload.avatar = fileResponse.url;
+      payload.blob_name = fileResponse.blobName;
     }
     Object.assign(user, payload);
     await user.save();
