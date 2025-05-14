@@ -16,7 +16,6 @@ import {
 } from '@Components/radix/DropDownMenu';
 import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
-import { getAvatar } from '@Constants/UserProfile';
 import { getStreams, getTestsByStreams } from '@Services/academics';
 import { getLeaderboard } from '@Services/leaderboard';
 
@@ -48,19 +47,6 @@ const Leaderboard = () => {
     select: ({ data }) => data as UserRank[],
     enabled: !!streamId && !!mockTestId,
   });
-
-  // const findRankDetails = (rank: number) => {
-  //   const rankDetails = leaderboardData?.find(
-  //     ({ rank: r }) => r === rank,
-  //   ) as UserRank;
-  //   if (!rankDetails) return {};
-  //   return {
-  //     name: rankDetails.name,
-  //     total_score: rankDetails.total_score,
-  //     previous_rank: rankDetails.previous_rank,
-  //     avatar: rankDetails.avatar,
-  //   };
-  // };
 
   const {
     data: streamsList,
@@ -207,28 +193,11 @@ const Leaderboard = () => {
           ) : (
             <FlexColumn className="w-full gap-4">
               <FlexColumn className="no-scrollbar h-[calc(100dvh-9rem)] w-full gap-2 overflow-y-auto md:h-[calc(100vh-11rem)]">
-                {leaderboardData?.map(
-                  ({
-                    rank,
-                    name,
-                    total_score,
-                    previous_rank,
-                    avatar,
-                    user_id,
-                  }) => {
-                    return (
-                      <ScoreRow
-                        key={rank}
-                        rank={rank}
-                        name={name}
-                        score={total_score}
-                        image={getAvatar(avatar)}
-                        previous_rank={previous_rank}
-                        user_id={user_id}
-                      />
-                    );
-                  },
-                )}
+                {leaderboardData?.map(leaderboard => {
+                  return (
+                    <ScoreRow {...leaderboard} key={leaderboard.user_id} />
+                  );
+                })}
               </FlexColumn>
             </FlexColumn>
           )}

@@ -1,22 +1,23 @@
 import React from 'react';
 
+import Avatar from '@Components/common/Avatar';
 import Icon from '@Components/common/Icon';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
-import { getFallBackImage } from '@Utils/index';
+import { getInitialsFromName } from '@Utils/index';
 import useAuthStore from '@Store/auth';
 
 type ScoreRowProps = {
-  image: string;
+  avatar: string;
   name: string;
-  score: number;
+  total_score: number;
   rank: number;
   previous_rank: number;
   user_id: number;
 };
 const ScoreRow = ({
-  image,
+  avatar,
   name,
-  score,
+  total_score,
   rank,
   previous_rank,
   user_id,
@@ -32,10 +33,11 @@ const ScoreRow = ({
           name={`${previous_rank > rank ? 'arrow_drop_up' : previous_rank === rank ? 'check_indeterminate_small' : 'arrow_drop_down'}`}
         />
         <p className="w-4 text-base font-semibold text-primary-600">{rank}</p>
-        <img
-          src={image || getFallBackImage()}
-          alt=""
+        <Avatar
+          src={avatar}
+          alt="User Avatar"
           className="h-10 w-10 rounded-full md:h-12 md:w-12"
+          fallback={getInitialsFromName(name)}
         />
         <FlexRow className="items-center gap-2">
           <p className="text-md font-semibold leading-4 md:text-base">
@@ -50,7 +52,7 @@ const ScoreRow = ({
       </FlexRow>
       <FlexColumn className="items-center">
         <p className="text-md font-medium leading-3 tracking-tighter">
-          {score}
+          {total_score}
         </p>
       </FlexColumn>
       {/* <Icon className="text-primary-700" name="arrow_drop_up" /> */}

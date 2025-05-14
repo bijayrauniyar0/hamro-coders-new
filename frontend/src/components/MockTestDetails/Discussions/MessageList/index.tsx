@@ -24,6 +24,11 @@ const MessageList = ({ messages }: { messages: ChatMessage[] }) => {
   const [searchParams] = useSearchParams();
   const mock_test_id = searchParams.get('test_id');
 
+  const [newMessagesIndicatorVisible, setNewMessagesIndicatorVisible] =
+    useState(false);
+  const previousMessagesLength = useRef(messages.length);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
   const {
     data: historyMessagesResponse,
     isLoading,
@@ -86,10 +91,6 @@ const MessageList = ({ messages }: { messages: ChatMessage[] }) => {
   useEffect(() => {
     setFirstItemIndex(1000 - updatedMessages.length);
   }, [updatedMessages.length]);
-  const [newMessagesIndicatorVisible, setNewMessagesIndicatorVisible] =
-    useState(false);
-  const previousMessagesLength = useRef(messages.length);
-  const [isAtBottom, setIsAtBottom] = useState(true);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
