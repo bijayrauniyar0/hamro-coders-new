@@ -22,4 +22,11 @@ export class AzureBlobService {
     await blockBlobClient.uploadFile(filePath);
     return blockBlobClient.url;
   }
+  async deleteBlob(blobName: string): Promise<void> {
+    const containerClient = this.blobServiceClient.getContainerClient(
+      AZURE_STORAGE_CONTAINER_NAME,
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    await blockBlobClient.deleteIfExists();
+  }
 }

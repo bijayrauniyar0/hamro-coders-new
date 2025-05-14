@@ -48,6 +48,16 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
     // If there's a file, try to upload it to Azure
     if (file) {
       const azureService = new AzureBlobService();
+      if (user.blob_name) {
+        try {
+          await azureService.deleteBlob(user.blob_name);
+        } catch {
+          res.status(500).json({
+            message: 'Error updating profile picture',
+          });
+        }
+      }
+
       const filePath = file.path;
       const blobName = `users/${Date.now()}-${file.originalname}`;
 
@@ -67,7 +77,6 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
           'Both old password and new password are required to change the password',
       });
     }
-    // If password is provided, check if the old password is valid and then hash the new password
     if (old_password && password) {
       const isPasswordValid = await bcrypt.compare(old_password, user.password);
       if (!isPasswordValid) {
@@ -76,13 +85,11 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
       user.password = bcrypt.hashSync(password, 10); // Hash new password
     }
 
-    // If file was uploaded, update the user avatar URL and blob name
     if (fileResponse) {
       restValues.avatar = fileResponse.url;
       restValues.blob_name = fileResponse.blobName;
     }
 
-    // Only update if there are changes to save
     if (Object.keys(restValues).length > 0) {
       Object.assign(user, restValues); // Assign the rest of the values to the user object
       await user.save(); // Save updated user

@@ -25,9 +25,9 @@ const ProfileTopBox = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      resizeImageToFile(file, (dataUrl, file) => {
+      resizeImageToFile(file, (dataUrl, resizedFile) => {
         setPreviewImage(dataUrl);
-        setAvatar(file);
+        setAvatar(resizedFile);
       });
       setShowImageUploadModal(true);
     }
