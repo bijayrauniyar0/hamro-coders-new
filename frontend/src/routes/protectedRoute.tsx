@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import Spinner from '@Components/common/Spinner';
 
@@ -17,6 +18,7 @@ export default function ProtectedRoute({
     return <Spinner />;
   }
   if (!isAuthenticated) {
+    toast.error('Please login to access this page');  
     return <Navigate to={redirectPath} replace />;
   }
   return children || <Outlet />;

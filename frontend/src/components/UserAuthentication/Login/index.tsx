@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -9,8 +9,7 @@ import { Input } from '@Components/common/FormUI';
 import InputLabel from '@Components/common/FormUI/InputLabel';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { setIsAuthenticated, setUserProfile } from '@Store/actions/common';
-import { useTypedDispatch } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { login } from '@Services/common';
 import { apiURL } from '@Services/index';
 
@@ -25,13 +24,16 @@ const initialState = {
 
 export default function Login() {
   const navigate = useNavigate();
-  const dispatch = useTypedDispatch();
+  const setUserProfile = useAuthStore(state => state.setUserProfile);
+  const setIsAuthenticated = useAuthStore(state => state.setIsAuthenticated);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setError,
+    clearErrors,
     formState: { isSubmitting, errors },
   } = useForm({
     defaultValues: initialState,
@@ -40,24 +42,32 @@ export default function Login() {
   const { mutate } = useMutation<any, any, any, unknown>({
     mutationFn: (payload: Record<string, any>) => login(payload),
     onSuccess: (res: any) => {
-      dispatch(setUserProfile(res.data.user));
+      setUserProfile(res.data.user);
       toast.success('Login Successful');
       navigate('/');
-      dispatch(setIsAuthenticated(true));
+      setIsAuthenticated(true);
     },
     onError: ({ response }: any) => {
       if (response?.status === 401 && response?.data?.verified === false) {
-        toast.error(
-          'User not verified. Please check your email for verification.',
-        );
-        dispatch(setUserProfile({ email: watch('email') }));
+        setUserProfile({ email: watch('email') });
         navigate('/verify-email');
         return;
       }
-      const caughtError = response?.data?.message || 'Something went wrong.';
-      toast.error(caughtError || 'Login Failed Something Went Wrong');
+      const caughtError = response?.data?.message;
+      if (caughtError) {
+        setError('email', {
+          type: 'manual',
+          message: caughtError,
+        });
+      }
     },
   });
+  const email = watch('email');
+  useEffect(() => {
+    if (errors?.email?.type === 'manual') {
+      clearErrors('email');
+    }
+  }, [email, errors, clearErrors]);
 
   const onSubmit = (data: Record<string, any>) => {
     mutate(data);
@@ -116,10 +126,9 @@ export default function Login() {
               )}
             </FormControl>
 
-            {/* ---- remember-me ---- */}
             <div className="flex items-center justify-end gap-2">
               <p
-                className="body-md-semibold cursor-pointer px-2 py-3 text-primary-800"
+                className="body-md-semibold cursor-pointer px-2 text-primary-800"
                 onClick={() => navigate('/forgot-password')}
               >
                 Forgot Password ?

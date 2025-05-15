@@ -1,35 +1,32 @@
 import { Request, Response } from 'express';
-import { uploadFileToDrive } from '../services/driveService';
+// import { uploadFileToDrive } from '../services/driveService';
 import Testimonial from '../models/testimonialsModel';
 import { BASE_URL } from '../constants';
+// import { AzureBlobService } from '../services/azureBlobService';
 
 export const createTestimonial = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const { file } = req;
+    // const { file } = req;
     const { full_name, email, testimonial, exam_type, rating } = req.body;
 
     try {
-      let fileResponse = null;
-      if (file) {
-        fileResponse = await uploadFileToDrive(
-          file,
-          `${file.originalname}-${Date.now()}-${email}`,
-        );
-        if (!fileResponse) {
-          res.status(500).json({ message: 'Failed to upload image' });
-          return;
-        }
-      }
+      // const fileResponse = null;
+      // if (file) {
+      //   const filePath = file.path;
+      //   const blobName = `reviews/${Date.now()}-${file.originalname}`;
+      //   const azureService = new AzureBlobService();
+      //   await azureService.uploadProfilePic(filePath, blobName);
+      // }
       const testimonialResponse = await Testimonial.create({
         full_name,
         email,
         testimonial,
         exam_type,
         rating,
-        profile_photo: fileResponse?.id || null,
+        // profile_photo: fileResponse?.id || null,
       });
       if (!testimonialResponse) {
         res.status(500).json({ message: 'Failed to create testimonial' });

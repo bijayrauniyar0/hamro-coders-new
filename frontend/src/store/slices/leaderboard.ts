@@ -1,52 +1,49 @@
-import { createSlice } from '@reduxjs/toolkit';
+/* eslint-disable no-unused-vars */
+import { create } from 'zustand';
+
+type FilterBy = 'daily' | 'weekly' | 'monthly';
+
+type Filters = {
+  stream_id: number;
+  test_id: number[];
+  filter_by: FilterBy;
+};
 
 type LeaderboardState = {
-  filters: {
-    stream_id: number;
-    test_id: number[];
-    filter_by: 'daily' | 'weekly' | 'monthly';
-  };
+  filters: Filters;
   isFiltersOpen: boolean;
+  setFilters: (filters: Partial<Filters>) => void;
+  resetFilters: () => void;
+  setIsFiltersOpen: (isOpen: boolean) => void;
 };
 
-const initialState: LeaderboardState = {
-  filters: {
-    stream_id: 0,
-    test_id: [],
-    filter_by: 'daily',
-  },
+const initialFilters: Filters = {
+  stream_id: 0,
+  test_id: [],
+  filter_by: 'daily',
+};
+
+const useLeaderboardStore = create<LeaderboardState>(set => ({
+  filters: initialFilters,
   isFiltersOpen: false,
-};
 
-const setFilters = (
-  state: LeaderboardState,
-  action: { payload: Partial<LeaderboardState['filters']> },
-) => {
-  const { payload } = action;
-  state.filters = { ...state.filters, ...payload };
-};
+  setFilters: filters =>
+    set(state => ({
+      filters: {
+        ...state.filters,
+        ...filters,
+      },
+    })),
 
-const resetFilters = (state: LeaderboardState) => {
-  state.filters = initialState.filters;
-};
+  resetFilters: () =>
+    set(() => ({
+      filters: initialFilters,
+    })),
 
-const setIsFiltersOpen = (
-  state: LeaderboardState,
-  action: { payload: boolean },
-) => {
-  const { payload } = action;
-  state.isFiltersOpen = payload;
-};
+  setIsFiltersOpen: isOpen =>
+    set(() => ({
+      isFiltersOpen: isOpen,
+    })),
+}));
 
-const leaderboardSlice = createSlice({
-  name: 'leaderboard',
-  initialState,
-  reducers: {
-    setFilters,
-    resetFilters,
-    setIsFiltersOpen,
-  },
-});
-
-export { leaderboardSlice };
-export default leaderboardSlice.reducer;
+export default useLeaderboardStore;

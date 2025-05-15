@@ -19,12 +19,14 @@ import {
   startOfMonth,
 } from 'date-fns';
 import Stream from '../models/streamModels';
+import User from '../models/userModels';
+import Discussion from '../models/discussionModel';
 // import User from '@Models/userModels';
 
 export async function seedUserScores(count: number = 100) {
-  const startDate = new Date('2025-05-6');
-  const endDate = new Date('2025-05-06');
-
+  const oneWeekAgo = new Date();
+  const startDate = new Date(oneWeekAgo.setDate(oneWeekAgo.getDate() - 7));
+  const endDate = new Date();
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
     return new Date(startDate.getTime() + Math.random() * diff);
@@ -32,21 +34,55 @@ export async function seedUserScores(count: number = 100) {
 
   const getRandomInt = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
+  try {
+    const users = await User.findAll({
+      attributes: ['id'],
+      raw: true,
+    });
+    const userIds = users.map(user => user.id);
+    const mockTest = await MockTest.findAll({
+      attributes: ['id'],
+    });
+    const mockTestIds = mockTest.map(test => test.id);
+    const api_url = 'https://zenquotes.io/api/quotes/';
 
-  // const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
+    // create discussions
+    // async function getapi() {
+    //   const response = await fetch(api_url);
+    //   const data = await response.json();
+    //   return data;
+    // }
+    // const data = await getapi();
+    // const records = data.map((quote: any) => {
+    //   const user_id = userIds[getRandomInt(0, userIds.length - 1)];
+    //   const mock_test_id = mockTestIds[getRandomInt(0, mockTestIds.length - 1)];
+    //   return {
+    //     user_id,
+    //     message: quote.q,
+    //     created_at: getRandomDate(),
+    //     mock_test_id,
+    //   };
+    // });
+    // await Discussion.bulkCreate(records);
 
-  const records = Array.from({ length: count }).map(() => {
-    const user_id = getRandomInt(1, 26);
-    return {
-      user_id: user_id,
-      score: getRandomInt(2, 10),
-      created_at: getRandomDate(),
-      elapsed_time: getRandomInt(200, 600),
-      mock_test_id: getRandomInt(1, 5),
-    };
-  });
+    // create scores
 
-  await UserScores.bulkCreate(records);
+    // const records = Array.from({ length: count }).map(() => {
+    //   const user_id = userIds[getRandomInt(0, userIds.length - 1)];
+    //   const mock_test_id = mockTestIds[getRandomInt(0, mockTestIds.length - 1)];
+    //   return {
+    //     user_id,
+    //     score: getRandomInt(7, 10),
+    //     created_at: getRandomDate(),
+    //     elapsed_time: getRandomInt(200, 600),
+    //     mock_test_id,
+    //   };
+    // });
+
+    // await UserScores.bulkCreate(records);
+  } catch (error) {
+    throw new Error('Error seeding user scores:');
+  }
 }
 
 export class UserStatsService {
@@ -269,6 +305,8 @@ export const getPerformanceDetails = async (
   req: Request<unknown, unknown, unknown, IGetUserStatsParamType>,
   res: Response,
 ) => {
+  // await seedUserScores(100);
+
   const {
     time_period,
     page = 1,
@@ -280,7 +318,6 @@ export const getPerformanceDetails = async (
   const { user } = req;
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
-  // await seedUserScores(250);
   const userStatsService = new UserStatsService(user.id);
   if (!mock_test_id) {
     res.status(400).end('Mock test id is required');
@@ -333,7 +370,6 @@ export const getPerformanceTrend = async (
 
     const rangeStarts = [getStartDate(3), getStartDate(2), getStartDate(1)];
 
-    // console.log(rangeStarts, '000000-----------------------');
     const scores = await UserScores.findAll({
       where: {
         user_id: user.id,

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-const MAX_WIDTH = 256;
-const MAX_HEIGHT = 256;
+const MAX_WIDTH = 1024;
+const MAX_HEIGHT = 1024;
 
 export const resizeImageToFile = (
   file: File,
@@ -35,16 +35,21 @@ export const resizeImageToFile = (
         canvas.toBlob(
           blob => {
             if (blob) {
-              const resizedFile = new File([blob], file.name, {
-                type: 'image/jpeg',
-                lastModified: Date.now(),
-              });
+              const resizedFile = new File(
+                [blob],
+                file.name.replace(/\.[^/.]+$/, '.webp'),
+                {
+                  type: 'image/webp',
+                  lastModified: Date.now(),
+                },
+              );
+
               const dataUrl = URL.createObjectURL(resizedFile);
               callback(dataUrl, resizedFile);
             }
           },
-          'image/jpeg',
-          0.6, // Quality
+          'image/webp',
+          0.8,
         );
       }
     };

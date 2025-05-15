@@ -16,3 +16,10 @@ export const NODE_ENV = process.env.NODE_ENV;
 export const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 export const IMAGE_API_KEY = process.env.IMAGE_API_KEY;
 export const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS;
+export const AZURE_STORAGE_ACCOUNT_NAME =
+  process.env.AZURE_STORAGE_ACCOUNT_NAME;
+export const AZURE_STORAGE_CONTAINER_NAME =
+  process.env.AZURE_STORAGE_CONTAINER_NAME || '';
+export const AZURE_STORAGE_ACCOUNT_KEY = process.env.AZURE_STORAGE_ACCOUNT_KEY;
+export const AZURE_STORAGE_CONNECTION_STRING =
+  process.env.AZURE_STORAGE_CONNECTION_STRING || '';

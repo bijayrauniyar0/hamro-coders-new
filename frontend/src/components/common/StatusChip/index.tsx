@@ -24,7 +24,7 @@ const StatusChip: React.FC<StatusChipProps> = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-center rounded-full px-3 py-1',
+        'flex items-center justify-center rounded-full px-3 py-1 w-fit',
         statusColors[status],
       )}
     >

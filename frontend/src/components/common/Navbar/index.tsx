@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import AccountMenu from '@Components/common/Navbar/AccountMenu';
 import { Button } from '@Components/radix/Button';
+import MockSewaLogo from '@Assets/images/logos/mocksewa2.png';
+import useAuthStore from '@Store/auth';
 import { navbarData } from '@Constants/navbarData';
 import useAuth from '@Hooks/useAuth';
 
@@ -16,7 +18,8 @@ const Navbar = () => {
   const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [width, setWidth] = useState(window.innerWidth);
-  const isAuthenticated = useAuth();
+  useAuth();
+  const isAuthenticated = useAuthStore();
 
   const closeBurgerMenu = () => {
     setBurgerMenuOpen(false);
@@ -40,14 +43,20 @@ const Navbar = () => {
   return (
     <>
       <header className="sticky right-0 top-0 z-[10] flex w-full items-center justify-between bg-white px-4 py-1 shadow-custom xl:px-7">
-        <div
+        <FlexRow
           tabIndex={0}
           role="button"
-          className="logo-container min-w-[9rem] cursor-pointer"
+          className="min-w-[9rem] cursor-pointer items-center gap-2"
           onClick={() => navigate('/')}
         >
+          <img
+            src={MockSewaLogo}
+            alt="MS"
+            className="aspect-auto w-8"
+            loading="lazy"
+          />
           <p className="text-xl font-bold text-primary-700">MockSewa</p>
-        </div>
+        </FlexRow>
         {width > 768 && (
           <div className="flex items-center gap-x-9">
             {navbarData.map(navbarItem => (
@@ -102,9 +111,19 @@ const Navbar = () => {
           >
             <FlexColumn className="h-full">
               <FlexRow className="items-center justify-between px-6 py-4">
-                <div tabIndex={0} role="button" onClick={() => navigate('/')}>
+                <FlexRow
+                  tabIndex={0}
+                  role="button"
+                  className="min-w-[9rem] cursor-pointer items-center gap-2"
+                  onClick={() => navigate('/')}
+                >
+                  <img
+                    src={MockSewaLogo}
+                    alt="MS"
+                    className="aspect-auto w-8"
+                  />
                   <p className="text-xl font-bold text-primary-700">MockSewa</p>
-                </div>
+                </FlexRow>
                 <Icon
                   name="close"
                   className="!text-2xl"

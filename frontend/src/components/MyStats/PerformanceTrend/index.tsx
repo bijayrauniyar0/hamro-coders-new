@@ -7,7 +7,7 @@ import { FlexColumn, FlexRow, Grid } from '@Components/common/Layouts';
 import NoDataAvailable from '@Components/common/NoDataAvailable';
 import SwitchTab from '@Components/common/SwitchTab';
 import { Card, CardHeader, CardTitle } from '@Components/radix/card';
-import { useTypedSelector } from '@Store/hooks';
+import useAnalyticsStore from '@Store/analytics';
 import { chartKeysData, filterByOptions } from '@Constants/MyStats';
 import { getPerformanceTrend } from '@Services/userStats';
 
@@ -91,7 +91,7 @@ export default function PerformanceTrend() {
 
   const [filterBy, setFilterBy] = useState<string>('last_3_weeks');
 
-  const mockTestId = useTypedSelector(state => state.analyticsSlice.mockTestId);
+  const mockTestId = useAnalyticsStore(state => state.mockTestId);
 
   const { data: chartData, isLoading: chartDataIsLoading } = useQuery({
     queryKey: ['performanceTrend', filterBy],

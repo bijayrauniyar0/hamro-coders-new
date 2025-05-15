@@ -16,7 +16,6 @@ import {
 } from '@Components/radix/DropDownMenu';
 import Skeleton from '@Components/radix/Skeleton';
 import isEmpty from '@Utils/isEmpty';
-import { getAvatar } from '@Constants/UserProfile';
 import { getStreams, getTestsByStreams } from '@Services/academics';
 import { getLeaderboard } from '@Services/leaderboard';
 
@@ -48,19 +47,6 @@ const Leaderboard = () => {
     select: ({ data }) => data as UserRank[],
     enabled: !!streamId && !!mockTestId,
   });
-
-  // const findRankDetails = (rank: number) => {
-  //   const rankDetails = leaderboardData?.find(
-  //     ({ rank: r }) => r === rank,
-  //   ) as UserRank;
-  //   if (!rankDetails) return {};
-  //   return {
-  //     name: rankDetails.name,
-  //     total_score: rankDetails.total_score,
-  //     previous_rank: rankDetails.previous_rank,
-  //     avatar: rankDetails.avatar,
-  //   };
-  // };
 
   const {
     data: streamsList,
@@ -206,63 +192,12 @@ const Leaderboard = () => {
             </div>
           ) : (
             <FlexColumn className="w-full gap-4">
-              {/* <FlexRow className="w-full items-end justify-center gap-4">
-                <LeaderBox
-                  rank={2}
-                  name={findRankDetails(2)?.name}
-                  score={findRankDetails(2)?.total_score || 0}
-                  previous_rank={findRankDetails(2)?.previous_rank || 0}
-                  imageClassName="w-12 h-12 md:w-20 md:h-20"
-                  outlineColor="outline-blue-400"
-                  rankClassName="bg-blue-400"
-                  image={findRankDetails(2)?.avatar}
-                />
-                <div className="pb-4">
-                  <LeaderBox
-                    rank={1}
-                    name={findRankDetails(1).name}
-                    score={findRankDetails(1)?.total_score || 0}
-                    previous_rank={findRankDetails(1)?.previous_rank || 0}
-                    imageClassName="w-16 h-16 md:w-24 md:h-24"
-                    outlineColor="outline-primary-400"
-                    rankClassName="bg-primary-400"
-                    image={findRankDetails(1)?.avatar}
-                  />
-                </div>
-                <LeaderBox
-                  rank={3}
-                  name={findRankDetails(3).name}
-                  score={findRankDetails(3)?.total_score || 0}
-                  previous_rank={findRankDetails(3)?.previous_rank || 0}
-                  imageClassName="w-12 h-12 md:w-20 md:h-20"
-                  outlineColor="outline-green-400"
-                  rankClassName="bg-green-400"
-                  image={findRankDetails(2)?.avatar}
-                />
-              </FlexRow> */}
               <FlexColumn className="no-scrollbar h-[calc(100dvh-9rem)] w-full gap-2 overflow-y-auto md:h-[calc(100vh-11rem)]">
-                {leaderboardData?.map(
-                  ({
-                    rank,
-                    name,
-                    total_score,
-                    previous_rank,
-                    avatar,
-                    user_id,
-                  }) => {
-                    return (
-                      <ScoreRow
-                        key={rank}
-                        rank={rank}
-                        name={name}
-                        score={total_score}
-                        image={getAvatar(avatar)}
-                        previous_rank={previous_rank}
-                        user_id={user_id}
-                      />
-                    );
-                  },
-                )}
+                {leaderboardData?.map(leaderboard => {
+                  return (
+                    <ScoreRow {...leaderboard} key={leaderboard.user_id} />
+                  );
+                })}
               </FlexColumn>
             </FlexColumn>
           )}

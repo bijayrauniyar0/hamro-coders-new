@@ -98,37 +98,18 @@ const Streams = () => {
                           </p>
                         </FlexRow>
 
-                        <FlexRow className="items-center">
-                          <Users size={14} className="mr-1 text-gray-400" />
-                          <span className="text-xs text-gray-500">
-                            45 students
-                          </span>
-                        </FlexRow>
-
-                        {/* {!stream.comingSoon && (
-                          <div className="mt-3">
-                            <div className="relative pt-1">
-                              <div className="mb-2 flex items-center justify-between">
-                                <div>
-                                  <span className="inline-block text-xs font-semibold text-indigo-600">
-                                    Progress
-                                  </span>
-                                </div>
-                                <div className="text-right">
-                                  <span className="inline-block text-xs font-semibold text-indigo-600">
-                                    {stream.progress}%
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="mb-1 flex h-2 overflow-hidden rounded bg-indigo-50 text-xs">
-                                <div
-                                  style={{ width: `${stream.progress}%` }}
-                                  className="flex flex-col justify-center whitespace-nowrap rounded bg-gradient-to-r from-indigo-500 to-purple-500 text-center text-white shadow-none"
-                                ></div>
-                              </div>
-                            </div>
+                        {stream.students_count > 0 ? (
+                          <FlexRow className="items-center">
+                            <Users size={14} className="mr-1 text-gray-400" />
+                            <span className="text-xs text-gray-500">
+                              {stream.students_count} students
+                            </span>
+                          </FlexRow>
+                        ) : (
+                          <div className="w-fit">
+                            <StatusChip label="New" status="info" />
                           </div>
-                        )} */}
+                        )}
 
                         <FlexRow className="items-center justify-between border-t border-gray-100 pt-4">
                           <StatusChip

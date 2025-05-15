@@ -1,5 +1,4 @@
-import { IChangePasswordPayload } from '@Components/common/Navbar/AccountMenu/AccountSettings';
-import { User } from '@Store/slices/common';
+import { UserProfileUpdate } from '@Api/User';
 
 import { api, authenticated } from '.';
 
@@ -35,13 +34,15 @@ export const verifyEmail = (payload: Record<string, any>) => {
   return api.post('/api/auth/verify-email/', payload);
 };
 
-export const updateUser = (payload: Partial<User>) => {
-  return authenticated(api).patch('/api/user/update/profile/', {
-    ...payload,
+export const updateUser = (payload: UserProfileUpdate) => {
+  return authenticated(api).patch('/api/user/update/profile/', payload, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
 };
 
-export const changePassword = (payload: IChangePasswordPayload) => {
+export const changePassword = (payload: Record<string, string>) => {
   return authenticated(api).patch('/api/user/change-password/', {
     ...payload,
   });
@@ -59,10 +60,10 @@ export const getNotificationCount = () => {
   return authenticated(api).get('/api/notification/unread-count/');
 };
 
-export const getNotifications = () => {
-  return authenticated(api).get('/api/notification/');
+export const getNotifications = (params: Record<string, any>) => {
+  return authenticated(api).get('/api/notification/', { params });
 };
-export const markNotificationAsRead = (notificationId: string) => {
+export const markNotificationAsRead = (notificationId: number) => {
   return authenticated(api).post(`/api/notification/${notificationId}/`);
 };
 export const markAllNotificationsAsRead = () => {

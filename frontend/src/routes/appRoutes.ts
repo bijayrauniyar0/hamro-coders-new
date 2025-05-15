@@ -1,10 +1,12 @@
 // import ModesPage from '@Views/Modes';
 import PageNotFound from '@Components/common/PageNotFound';
+import MockTestDetails from '@Components/MockTestDetails';
 import Streams from '@Components/Streams';
-import Tests from '@Components/Streams/TestsComponent';
+import Tests from '@Components/Streams/MockTestsComponent';
 import TestimonialForm from '@Components/Testimonial';
 import AuthenticationComponent from '@Components/UserAuthentication';
 import EmailVerification from '@Components/UserAuthentication/Verification';
+import UserProfile from '@Components/UserProfile';
 import AboutUsPage from '@Views/AboutUs';
 import HomePage from '@Views/HomePage';
 import LeaderboardPage from '@Views/LeaderboardPage';
@@ -88,15 +90,15 @@ const appRoutes: IRoute[] = [
     authenticated: false,
   },
   {
-    name: 'MCQ',
-    path: '/mcq/:stream_id/*',
-    component: MCQPage,
-    authenticated: true,
+    name: 'Mock Test',
+    path: '/streams/mock-test/:stream_id/',
+    component: MockTestDetails,
   },
   {
-    name: 'Page Not Found',
-    path: '*',
-    component: PageNotFound,
+    name: 'MCQ',
+    path: '/mcq/:stream_id/',
+    component: MCQPage,
+    authenticated: true,
   },
   {
     name: 'About Us',
@@ -104,6 +106,21 @@ const appRoutes: IRoute[] = [
     component: AboutUsPage,
     authenticated: false,
   },
+  {
+    name: 'Page Not Found',
+    path: '*',
+    component: PageNotFound,
+  },
+  {
+    name: 'User Profile',
+    path: '/user-profile',
+    component: UserProfile,
+  },
+  // {
+  //   name: 'Modes',
+  //   path: '/test',
+  //   component: UserProfileEditor,
+  // },
 ];
 
 export default appRoutes;

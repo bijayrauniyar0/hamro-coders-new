@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-import { setIsAuthenticated } from '@Store/actions/common';
-import { useTypedDispatch } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { checkLogin } from '@Services/common';
 
 export default function useAuth() {
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
-  const dispatch = useTypedDispatch();
+  const { setIsAuthenticated } = useAuthStore();
 
   const {
     isSuccess: isUserLoggedIn,
@@ -24,12 +23,12 @@ export default function useAuth() {
     const checkLoginError = error as AxiosError;
     if (isUserLoggedIn && loggedInUserDetails) {
       setIsAuth(true);
-      dispatch(setIsAuthenticated(true));
+      setIsAuthenticated(true);
     } else if (checkLoginError?.response?.status === 401) {
       setIsAuth(false);
-      dispatch(setIsAuthenticated(false));
+      setIsAuthenticated(false);
     }
-  }, [dispatch, error, isUserLoggedIn, loggedInUserDetails]);
+  }, [error, isUserLoggedIn, loggedInUserDetails, setIsAuthenticated]);
 
   return isAuth;
 }

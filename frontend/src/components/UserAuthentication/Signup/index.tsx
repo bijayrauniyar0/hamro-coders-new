@@ -13,8 +13,7 @@ import Icon from '@Components/common/Icon';
 import IconButton from '@Components/common/IconButton';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
-import { setUserProfile } from '@Store/actions/common';
-import { useTypedDispatch } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import useDebouncedInput from '@Hooks/useDebouncedInput';
 import { checkIfEmailExists, createNewUser } from '@Services/common';
 import {
@@ -32,13 +31,13 @@ const initialState = {
 };
 
 export default function Signup() {
-  const dispatch = useTypedDispatch();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [formStep, setFormStep] = useState(1);
   const [isTermsChecked, setIsTermsChecked] = useState(false);
+  const setUserProfile = useAuthStore(state => state.setUserProfile);
 
   const {
     register,
@@ -59,12 +58,10 @@ export default function Signup() {
   const { mutate, isPending } = useMutation<any, any, any, unknown>({
     mutationFn: (payload: Record<string, any>) => createNewUser(payload),
     onSuccess: () => {
-      dispatch(
-        setUserProfile({
-          email: watch('email'),
-          name: watch('name'),
-        }),
-      );
+      setUserProfile({
+        email: watch('email'),
+        name: watch('name'),
+      });
       navigate('/verify-email');
     },
     onError: (error: any) => {

@@ -164,6 +164,12 @@ export const loginController = async (
       res.status(404).json({ message: 'User not found.' });
       return;
     }
+    if (user.oauth_provider !== 'local') {
+      res.status(401).json({
+        message: 'User logged in with Google. Please login with Google.',
+      });
+      return;
+    }
 
     if (!user.verified) {
       res.status(401).json({

@@ -3,9 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
 
-import { setUserProfile } from '@Store/actions/common';
-import { useTypedDispatch } from '@Store/hooks';
-import useAuth from '@Hooks/useAuth';
+import Modal from '@Components/common/Modal';
+import useAuthStore from '@Store/auth';
+import { useCommonStore } from '@Store/common';
+import { getModalContent } from '@Constants/modalContent';
 import { getUserProfile } from '@Services/common';
 
 import Navbar from './components/common/Navbar';
@@ -16,8 +17,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const { pathname } = useLocation();
-  const dispatch = useTypedDispatch();
-  const isAuthenticated = useAuth();
+  const setUserProfile = useAuthStore(state => state.setUserProfile);
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const showModal = useCommonStore(state => state.showModal);
+  const modalContent = useCommonStore(state => state.modalContent);
+  const setModalContent = useCommonStore(state => state.setModalContent);
+  const toggleModal = useCommonStore(state => state.toggleModal);
   const routesWithoutNavbar = [
     '/login',
     '/signup',
@@ -31,18 +36,34 @@ function App() {
     pathname.includes(route),
   );
   const { isSuccess: isUserDataFetched, data: loggedInUserDetails } = useQuery({
-    queryKey: ['checkLogin', isAuthenticated],
+    queryKey: ['getUserProfile', isAuthenticated],
     queryFn: () => getUserProfile(),
     select: ({ data }) => data,
     enabled: Boolean(isAuthenticated),
   });
   useEffect(() => {
     if (isUserDataFetched && loggedInUserDetails) {
-      dispatch(setUserProfile(loggedInUserDetails));
+      setUserProfile(loggedInUserDetails);
     }
-  }, [loggedInUserDetails, dispatch, isUserDataFetched]);
+  }, [loggedInUserDetails, isUserDataFetched, setUserProfile]);
+
+  const handleModalClose = () => {
+    toggleModal();
+    setTimeout(() => {
+      setModalContent(null);
+    }, 150);
+  };
   return (
     <>
+      <Modal
+        show={showModal}
+        className={getModalContent(modalContent)?.className || ''}
+        title={getModalContent(modalContent)?.title}
+        onClose={handleModalClose}
+        hideCloseButton={!!getModalContent(modalContent)?.hideCloseButton}
+      >
+        {getModalContent(modalContent)?.content}
+      </Modal>
       {showNavbar && <Navbar />}
       <div className="absolute right-0 top-4 w-1/4">
         <ToastContainer />

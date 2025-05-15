@@ -8,7 +8,9 @@ export const findOrCreateGoogleUser = async (googleData: any) => {
       name: googleData.name,
       email: googleData.email,
       avatar: googleData.picture,
-      password: '12345678',
+      password: null,
+      verified: true,
+      oauth_provider: 'google',
     });
   }
 

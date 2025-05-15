@@ -13,7 +13,7 @@ import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import Rating from '@Components/common/Rating';
 import { Button } from '@Components/radix/Button';
 import { resizeImageToFile } from '@Utils/resizeImage';
-import { useTypedSelector } from '@Store/hooks';
+import useAuthStore from '@Store/auth';
 import { TestsType } from '@Constants/Types/academics';
 import { getAvatar } from '@Constants/UserProfile';
 import useAuth from '@Hooks/useAuth';
@@ -31,7 +31,7 @@ const defaultValues: FieldValues = {
 };
 
 const TestimonialForm: React.FC = () => {
-  const userProfile = useTypedSelector(state => state.commonSlice.userProfile);
+  const userProfile = useAuthStore(state => state.userProfile);
   const isAuthenticated = useAuth();
   const [ratingHover, setRatingHover] = React.useState<number>(-1);
   const [previewImage, setPreviewImage] = useState<string>(getAvatar('hacker'));
@@ -135,9 +135,7 @@ const TestimonialForm: React.FC = () => {
               Your testimonial has been submitted successfully. We appreciate
               your feedback!
             </p>
-            <Button
-              onClick={() => resetTestimonial()}
-            >
+            <Button onClick={() => resetTestimonial()}>
               Submit Another Testimonial
             </Button>
           </div>

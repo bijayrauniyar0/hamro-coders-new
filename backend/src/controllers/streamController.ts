@@ -1,6 +1,9 @@
 import Stream from '../models/streamModels';
 import Test from '../models/mockTestModel';
 import { Request, Response } from 'express';
+import UserScores from '../models/userScoresModels';
+import MockTest from '../models/mockTestModel';
+import Bookmark from '../models/bookmarksModel';
 
 export class StreamsService {
   async getStreams() {
@@ -11,10 +14,22 @@ export class StreamsService {
           const testsCount = await Test.count({
             where: { stream_id: stream.id },
           });
+          const numberOfStudents = await UserScores.count({
+            distinct: true,
+            col: 'user_id',
+            include: [
+              {
+                model: Test,
+                where: { stream_id: stream.id },
+                attributes: [],
+              },
+            ],
+          });
 
           return {
             ...stream.toJSON(),
             tests_count: testsCount,
+            students_count: numberOfStudents,
           };
         }),
       );
@@ -78,7 +93,38 @@ export const getMockTestsListByStream = async (req: Request, res: Response) => {
   try {
     const streamsService = new StreamsService();
     const tests = await streamsService.getTestsList(+stream_id);
-    res.status(200).json(tests);
+    const updatedTests = await Promise.all(
+      tests.map(async test => {
+        const studentsCount = await UserScores.count({
+          distinct: true,
+          col: 'user_id',
+          include: [
+            {
+              model: Test,
+              where: { id: test.id },
+              attributes: [],
+            },
+          ],
+        });
+        let bookmark = false;
+        if (req.user) {
+          const bookmarks = await Bookmark.findOne({
+            where: {
+              user_id: req.user.id,
+              mock_test_id: test.id,
+            },
+          });
+          bookmark = !!bookmarks;
+        }
+
+        return {
+          ...test,
+          students_count: studentsCount,
+          bookmark,
+        };
+      }),
+    );
+    res.status(200).json(updatedTests);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
   }
@@ -86,26 +132,11 @@ export const getMockTestsListByStream = async (req: Request, res: Response) => {
 
 export const getAllMockTests = async (req: Request, res: Response) => {
   try {
-    const streamService = new StreamsService();
-    const mockTests = await streamService.getTestsList(undefined, [
-      'id',
-      'title',
-    ]);
+    const mockTests = await MockTest.findAll({
+      attributes: ['id', 'title'],
+    });
     res.status(200).json(mockTests);
   } catch (error) {
     res.status(500).send({ message: 'Internal Server Error', error });
   }
 };
-
-// export const getTestsMetaData = async (
-//   req: Request<{ test_id: number }, unknown, unknown, unknown>,
-//   res: Response,
-// ) => {
-//   const { test_id } = req.params;
-//   try {
-//     const tests = await Test.findByPk(test_id);
-//     res.status(200).json(tests);
-//   } catch {
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// };
