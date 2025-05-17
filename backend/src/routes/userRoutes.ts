@@ -18,7 +18,7 @@ const upload = multer({
 });
 
 userRouter.get('/profile/', authenticate, getUserProfile);
-userRouter.get('/', authenticate, getAllUsers);
+userRouter.get('/',  getAllUsers);
 userRouter.patch(
   '/update/profile/',
   authenticate,
