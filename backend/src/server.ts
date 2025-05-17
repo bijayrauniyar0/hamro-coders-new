@@ -10,22 +10,17 @@ import analyticsRouter from './routes/analyticsRoutes';
 import './models/testSectionLinkModel';
 import authRouter from './routes/authRoutes';
 import cookieParser from 'cookie-parser';
-import { FRONTEND_URL } from './constants';
 import testimonialRouter from './routes/testimonialsRoutes';
 import privateImageRouter from './routes/privateImageRoutes';
 import bookmarkRouter from './routes/bookmarkRoutes';
 import discussionRouter from './routes/discussionRoutes';
 import './models/discussionMentions';
+import { corsOptions } from './config/cors';
 
 const app = express();
 
 app.set('view engine', 'ejs');
-app.use(
-  cors({
-    origin: FRONTEND_URL,
-    credentials: true,
-  }),
-);
+app.use(cors(corsOptions));
 app.use(cookieParser()); // Middleware to parse cookies
 app.use(express.json()); // Middleware to parse JSON requests
 

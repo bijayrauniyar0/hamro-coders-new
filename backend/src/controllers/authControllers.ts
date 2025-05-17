@@ -48,7 +48,7 @@ export class AuthService {
       'templates',
       'emailVerification.ejs',
     );
-    const verificationLink = `${FRONTEND_URL}/email-verification/${token}`;
+    const verificationLink = `${FRONTEND_URL}/auth/email-verification/${token}`;
     const verificationTemplate = await ejs.renderFile(templatePath, {
       verificationLink: verificationLink,
       currentYear: new Date().getFullYear(),
@@ -68,7 +68,7 @@ export class AuthService {
       'templates',
       'resetPassword.ejs',
     );
-    const resetLink = `${FRONTEND_URL}/reset-password/${token}`;
+    const resetLink = `${FRONTEND_URL}/auth/reset-password/${token}`;
     const resetTemplate = await ejs.renderFile(templatePath, {
       resetLink: resetLink,
       currentYear: new Date().getFullYear(),
