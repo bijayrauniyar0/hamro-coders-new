@@ -9,6 +9,7 @@ class MockTest extends Model {
   public title!: string;
   public time_limit!: number;
   public Stream!: Stream;
+  public Sections!: Section[];
   public getSections!: BelongsToManyGetAssociationsMixin<Section>;
 }
 

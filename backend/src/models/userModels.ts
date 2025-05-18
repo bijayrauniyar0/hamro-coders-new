@@ -9,10 +9,12 @@ class User extends Model {
   public email!: string;
   public password!: string;
   public number!: string;
+  public bio!: string;
   public avatar!: string;
   public verified!: boolean;
   public oauth_provider!: string;
   public blob_name!: string;
+  public created_at!: Date;
 }
 
 User.init(
@@ -36,6 +38,10 @@ User.init(
       allowNull: true,
     },
     number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    bio: {
       type: DataTypes.STRING,
       allowNull: true,
     },

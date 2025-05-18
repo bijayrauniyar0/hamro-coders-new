@@ -49,6 +49,11 @@ export class ChatController {
     // eslint-disable-next-line no-console
     console.log(`User disconnected: ${socket.id}`, socket.data.user.id);
   }
+  static handleError(socket: Socket, error: any) {
+    // eslint-disable-next-line no-console
+    console.error(`Socket error: ${error}`);
+    socket.emit('error', 'An error occurred');
+  }
 }
 
 export const getAllUsersInChat = async (req: Request, res: Response) => {

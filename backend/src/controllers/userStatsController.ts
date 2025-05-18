@@ -20,7 +20,8 @@ import {
 } from 'date-fns';
 import Stream from '../models/streamModels';
 import User from '../models/userModels';
-import Discussion from '../models/discussionModel';
+import Section from '../models/sectionModel';
+import { format } from 'date-fns';
 // import User from '@Models/userModels';
 
 export async function seedUserScores(count: number = 100) {
@@ -95,7 +96,6 @@ export class UserStatsService {
     startDate,
     otherFilterOptions,
     mock_test_id,
-    controllerName,
   }: UserScoresArgsType): Promise<UserScores[]> {
     const whereClause: any = {
       user_id: this.user_id,
@@ -116,11 +116,15 @@ export class UserStatsService {
       include: [
         {
           model: MockTest,
-          attributes: ['title'],
+          attributes: ['title', 'time_limit'],
           include: [
             {
               model: Stream,
               attributes: ['name'], // or other fields
+            },
+            {
+              model: Section,
+              attributes: ['question_count', 'marks_per_question'],
             },
           ],
         },
@@ -247,6 +251,40 @@ export class UserStatsService {
       next_page: offset + page_size < total ? page + 1 : null,
     };
   }
+  getUserStats = async ({
+    mock_test_id,
+    leaderboardService,
+    time_period,
+  }: {
+    mock_test_id: number;
+    leaderboardService: LeaderboardService;
+    time_period?: string | undefined;
+  }) => {
+    const scores = await this.getUserScores({
+      startDate: time_period
+        ? getStartDateByTimePeriod(time_period)
+        : 'all_time',
+      mock_test_id,
+    });
+
+    const userRanks = await leaderboardService.getRankedUsers({
+      startDate: 'all_time',
+      mock_test_id,
+    });
+
+    const totalScore = scores.reduce((acc, score) => acc + score.score, 0);
+    const avg_accuracy = +((totalScore / (scores.length * 10)) * 100).toFixed(
+      2,
+    );
+
+    return {
+      score: totalScore,
+      avg_accuracy: avg_accuracy ? `${avg_accuracy}%` : 'N/A',
+      total_sessions: scores.length,
+      current_rank: userRanks.find((u: any) => u.user_id === this.user_id)
+        ?.rank,
+    };
+  };
 }
 
 export const getUserStats = async (
@@ -262,28 +300,155 @@ export const getUserStats = async (
     return;
   }
   try {
-    const scores = await userStatsService.getUserScores({
-      startDate: getStartDateByTimePeriod(time_period),
+    const stats = await userStatsService.getUserStats({
       mock_test_id: Number(mock_test_id),
+      leaderboardService,
+      time_period,
     });
-    const userRanks = await leaderboardService.getRankedUsers({
+    res.status(200).json(stats);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', details: error });
+  }
+};
+export const getUserStatsById = async (
+  req: Request<{ user_id: string }, unknown, unknown, IGetUserStatsParamType>,
+  res: Response,
+) => {
+  const { user_id } = req.params;
+  const { mock_test_id } = req.query;
+  const leaderboardService = new LeaderboardService();
+  const userStatsService = new UserStatsService(+user_id);
+  if (!mock_test_id) {
+    res.status(400).end('Mock test id is required');
+    return;
+  }
+  if (!user_id) {
+    res.status(400).end('User id is required');
+    return;
+  }
+  try {
+    const stats = await userStatsService.getUserStats({
+      mock_test_id: Number(mock_test_id),
+      leaderboardService,
+    });
+    res.status(200).json(stats);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', details: error });
+  }
+};
+
+export const getRadarMetrics = async (
+  req: Request<{ user_id: string }, unknown, unknown, IGetUserStatsParamType>,
+  res: Response,
+) => {
+  const { user_id } = req.params;
+  const { mock_test_id } = req.query;
+
+  if (!mock_test_id) {
+    res.status(400).send('Mock test id is required');
+    return;
+  }
+  if (!user_id) {
+    res.status(400).send('User id is required');
+    return;
+  }
+
+  try {
+    const userStatsService = new UserStatsService(+user_id);
+    const maxTestsTakenInSubject = 10;
+    const maxTimeRatio = 1.5;
+
+    const userAttempts = await userStatsService.getUserScores({
       startDate: 'all_time',
       mock_test_id: Number(mock_test_id),
     });
 
-    const totalScore = scores.reduce((acc, score) => acc + score.score, 0);
-    const avg_accuracy = +((totalScore / (scores.length * 10)) * 100).toFixed(
-      2,
+    if (userAttempts.length === 0) {
+      res.status(404).json({ message: 'No attempts found' });
+      return;
+    }
+    const sortedAttempts = [...userAttempts].sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
     );
-    const stats = {
-      score: totalScore,
-      avg_accuracy: avg_accuracy ? `${avg_accuracy}%` : 'N/A',
-      total_sessions: scores.length,
-      current_rank: userRanks.find((user: any) => user.user_id === req.user.id)
-        ?.rank,
+
+    // Helper to calculate full marks and total questions from sections
+    const calcMockStats = (
+      sections: (typeof userAttempts)[0]['MockTest']['Sections'],
+    ) => {
+      const fullMarks = sections.reduce(
+        (sum, sec) => sum + sec.question_count * sec.marks_per_question,
+        0,
+      );
+      const totalQuestions = sections.reduce(
+        (sum, sec) => sum + sec.question_count,
+        0,
+      );
+      return { fullMarks, totalQuestions };
     };
 
-    res.status(200).json(stats);
+    let totalScore = 0;
+    let totalFullMarks = 0;
+    let totalElapsedTime = 0;
+    let totalTimeGiven = 0;
+    let totalUnansweredQuestions = 0;
+    let totalQuestions = 0;
+
+    for (const attempt of userAttempts) {
+      const { Sections, time_limit } = attempt.MockTest;
+      const { fullMarks, totalQuestions: mockTotalQuestions } =
+        calcMockStats(Sections);
+
+      totalScore += attempt.score;
+      totalFullMarks += fullMarks;
+      totalElapsedTime += attempt.elapsed_time;
+      totalTimeGiven += time_limit * 60;
+      totalUnansweredQuestions += attempt.unanswered_questions;
+      totalQuestions += mockTotalQuestions;
+    }
+
+    // Accuracy %
+    const accuracy = (totalScore / totalFullMarks) * 100;
+    // Average Elapsed Time (inverted, clamped)
+    const avgElapsedRatio = totalElapsedTime / totalTimeGiven;
+    const clampedTimeRatio = Math.min(avgElapsedRatio, maxTimeRatio);
+    const normElapsedTime = ((maxTimeRatio - clampedTimeRatio) / 1.0) * 100;
+
+    // Tests Taken (normalized)
+    const testsTaken = userAttempts.length;
+    const normTestsTaken = Math.min(
+      100,
+      (testsTaken / maxTestsTakenInSubject) * 100,
+    );
+
+    // Improvement Rate
+    const getDerivedScore = (attempt: (typeof userAttempts)[0]) => {
+      const { fullMarks } = calcMockStats(attempt.MockTest.Sections);
+      return attempt.score / fullMarks;
+    };
+    const improvementRate =
+      (getDerivedScore(sortedAttempts[sortedAttempts.length - 1]) -
+        getDerivedScore(sortedAttempts[0])) *
+      100;
+    const normImprovement = Math.max(
+      0,
+      Math.min(100, (improvementRate + 100) / 2),
+    );
+
+    // Average Unanswered Questions (%)
+    const avgUnansweredQuestions =
+      (totalUnansweredQuestions / totalQuestions) * 100;
+
+    // Final Radar Metrics
+    const radarMetrics = {
+      accuracy: Number(accuracy.toFixed(2)),
+      avg_elapsed_time: Number(normElapsedTime.toFixed(2)),
+      tests_taken: Number(normTestsTaken.toFixed(2)),
+      improvement_rate: Number(normImprovement.toFixed(2)),
+      avg_unanswered_questions: Number(avgUnansweredQuestions.toFixed(2)),
+    };
+
+    res.status(200).json(radarMetrics);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
   }
@@ -433,6 +598,43 @@ export const getPerformanceTrend = async (
     ];
 
     res.status(200).json(results);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', details: error });
+  }
+};
+
+export const getUserScoresByMockTest = async (
+  req: Request<{ user_id: string }, unknown, unknown, { mock_test_id: string }>,
+  res: Response,
+) => {
+  const { user_id } = req.params;
+  const { mock_test_id } = req.query;
+  if (!mock_test_id) {
+    res.status(400).end('Mock test id is required');
+    return;
+  }
+  if (!user_id) {
+    res.status(400).end('User id is required');
+    return;
+  }
+  try {
+    const userStatsService = new UserStatsService(+user_id);
+    const scores = await userStatsService.getUserScores({
+      startDate: 'all_time',
+      mock_test_id: Number(mock_test_id),
+    });
+    const scoreMap: Record<string, number> = {};
+
+    for (const s of scores) {
+      const date = format(new Date(s.created_at), 'yyyy-MM-dd');
+      scoreMap[date] = (scoreMap[date] || 0) + s.score;
+    }
+
+    const dailyScores = Object.entries(scoreMap)
+      .map(([date, total_score]) => ({ date, total_score }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    res.status(200).json(dailyScores);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', details: error });
   }
