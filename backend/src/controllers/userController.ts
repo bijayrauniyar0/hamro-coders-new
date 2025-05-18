@@ -32,6 +32,32 @@ export const getUserProfile = async (
     res.status(500).json({ message: 'Error fetching user', error });
   }
 };
+export const getPublicUserProfileById = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  try {
+    const { user_id } = req.params;
+    const userData = await User.findOne({
+      where: { id: user_id },
+      attributes: {
+        exclude: [
+          'password',
+          'email',
+          'number',
+          'oauth_provider',
+          'verified',
+          'created_at',
+          'updated_at',
+          'blob_name',
+        ],
+      },
+    });
+    res.status(200).json(userData);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user', error });
+  }
+};
 
 // Update user by ID
 export const updateUser = async (req: Request, res: Response): Promise<any> => {
