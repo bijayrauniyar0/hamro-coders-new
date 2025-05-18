@@ -13,6 +13,7 @@ class UserScores extends Model {
   public MockTest!: MockTest;
   public elapsed_time!: number;
   public readonly created_at!: Date;
+  public unanswered_questions!: number;
 }
 
 UserScores.init(
@@ -33,6 +34,11 @@ UserScores.init(
     score: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    unanswered_questions: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     elapsed_time: {
       type: DataTypes.INTEGER,

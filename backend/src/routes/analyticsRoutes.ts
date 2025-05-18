@@ -1,6 +1,7 @@
 import {
   getPerformanceDetails,
   getPerformanceTrend,
+  getRadarMetrics,
   getRecentSessions,
   getUserStats,
 } from '../controllers/userStatsController';
@@ -17,5 +18,6 @@ analyticsRouter.get(
   getPerformanceDetails,
 );
 analyticsRouter.get('/performance-trend/', authenticate, getPerformanceTrend);
+analyticsRouter.get('/radar-metrics/:user_id', getRadarMetrics);
 
 export default analyticsRouter;
