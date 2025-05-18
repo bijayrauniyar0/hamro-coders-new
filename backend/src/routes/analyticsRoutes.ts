@@ -3,7 +3,9 @@ import {
   getPerformanceTrend,
   getRadarMetrics,
   getRecentSessions,
+  getUserScoresByMockTest,
   getUserStats,
+  getUserStatsById,
 } from '../controllers/userStatsController';
 import express from 'express';
 import { authenticate } from '../middlewares/authenticate';
@@ -19,5 +21,7 @@ analyticsRouter.get(
 );
 analyticsRouter.get('/performance-trend/', authenticate, getPerformanceTrend);
 analyticsRouter.get('/radar-metrics/:user_id', getRadarMetrics);
+analyticsRouter.get('/user-scores/:user_id', getUserScoresByMockTest);
+analyticsRouter.get('/user-stats/:user_id', getUserStatsById);
 
 export default analyticsRouter;
