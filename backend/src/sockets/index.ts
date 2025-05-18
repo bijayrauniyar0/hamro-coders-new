@@ -9,30 +9,33 @@ export type SocketSendMessageType = {
 };
 export const initializeSocket = (io: Server) => {
   io.use(socketAuthMiddleware);
+  try {
+    io.on('connection', socket => {
+      socket.on('joinRoom', (mock_test_id: string) => {
+        ChatController.handleJoinRoom(socket, mock_test_id);
+      });
 
-  io.on('connection', socket => {
-    socket.on('joinRoom', (mock_test_id: string) => {
-      ChatController.handleJoinRoom(socket, mock_test_id);
+      socket.on(
+        'sendMessage',
+        ({ mock_test_id, message, messageId }: SocketSendMessageType) => {
+          ChatController.handleSendMessage(
+            socket,
+            mock_test_id,
+            message,
+            messageId,
+          );
+        },
+      );
+
+      socket.on('disconnect', () => {
+        socket.emit('disconnected', socket.id);
+      });
+      socket.on('connection_error', err =>
+        ChatController.handleError(socket, err),
+      );
     });
-
-    socket.on(
-      'sendMessage',
-      ({ mock_test_id, message, messageId }: SocketSendMessageType) => {
-        ChatController.handleSendMessage(
-          socket,
-          mock_test_id,
-          message,
-          messageId,
-        );
-      },
-    );
-
-    socket.on('disconnect', () => {
-      ChatController.handleDisconnect(socket);
-    });
-  });
-  io.on('connection_error', err => {
+  } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('Socket connection error:', err.message);
-  });
+    console.error('Socket error:', err);
+  }
 };

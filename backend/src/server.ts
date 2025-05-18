@@ -15,12 +15,17 @@ import privateImageRouter from './routes/privateImageRoutes';
 import bookmarkRouter from './routes/bookmarkRoutes';
 import discussionRouter from './routes/discussionRoutes';
 import './models/discussionMentions';
-import { corsOptions } from './config/cors';
+import { CORS_ORIGIN } from './constants';
 
 const app = express();
 
 app.set('view engine', 'ejs');
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: CORS_ORIGIN?.split(' '),
+    credentials: true,
+  }),
+);
 app.use(cookieParser()); // Middleware to parse cookies
 app.use(express.json()); // Middleware to parse JSON requests
 
