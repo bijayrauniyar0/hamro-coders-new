@@ -7,7 +7,7 @@ import MockTest from './mockTestModel';
 class Discussion extends Model {
   public id!: number;
   public mock_test_id!: string;
-  public message!: string;
+  public message!: JSON;
   public user_id!: string;
   public created_at!: Date;
   public User!: User;
@@ -20,7 +20,7 @@ Discussion.init(
       allowNull: false,
     },
     message: {
-      type: DataTypes.STRING,
+      type: DataTypes.JSON,
       allowNull: false,
     },
     user_id: {
