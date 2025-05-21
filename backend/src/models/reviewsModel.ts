@@ -1,18 +1,18 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
 
-class Testimonial extends Model {
+class Review extends Model {
   public id!: number;
   public full_name!: string;
   public email!: string;
-  public testimonial!: string;
+  public review!: string;
   public exam_type!: string;
   public rating!: number;
   public profile_photo?: string;
   public anonymous!: boolean;
 }
 
-Testimonial.init(
+Review.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -30,7 +30,7 @@ Testimonial.init(
         isEmail: true,
       },
     },
-    testimonial: {
+    review: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
@@ -57,11 +57,11 @@ Testimonial.init(
     },
   },
   {
-    tableName: 'testimonials',
+    tableName: 'reviews',
     sequelize,
     createdAt: 'created_at',
     updatedAt: false,
   },
 );
 
-export default Testimonial;
+export default Review;
