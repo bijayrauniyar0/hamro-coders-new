@@ -1,0 +1,1783 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 15.12 (Debian 15.12-1.pgdg120+1)
+-- Dumped by pg_dump version 15.12 (Debian 15.12-1.pgdg120+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: public; Type: SCHEMA; Schema: -; Owner: -
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+--
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON SCHEMA public IS '';
+
+
+--
+-- Name: enum_user_scores_mode; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.enum_user_scores_mode AS ENUM (
+    'practice',
+    'ranked'
+);
+
+
+--
+-- Name: enum_users_oauth_provider; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.enum_users_oauth_provider AS ENUM (
+    ''
+);
+
+
+--
+-- Name: oauth_provider_enum; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.oauth_provider_enum AS ENUM (
+    'local',
+    'google'
+);
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: bookmarks; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.bookmarks (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    mock_test_id integer NOT NULL
+);
+
+
+--
+-- Name: bookmarks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.bookmarks_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bookmarks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.bookmarks_id_seq OWNED BY public.bookmarks.id;
+
+
+--
+-- Name: discussions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.discussions (
+    id integer NOT NULL,
+    mock_test_id integer NOT NULL,
+    message jsonb NOT NULL,
+    user_id integer NOT NULL,
+    created_at timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: discussions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.discussions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: discussions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.discussions_id_seq OWNED BY public.discussions.id;
+
+
+--
+-- Name: google_auth_tokens; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.google_auth_tokens (
+    id integer NOT NULL,
+    refresh_token text NOT NULL,
+    access_token text,
+    access_token_expires_at timestamp with time zone
+);
+
+
+--
+-- Name: google_auth_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.google_auth_tokens_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: google_auth_tokens_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.google_auth_tokens_id_seq OWNED BY public.google_auth_tokens.id;
+
+
+--
+-- Name: mcq_questions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.mcq_questions (
+    id integer NOT NULL,
+    section_id integer NOT NULL,
+    question character varying(255) NOT NULL,
+    options json NOT NULL,
+    answer character varying(255) NOT NULL
+);
+
+
+--
+-- Name: mcq_questions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.mcq_questions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: mcq_questions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.mcq_questions_id_seq OWNED BY public.mcq_questions.id;
+
+
+--
+-- Name: mock_tests; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.mock_tests (
+    id integer NOT NULL,
+    stream_id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    time_limit integer NOT NULL
+);
+
+
+--
+-- Name: mock_tests_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.mock_tests_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: mock_tests_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.mock_tests_id_seq OWNED BY public.mock_tests.id;
+
+
+--
+-- Name: notifications; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.notifications (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    message character varying(255) NOT NULL,
+    is_read boolean DEFAULT false NOT NULL,
+    created_at timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: notifications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.notifications_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: notifications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.notifications_id_seq OWNED BY public.notifications.id;
+
+
+--
+-- Name: reviews; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.reviews (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    mock_test_id integer NOT NULL,
+    review text NOT NULL,
+    rating double precision,
+    created_at timestamp with time zone NOT NULL
+);
+
+
+--
+-- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.reviews_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.reviews_id_seq OWNED BY public.reviews.id;
+
+
+--
+-- Name: sections; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.sections (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    question_count integer NOT NULL,
+    marks_per_question double precision NOT NULL,
+    negative_marking double precision NOT NULL
+);
+
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.sections_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.sections_id_seq OWNED BY public.sections.id;
+
+
+--
+-- Name: streams; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.streams (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+--
+-- Name: streams_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.streams_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: streams_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.streams_id_seq OWNED BY public.streams.id;
+
+
+--
+-- Name: test_section_links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.test_section_links (
+    mock_test_id integer NOT NULL,
+    section_id integer NOT NULL,
+    test_id integer
+);
+
+
+--
+-- Name: user_scores; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_scores (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    mock_test_id integer NOT NULL,
+    score integer NOT NULL,
+    elapsed_time integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    unanswered_questions integer
+);
+
+
+--
+-- Name: user_scores_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_scores_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_scores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_scores_id_seq OWNED BY public.user_scores.id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(255),
+    number character varying(255),
+    avatar character varying(255) DEFAULT 'bear'::character varying,
+    verified boolean DEFAULT false NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    oauth_provider public.oauth_provider_enum DEFAULT 'local'::public.oauth_provider_enum NOT NULL,
+    blob_name text,
+    bio text
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- Name: bookmarks id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.bookmarks ALTER COLUMN id SET DEFAULT nextval('public.bookmarks_id_seq'::regclass);
+
+
+--
+-- Name: discussions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.discussions ALTER COLUMN id SET DEFAULT nextval('public.discussions_id_seq'::regclass);
+
+
+--
+-- Name: google_auth_tokens id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.google_auth_tokens ALTER COLUMN id SET DEFAULT nextval('public.google_auth_tokens_id_seq'::regclass);
+
+
+--
+-- Name: mcq_questions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mcq_questions ALTER COLUMN id SET DEFAULT nextval('public.mcq_questions_id_seq'::regclass);
+
+
+--
+-- Name: mock_tests id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mock_tests ALTER COLUMN id SET DEFAULT nextval('public.mock_tests_id_seq'::regclass);
+
+
+--
+-- Name: notifications id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notifications ALTER COLUMN id SET DEFAULT nextval('public.notifications_id_seq'::regclass);
+
+
+--
+-- Name: reviews id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reviews ALTER COLUMN id SET DEFAULT nextval('public.reviews_id_seq'::regclass);
+
+
+--
+-- Name: sections id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sections ALTER COLUMN id SET DEFAULT nextval('public.sections_id_seq'::regclass);
+
+
+--
+-- Name: streams id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.streams ALTER COLUMN id SET DEFAULT nextval('public.streams_id_seq'::regclass);
+
+
+--
+-- Name: user_scores id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_scores ALTER COLUMN id SET DEFAULT nextval('public.user_scores_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Data for Name: bookmarks; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.bookmarks (id, user_id, mock_test_id) FROM stdin;
+7	19	2
+\.
+
+
+--
+-- Data for Name: discussions; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.discussions (id, mock_test_id, message, user_id, created_at) FROM stdin;
+738	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "hey man", "type": "text"}]}]}	19	2025-05-19 20:01:13.452+00
+739	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "<button onclick=\\"alert('Hello, world!')\\">Click me</button>", "type": "text"}]}]}	19	2025-05-19 20:09:19.546+00
+740	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "<p>hey buddy </p>", "type": "text"}]}]}	19	2025-05-19 20:10:30.78+00
+741	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "<script>alert(\\"XSS1\\")</script>", "type": "text"}]}, {"type": "paragraph"}]}	19	2025-05-19 20:14:46.326+00
+742	1	{"type": "doc", "content": [{"type": "paragraph"}, {"type": "paragraph", "content": [{"text": "<img src=\\"x\\" onerror=\\"alert('XSS2')\\" />", "type": "text"}]}, {"type": "paragraph"}]}	19	2025-05-19 20:14:55.624+00
+743	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "<a href=\\"javascript:alert('XSS3')\\">Click me</a>", "type": "text"}]}, {"type": "paragraph"}]}	19	2025-05-19 20:15:05.481+00
+744	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "<svg/onload=alert(\\"XSS4\\")>", "type": "text"}]}, {"type": "paragraph"}, {"type": "paragraph"}]}	19	2025-05-19 20:15:14.026+00
+745	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "hey ", "type": "text"}, {"type": "mention", "attrs": {"id": 19, "label": null}}, {"text": " ", "type": "text"}]}]}	1	2025-05-19 20:18:43.42+00
+746	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "HEY ", "type": "text"}, {"type": "mention", "attrs": {"id": 1, "label": null}}, {"text": " ", "type": "text"}]}]}	19	2025-05-19 20:25:41.032+00
+747	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "mention", "attrs": {"id": 1, "label": "Sita Koirala"}}, {"text": " ", "type": "text"}]}]}	19	2025-05-19 20:27:00.188+00
+748	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "mention", "attrs": {"id": 1, "label": "Sita Koirala"}}, {"text": " ", "type": "text"}]}]}	19	2025-05-19 21:08:53.917+00
+749	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "mention", "attrs": {"id": 1, "label": "Sita Koirala"}}, {"text": " hey", "type": "text"}]}]}	19	2025-05-19 21:11:39.774+00
+750	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "@hey", "type": "text"}]}]}	19	2025-05-21 13:45:11.552+00
+751	1	{"type": "doc", "content": [{"type": "bulletList", "content": [{"type": "listItem", "content": [{"type": "paragraph", "content": [{"text": "The rest of the text is the label or id without the '@' (so I sliced off the first character).", "type": "text"}]}]}, {"type": "listItem", "content": [{"type": "paragraph", "content": [{"text": "The array format for children elements in ", "type": "text"}, {"text": "re", "type": "text", "marks": [{"type": "code"}]}]}]}]}]}	19	2025-05-21 13:48:36.878+00
+752	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "hey man", "type": "text"}]}]}	5	2025-05-21 13:51:27.136+00
+753	1	{"type": "doc", "content": [{"type": "paragraph"}, {"type": "paragraph", "content": [{"text": "hey whats up", "type": "text"}]}]}	5	2025-05-21 13:51:30.56+00
+754	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "Hye  ", "type": "text"}]}]}	5	2025-05-21 15:49:19.813+00
+755	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "hey buddy", "type": "text"}]}]}	19	2025-05-21 15:49:42.357+00
+756	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "hey man", "type": "text"}]}]}	5	2025-05-21 16:04:13.874+00
+757	1	{"type": "doc", "content": [{"type": "paragraph"}, {"type": "paragraph", "content": [{"text": "whats  up ", "type": "text"}]}]}	5	2025-05-21 16:04:17.22+00
+758	1	{"type": "doc", "content": [{"type": "paragraph"}, {"type": "paragraph", "content": [{"text": "hpw are you", "type": "text"}]}]}	5	2025-05-21 16:04:19.5+00
+759	1	{"type": "doc", "content": [{"type": "paragraph", "content": [{"text": "i am good", "type": "text"}]}]}	19	2025-05-21 16:04:26.124+00
+760	1	{"type": "doc", "content": [{"type": "paragraph"}, {"type": "paragraph", "content": [{"text": "what bout you", "type": "text"}]}]}	19	2025-05-21 16:04:29.771+00
+\.
+
+
+--
+-- Data for Name: google_auth_tokens; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.google_auth_tokens (id, refresh_token, access_token, access_token_expires_at) FROM stdin;
+1	e86d62aed4571572290ad2e6183008b8:3ff99d68d057251b2238f541cbc92bbf8271aa31c18ca339e0b745ad225c840daee8bcae3110add7b9777dfde2854cb79cf33c51f6f85f3f656ff5a16050a5a7a92602cc995232d3c4566619c4582151bb0e36797e51d1902eb31ffe434c6a1a0fcbd852fae494b222c2b3468a068497	1d8dca806c091e32adb603fcadfac13a:e830b5076110842e176d24ae7aca9f7c00cb249c1ce67dc1d95166d894756f29bf95abe8ec5bd2b40262ef9b7117f1fd5dd470538d62f2033c5e994a5dfc540d49090b37d7371d6da58e88ded43e1c2ab6218ea2bfdccfdd4ae28130b1c116c46f335c72cc717a7daf2f1ab5dd17e4ec129d2ce0321dd453afbf160f6cc85423e76447561f22a6d0aa3a2eae4cba180ab2fadf760817a714df7bd442513f47bbf0188c59a6e9811b79d2529e3ffc5c415e60cf116e625e16d6be0379a6864eac8245c5002fb8c52b82d5d93ad1656ea5cee557787f0a5602f80e78ee55502c7d52e29d564a0d410c72243a52b95cffd6	2025-05-16 09:07:18.85+00
+\.
+
+
+--
+-- Data for Name: mcq_questions; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.mcq_questions (id, section_id, question, options, answer) FROM stdin;
+1	3	Which of the following is the smallest unit of length?	{"1": "millimeter", "2": "micrometer", "3": "nanometer", "4": "angstrom unit"}	4
+2	3	Which of the following elements does not belong to alkali metals?	{"1": "Na", "2": "Li", "3": "Mg", "4": "K"}	3
+3	3	Methyl orange gives ____ colour with base.	{"1": "red", "2": "pink", "3": "orange", "4": "yellow"}	4
+4	3	Which of the following is common alcohol (wine)?	{"1": "methyl alcohol", "2": "ethyl alcohol", "3": "propyl alcohol", "4": "butyl alcohol"}	2
+5	3	Cobalt oxide is added to ordinary glass to make _______ glass.	{"1": "black", "2": "red", "3": "hard", "4": "blue"}	4
+6	3	What should be the amount of sugar to make a saturated solution of sugar in 500gm water at 25°C, if solubility of sugar at that temp. is 20.	{"1": "20", "2": "25", "3": "100", "4": "200"}	3
+7	3	The element with atomic no. 24 is:	{"1": "Iron", "2": "Cadmium", "3": "Chromium", "4": "Copper"}	3
+8	3	What is the molecular formula for bleaching powder?	{"1": "CaCl2", "2": "CaOCl2", "3": "CuSO4", "4": "MgCl2"}	2
+9	3	Glycerol is an example of _______.	{"1": "monohydric alcohol", "2": "dihydric alcohol", "3": "trihydric alcohol", "4": "aldehyde"}	3
+10	3	Which of the following metal has highest boiling point?	{"1": "Aluminium", "2": "Silver", "3": "Copper", "4": "Gold"}	1
+11	4	Amphibian of plant kingdom is:	{"1": "Algae", "2": "Fungi", "3": "Gymnosperm", "4": "Bryophyta"}	4
+12	4	The largest animal cell is _______.	{"1": "Ostrich egg", "2": "RBC", "3": "WBC", "4": "Neuron"}	1
+13	4	Nucleolus is present in _______.	{"1": "cytoplasm", "2": "nucleoplasm", "3": "cell membrane", "4": "plastid"}	2
+14	4	Which of the following planet spins most slowly?	{"1": "Venus", "2": "Earth", "3": "Mars", "4": "Jupiter"}	1
+15	4	Which of the following does not belong to phylum coelenterata?	{"1": "Hydra", "2": "Volvox", "3": "Obelia", "4": "both b and c"}	4
+16	4	The animal in which both male and female sex organ are present in a single individual is called:	{"1": "sexual", "2": "asexual", "3": "hermaphrodite", "4": "monosexual"}	3
+17	4	The scientific name of "pea" is:	{"1": "Allium sativum", "2": "Rosa indica", "3": "Pisum sativum", "4": "Magnifera indica"}	3
+18	4	Crossing over starts in _______.	{"1": "Diplotene", "2": "Zygotene", "3": "Leptotene", "4": "Pachytene"}	1
+19	4	What is the gametophyte of fern plant?	{"1": "Thallus", "2": "Inducicum", "3": "Flowers", "4": "Prothallus"}	4
+20	4	Bloods are made with _______ tissues.	{"1": "epithelial", "2": "connective", "3": "muscular", "4": "nervous"}	2
+21	5	If 36 men can finish a piece of work in 20 days. How many men should be added so that the work can be finished in 4/5 of the time?	{"1": "12", "2": "9", "3": "8", "4": "4"}	2
+22	5	A rectangular sheet of paper 30 cm × 16 cm can be formed into two right circular cylinders in two ways, thus the ratio of volume between the cylinder equals to:	{"1": "1:5", "2": "2:5", "3": "3:5", "4": "none"}	4
+23	5	Find the least number by which 3920 should be multiplied so that the result is a complete square?	{"1": "5", "2": "28", "3": "25", "4": "20"}	2
+24	5	The market price of an article is 25% above its selling price and cost price is 30% less than market price. Then the discount percent is:	{"1": "5%", "2": "15%", "3": "20%", "4": "25%"}	3
+25	5	If U = {set of all triangles} A = {set of Δ with at least one angle different from 60°}, then A = _______.	{"1": "Isosceles triangle", "2": "Scalene triangle", "3": "Equilateral triangle", "4": "none"}	2
+26	5	At what rate percent per annum will a sum of money double itself in 20 years?	{"1": "10%", "2": "7%", "3": "12%", "4": "5%"}	1
+27	6	Which of the following is the smallest unit of length?	{"1": "millimeter", "2": "micrometer", "3": "nanometer", "4": "angstrom unit"}	4
+28	6	Which of the following elements does not belong to alkali metals?	{"1": "Na", "2": "Li", "3": "Mg", "4": "K"}	3
+29	6	Methyl orange gives ____ colour with base.	{"1": "red", "2": "pink", "3": "orange", "4": "yellow"}	4
+30	6	Which of the following is common alcohol (wine)?	{"1": "methyl alcohol", "2": "ethyl alcohol", "3": "propyl alcohol", "4": "butyl alcohol"}	2
+31	6	Cobalt oxide is added to ordinary glass to make _______ glass.	{"1": "black", "2": "red", "3": "hard", "4": "blue"}	4
+32	5	If θ = 22.5° then 2Sinθ.Cosθ = ?	{"1": "Cos²θ - Sin²θ", "2": "1", "3": "0", "4": "none of the above"}	3
+33	5	If (1/m) + (1/(m+3)) = a, then what will be the value of m³ + (a-3)?	{"1": "a", "2": "1", "3": "a(a-3)", "4": "none of the above"}	3
+34	5	What must be added to (2a + 5b) to get the same result as (b + 2c) subtracted from (4a + b)?	{"1": "2a - 3b", "2": "3a - 4b", "3": "7a - 2b", "4": "2a - 5b - 2c"}	4
+35	5	If n = 4n + m and m = -1, then n = ?	{"1": "2n + m", "2": "1", "3": "0", "4": "none of the above"}	3
+36	5	If the ratio of two numbers is 5:6 and their product is 120. Find the numbers.	{"1": "10, 12", "2": "12, 10", "3": "20, 6", "4": "40, 3"}	1
+37	5	If (a + b + c) = 6 and (ab + bc + ca) = 11, then a³ + b³ + c³ – 3abc is equal to:	{"1": "15", "2": "16", "3": "17", "4": "none"}	2
+38	5	A father's age was four times his son's age in 2042 and two times his son's age in 2060. Find the year of birth of the son?	{"1": "2040", "2": "2038", "3": "2035", "4": "2033"}	2
+39	5	If the length of the side of a square is reduced by 20%, then the area will be decreased by:	{"1": "36%", "2": "44%", "3": "15%", "4": "20%"}	1
+40	5	If a number is chosen at random from the set of natural numbers less than 30, what is the probability that a prime number is picked?	{"1": "10/29", "2": "12/29", "3": "1/29", "4": "0"}	2
+41	5	A group of 7 students have their weights in Kg as follows: 5, 12, 16, 5, 8, 12, 5. What is their modal weight?	{"1": "5 Kg", "2": "12 Kg", "3": "15 Kg", "4": "8 Kg"}	1
+42	5	In the adjoining figure, below, "O" is the center of the circle, then find ∠ADC if ∠AOB = 100°.	{"1": "50°", "2": "25°", "3": "75°", "4": "200°"}	1
+43	5	An isosceles triangle with AB = AC = 10 cm and BC = 12 cm is inscribed in a circle. Find the radius of the circle?	{"1": "6.25 cm", "2": "6.35 cm", "3": "12.5 cm", "4": "10 cm"}	1
+44	5	The area of the following geometrical figure is equal to ____ cm².	{"1": "120", "2": "40", "3": "42", "4": "50"}	2
+45	5	What is the radius of a circle if its area and circumference are equal in magnitude?	{"1": "7 unit", "2": "5 unit", "3": "22/7 unit", "4": "2 unit"}	3
+46	3	Heart is a muscular organ made of _______ muscles.	{"1": "voluntary", "2": "cardiac", "3": "involuntary", "4": "skeletal"}	2
+47	3	Which one of these is not an appropriate method of waste disposal?	{"1": "sanitary landfill", "2": "incineration", "3": "dumping", "4": "piling up at roadside"}	4
+48	3	Which one of these is caused by an organism called "Bordetella Pertusis"?	{"1": "tetanus", "2": "whooping cough", "3": "diphtheria", "4": "poliomyelitis"}	2
+49	3	One of the objectives of first aid treatment is to _______.	{"1": "save the life of an injured person", "2": "cure a patient", "3": "both of the above", "4": "none of the above"}	1
+50	3	Function of vitamin "K" is to _______.	{"1": "improve vision", "2": "blood clotting", "3": "increase blood cell", "4": "improve muscles"}	2
+51	3	What is the percentage of water in a normal body weight?	{"1": "60-70", "2": "75-80", "3": "80-90", "4": "85-95"}	1
+52	3	Which one of these is not a communicable disease?	{"1": "TB", "2": "Common cold", "3": "Cancer", "4": "Cholera"}	3
+53	3	_______ is not a nutrient.	{"1": "Protein", "2": "Medicine", "3": "Vitamin", "4": "Minerals"}	2
+54	3	Safe motherhood is not affected by _____.	{"1": "age", "2": "smoking", "3": "weather", "4": "food intake"}	3
+55	3	DPT is vaccinated to a child _______ times.	{"1": "1", "2": "2", "3": "3", "4": "4"}	3
+56	3	Norplant is a _______.	{"1": "pills", "2": "permanent method of family planning", "3": "Depo-Provera injection", "4": "temporary method of family planning implanted in a mid-arm of a woman"}	4
+57	3	Most of the diseases of a community in Nepal can be controlled by _______.	{"1": "improving community environment", "2": "providing clean drinking water", "3": "raising the income level", "4": "providing health services"}	2
+58	3	Goiter occurs due to the deficiency of ____.	{"1": "iron", "2": "vitamin", "3": "calcium", "4": "iodine"}	4
+59	3	Norplant is a _______.	{"1": "pills", "2": "permanent method of family planning", "3": "Depo-Provera injection", "4": "temporary method of family planning implanted in a mid arm of a woman"}	2
+60	3	Most of the disease of a community in Nepal can be controlled by _______.	{"1": "improving community environment", "2": "providing clean drinking water", "3": "raising the income level", "4": "providing health services"}	2
+61	3	Goiter occurs due to the deficiency of ____.	{"1": "iron", "2": "vitamin", "3": "calcium", "4": "iodine"}	4
+62	3	Full form of AIDS is _______.	{"1": "Acute Immune Deficiency Syndrome", "2": "Acquired Immuno Deficiency Syndrome", "3": "Acquired Immune Deficient Syndrome", "4": "Acquired Immune Deficiency Symptoms"}	2
+63	3	Syphilis is caused by _______.	{"1": "Treponema pallidum", "2": "Brodetlla pertusis", "3": "Entamoeba hystolytica", "4": "Corynebacterium diphtheria"}	1
+64	3	The most appropriate age group to become pregnant for a woman is _______.	{"1": "15-20 years", "2": "20-25 years", "3": "25-35 years", "4": "35-40 years"}	3
+65	3	Which of these is not a female reproductive organ?	{"1": "uterus", "2": "fallopian tube", "3": "scrotum", "4": "cervix"}	3
+66	3	Family health is not affected by _______.	{"1": "literacy", "2": "household size", "3": "cultural environment", "4": "geographic environment"}	4
+67	3	Which of these is not a micro-organism?	{"1": "virus", "2": "cell", "3": "bacteria", "4": "fungus"}	2
+68	3	Nepali people need _______ caloric food on an average a day.	{"1": "2000", "2": "2250", "3": "2500", "4": "2750"}	3
+69	3	Human body has _______ pieces of bones.	{"1": "204", "2": "206", "3": "208", "4": "210"}	2
+70	3	Cause of population change is _______.	{"1": "birth rate", "2": "immigration", "3": "death rate", "4": "all of above"}	4
+71	3	Purification of milk is called _______.	{"1": "sterilization", "2": "pasteurization", "3": "distillation", "4": "filtration"}	2
+72	3	Child mortality rate in Nepal is high due to _______.	{"1": "fever", "2": "acute respiratory infection", "3": "tetanus", "4": "all of the above"}	4
+73	3	Which of these is not a viral disease?	{"1": "poliomyelitis", "2": "measles", "3": "leprosy", "4": "hepatitis"}	3
+74	6	Suman speaks ______ English.	{"1": "fluent", "2": "fluently", "3": "fluency", "4": "flowing"}	2
+75	6	He is sitting ____ the table ____ the bench.	{"1": "on, on", "2": "at, on", "3": "at, at", "4": "on, at"}	2
+76	6	She is junior ______ me.	{"1": "to", "2": "than", "3": "with", "4": "by"}	1
+77	6	They ______ him to cut wood.	{"1": "got", "2": "made", "3": "had", "4": "make"}	3
+78	6	The letter was written ______ red ink.	{"1": "in", "2": "with", "3": "on", "4": "by"}	1
+79	6	The teacher said to me, "You can do if you try".	{"1": "The teacher told me that she could do if I tried.", "2": "The teacher told me that I could do if I tried.", "3": "The teacher told me that you can do if you try.", "4": "The teacher told me that I can do if I try."}	2
+80	6	Their _______ based on facts.	{"1": "information is", "2": "informations are", "3": "information are", "4": "informations is"}	1
+81	6	You'd better _______ a doctor.	{"1": "seen", "2": "to see", "3": "see", "4": "seeing"}	3
+82	6	I have been teaching English ______ 1999.	{"1": "for", "2": "since", "3": "from", "4": "to"}	2
+83	6	The correct spelling is _______.	{"1": "karnel", "2": "colonel", "3": "colonell", "4": "kornel"}	2
+84	6	She does not _______ money.	{"1": "has", "2": "have", "3": "had", "4": "gets"}	2
+85	6	One of the girls _______ gone out.	{"1": "have", "2": "are", "3": "has", "4": "is"}	3
+86	6	The hotter it is, _______ I feel.	{"1": "more miserable", "2": "the more miserable", "3": "the much miserable", "4": "the most miserable"}	2
+87	6	Antonym of brave is:	{"1": "coward", "2": "army officer", "3": "greedy", "4": "policeman"}	1
+88	6	I am _______ to take revenge.	{"1": "good enough", "2": "enough good", "3": "experienced good", "4": "enough better"}	1
+89	6	Had I been born in the USA, I _______ a car.	{"1": "had purchased", "2": "will have purchased", "3": "would purchase", "4": "would have purchased"}	4
+90	6	He was not _______ Indian.	{"1": "a", "2": "an", "3": "the", "4": "no article"}	2
+91	6	Let us go home, _______?	{"1": "shall we", "2": "will we", "3": "will you", "4": "shall I"}	1
+92	6	I am used to _______ late night.	{"1": "read", "2": "reading", "3": "reads", "4": "red"}	2
+93	6	She is _______ NCC officer.	{"1": "a", "2": "the", "3": "no article", "4": "an"}	4
+94	6	The driver is good _______ driving.	{"1": "at", "2": "in", "3": "for", "4": "on"}	1
+95	6	She had never _______ by an insect.	{"1": "been stung", "2": "been stunged", "3": "was stung", "4": "been stunged"}	1
+96	6	I saw him _______.	{"1": "played", "2": "had played", "3": "play", "4": "to play"}	3
+97	6	You will pass the final exam _______ you study hard.	{"1": "because of", "2": "so that", "3": "provided that", "4": "as though"}	3
+98	6	In 2020, she ______ in the same school.	{"1": "will be working", "2": "will work", "3": "will have worked", "4": "will be work"}	1
+99	1	Astronomical unit (AU) is distance between Earth and Sun. 1 AU =	{"1": "1.496 x 10^8 Km", "2": "9.46 x 10^12 Km", "3": "3.084 x 10^13 Km", "4": "None"}	1
+100	1	The magnitude of the sum of the two vectors is equal to the difference of their magnitudes. What is the angle between the vectors?	{"1": "0°", "2": "45°", "3": "90°", "4": "180°"}	4
+101	1	A particle is moving on a straight line path with constant acceleration directed along the direction of instantaneous velocity. Which of the following statement is true?	{"1": "Particle may reverse the direction of motion.", "2": "Distance covered = magnitude of displacement.", "3": "Average velocity is less than average speed.", "4": "Average velocity = instantaneous velocity."}	2
+102	1	A ball is projected from the top of a tower at an angle 60° with the vertical. What happens to the vertical component of its velocity?	{"1": "Increases continuously.", "2": "Decreases continuously.", "3": "Remains unchanged.", "4": "First decreases and then increases."}	2
+103	1	A particle moving along a circular path due to a centripetal force having constant magnitude is an example of motion with:	{"1": "Constant speed and velocity.", "2": "Variable speed and velocity.", "3": "Variable speed and constant velocity.", "4": "Constant speed and variable velocity."}	4
+104	1	A rod of mass M and length L is lying on a horizontal table. The work done in making it stand on one end will be:	{"1": "MgL", "2": "MgL/2", "3": "MgL/4", "4": "2MgL"}	2
+105	1	A body weighs:	{"1": "Very slightly greater at night", "2": "Very slightly less at night.", "3": "Exactly equal at day & night.", "4": "Zero at night."}	2
+106	1	Two vessels have different base area. They are filled with water to the same height. If the amount of water in one be 4 times that in the other, then the ratio of pressure on their bottom will be:	{"1": "16:1", "2": "8:1", "3": "4:1", "4": "1:1"}	4
+107	1	The speed of light in air is 3 x 10^8 m/s. What will be its speed in diamond whose refractive index is 2.4?	{"1": "3 x 10^8 m/s", "2": "330 m/s", "3": "1.25 x 10^8 m/s", "4": "224 x 10^8 m/s"}	3
+108	1	Critical angle for water is:	{"1": "24°", "2": "49°", "3": "42°", "4": "35°"}	3
+109	1	The pressure of H2 gas at a gas thermometer is 80cm at 0°C, 110cm at 100°C. At what temperature will it record 95cm pressure?	{"1": "50°C", "2": "75°C", "3": "95°C", "4": "150°C"}	2
+110	1	Heat required to raise the temperature of a body through 1°C is known as:	{"1": "Specific heat capacity", "2": "Water equivalent", "3": "Molar specification", "4": "Thermal capacity"}	4
+111	1	The diameter of a wire is reduced to half. Now the resistance changes by factor:	{"1": "2", "2": "4", "3": "8", "4": "16"}	4
+129	3	A patient is generally advised to consume more meat, lentils, milk and egg when he/she suffers from:	{"1": "Rickets", "2": "Kwashiorkor", "3": "Anaemia", "4": "Scurvy"}	2
+130	3	Tetanus disease is:	{"1": "Viral", "2": "Bacterial", "3": "Fungal", "4": "None"}	2
+131	3	Kind of epithelium in inner lining of blood vessels?	{"1": "Cuboidal epithelium", "2": "Columnar", "3": "Ciliated columnar", "4": "Squamous epithelium"}	4
+132	3	Which part of brain is involved in regulating body temperature?	{"1": "Medulla oblongata", "2": "Cerebrum", "3": "Cerebellum", "4": "Hypothalamus"}	4
+133	3	Antibiotic was coined by:	{"1": "Pasteur", "2": "Edward Jenner", "3": "Fleming", "4": "Salman Waksman"}	4
+134	3	Not a feature of Annelida?	{"1": "Closed circulatory system", "2": "Segmentation", "3": "Pseudocoelom", "4": "Ventral nerve cord"}	3
+135	3	Evolutionary history of organism is:	{"1": "Phylogeny", "2": "Ancestry", "3": "Paleontology", "4": "Ontogeny"}	1
+136	3	HIV that caused AIDS first starts destroying:	{"1": "B-Lymphocytes", "2": "Platelets", "3": "Leucocytes", "4": "Helper T-cells"}	4
+137	3	Blood calcium level is lowered by deficiency of:	{"1": "Parathormone", "2": "Calcitonin", "3": "Thyroxine", "4": "Both b and c"}	1
+138	3	1st healthy mammal to be cloned is:	{"1": "Molly sheep", "2": "Dolly sheep", "3": "Polly sheep", "4": "Monkey"}	2
+139	3	Ribosome can also be called:	{"1": "Microsome", "2": "Oxyosome", "3": "Dictyosome", "4": "Ribonucleotide"}	1
+140	3	The first transgenic crop is:	{"1": "Tobacco", "2": "Wheat", "3": "Tomato", "4": "Maize"}	1
+141	3	Tobacco mosaic virus is:	{"1": "Rod shaped", "2": "Brick shaped", "3": "Spherical", "4": "None"}	1
+142	3	Bacterial DNA is identified as:	{"1": "DNA only", "2": "DNA with histone", "3": "DNA without histone", "4": "DNA and RNA"}	3
+143	3	Which is sensitive to SO2 pollution?	{"1": "Lichens", "2": "Algae", "3": "Mosses", "4": "Gymnosperms"}	1
+144	3	Cause of motility in male gamete is:	{"1": "Phototaxis", "2": "Chemotaxis", "3": "Thermotaxis", "4": "Thermotropism"}	2
+145	3	Milk is purified by:	{"1": "Fermentation", "2": "Pasteurisation", "3": "Preservation", "4": "Sterilisation"}	2
+146	3	Pollution can bring change in:	{"1": "Abiotic environment", "2": "Biotic environment", "3": "Both a and b", "4": "Animals"}	3
+147	3	BOD is:	{"1": "Biological oxygen deficit", "2": "Biosphere oxygen demand", "3": "Biological oxygen demand", "4": "None"}	3
+148	3	Which part of cinchona is used as a drug?	{"1": "Bark", "2": "Leaf", "3": "Pericarp", "4": "Endosperm"}	1
+149	5	Set A is a proper subset of B if:	{"1": "A-B ⊂ A", "2": "B-A ⊂ B", "3": "A ⊂ B", "4": "A ⊄ B"}	3
+150	5	If A and B are two sets containing 10 and 20 distinct elements respectively, then the minimum number of elements in A∪B is:	{"1": "30", "2": "50", "3": "40", "4": "80"}	1
+151	5	The value of |sin²θ-cos²θ|:	{"1": "2", "2": "-1", "3": "π", "4": "0"}	1
+152	5	The sum of the series Sn = 1² + 2² + 3² + .....n² is:	{"1": "n(n+1)", "2": "n(n+1)(2n+1)/6", "3": "n(n+1)/2", "4": "(n+1)²/2"}	2
+153	5	If 6, 18, 24, 162 .....are in G.S. then common ratio r is:	{"1": "12", "2": "9", "3": "3", "4": "7"}	3
+154	5	If 2Sin²θ + √3Cosθ + 1 = 0, then θ =	{"1": "150°", "2": "120°", "3": "180°", "4": "90°"}	1
+155	5	Let F→R be defined by f(x) = Sin X and g→R be defined by g(x) = x², then g∘f(x) =	{"1": "Sin²x", "2": "2Sinx", "3": "Sinx²", "4": "2Cosx"}	1
+156	5	If Cosθ + Secθ = 2, then the value of Sec⁷θ + Cos⁵θ =	{"1": "2", "2": "1", "3": "1/2", "4": "√3"}	2
+157	5	If 4 Sin⁻¹x + Cos⁻¹x = π then the value of x is:	{"1": "1", "2": "√3/2", "3": "1/√2", "4": "1/2"}	4
+158	5	Find dy/dx, If x = at², y = 2at.	{"1": "t", "2": "t/2", "3": "2/t", "4": "1/t²"}	3
+159	5	Find the derivative of e^(2x+3)	{"1": "2e^(2x)", "2": "2e^(2x+3)", "3": "2e^2", "4": "2e^(2x+6)"}	2
+160	5	For parallel or anti-parallel vectors θ is:	{"1": "0° or 90°", "2": "90° or 180°", "3": "0° or 180°", "4": "180° or 360°"}	3
+161	5	If a⃗ = i⃗ + j⃗ - k⃗ and b⃗, c⃗ are any two vectors. Find the angle between two.	{"1": "π/3", "2": "π/4", "3": "π/2", "4": "none"}	4
+162	5	For what value of k, 3x² - 4kxy + 5y² = 0 represents a pair of co-incident lines?	{"1": "±2/√15", "2": "±3/√15", "3": "±5/√15", "4": "±4/√15"}	1
+163	5	The lines are real and distinct if:	{"1": "h² > ab", "2": "h² < ab", "3": "h² = ab", "4": "none"}	1
+164	5	The value of k for which the equation 2x² - 7xy + 3y² - 5x - 5y + k = 0 represents a pair of straight lines?	{"1": "4", "2": "-3", "3": "2", "4": "6"}	1
+165	5	If ax + by + c₁ = 0 and ax + by + c₂ = 0 are two parallel lines, then distance between them is:	{"1": "|c₁-c₂|/√(a²+b²)", "2": "|c₁-c₂|/√a²+b²", "3": "|c₁-c₂|/√(a+b)", "4": "none"}	1
+166	5	The equation of tangent to circle x² + y² + 4x - 6y - 13 = 0 at point (3,4) is:	{"1": "3x + 4y = 17", "2": "2x - 7y = 9", "3": "5x + y = 19", "4": "5x + 3y = 1"}	1
+167	5	The straight line (x + y + 1) + λ(2x - y - 1) = 0 is perpendicular to the line 2x + 3y - 8 = 0, then λ =	{"1": "7", "2": "-5", "3": "1", "4": "3"}	2
+168	5	If a polygon has same number of diagonals as its sides, it is a:	{"1": "pentagon", "2": "Hexagon", "3": "Heptagon", "4": "Octagon"}	3
+169	5	A certain pump can drain a fuel 375 gallon tank in 15 minutes. At this rate, how many more minutes would it take to drain a full 600 gallon tank?	{"1": "24", "2": "18", "3": "15", "4": "9"}	4
+170	5	From 1985 to 1990, the berry production of bush x increased by 20%. From 1990 to 1995, it increased by 30%. What was percentage increased in berry production over the entire 10 years 1985 to 1995?	{"1": "50%", "2": "53%", "3": "56%", "4": "60%"}	3
+171	5	If f(x) = x + 2 and g(x) = x³, then f∘g(1) is:	{"1": "2", "2": "3", "3": "1", "4": "4"}	2
+172	5	A business man marked the selling price of an article 20% above the cost price. If he sells the article at 10% discount on marked price, find the profit percentage?	{"1": "8%", "2": "12%", "3": "10%", "4": "14%"}	1
+173	5	A women is 6 years younger to her husband and he is 5 times as old as his daughter. If daughter was 7 years old two years back, what is the age of woman?	{"1": "39 years", "2": "45 years", "3": "50 years", "4": "35 years"}	1
+174	5	∫7x³/² dx is:	{"1": "14x^(5/2) + c", "2": "14/5x^(5/2) + c", "3": "5/14x^(5/2) + c", "4": "7/2x^(5/2) + c"}	2
+175	5	∫dx/x√(x²-1) is:	{"1": "log(√(x²-1)) + c", "2": "2x + c", "3": "2√(x²-1)", "4": "2x² + c"}	1
+176	5	In a building with 10 floors, the number of rooms in each floor is R. If each room has C chairs, total chairs in building is:	{"1": "10R + C", "2": "10R + 10C", "3": "10RC", "4": "10/RC"}	3
+177	5	Solve for x: x-√(x-1) = √(x-2)	{"1": "1/3", "2": "3", "3": "1/2", "4": "2"}	2
+178	5	Area of triangle with sides x = 0, y = 0 and 4x + 5y = 20 is:	{"1": "20", "2": "10", "3": "5", "4": "1"}	2
+179	6	His pocket has been picked. It means:	{"1": "Picked his been his pocket", "2": "They have his pocket picked.", "3": "Someone has picked his pocket.", "4": "Picking has been done to his pocket."}	3
+180	6	More serious from the parent's point of view than the increasing expenditure on children's education is finding a good school. The more serious thing is:	{"1": "The parent's point of view", "2": "finding a good school", "3": "Children's education", "4": "increasing education"}	2
+181	6	Here's my report ----- it at last.	{"1": "I finish", "2": "I finished", "3": "I've finished", "4": "I'm finished"}	3
+182	6	Your parents are very upset with you and you are regretting over the wrong doing.	{"1": "I wish they would understand me", "2": "I wish I could tell them the truth", "3": "I wish I hadn't disobeyed them", "4": "I wish they were happy"}	3
+183	6	He gave up ............	{"1": "Smoke", "2": "to smoke", "3": "Smoking", "4": "to smoke"}	3
+184	6	The professor and psychologist......... come.	{"1": "has", "2": "have", "3": "has", "4": "was"}	2
+185	6	Where's Robert? ........ a shower?	{"1": "Does he have", "2": "Has he", "3": "Has he got", "4": "Is he having"}	4
+186	6	An Englishman killed his mother for trying to save an Indian's life. The person trying to save the Indian's life..........	{"1": "was an English woman", "2": "was saved", "3": "was Killed", "4": "was an Indian"}	1
+187	6	I didn't use to smoke in the past but these days I'm used to.......	{"1": "Smoke", "2": "smokes", "3": "Smoked", "4": "smoking"}	4
+188	6	Indirect speech of: She said. "Good bye, my friend."	{"1": "She told her friends good bye.", "2": "She bade good bye to her friends.", "3": "She shouted good bye to her friends.", "4": "She shouted good bye to her friends."}	2
+189	6	Fate smiles...... him in all his ventures.	{"1": "upon", "2": "at", "3": "with", "4": "for"}	1
+190	6	The downfall of this dictatorial regime is ...	{"1": "imminent", "2": "eminent", "3": "urgent", "4": "optional"}	1
+191	6	Unexpected change in somebody's fortune is called:	{"1": "Vicissitude", "2": "Verisimilitude", "3": "Fortunate", "4": "Catastrophe"}	1
+192	6	It's time to take tea. It means .............	{"1": "tea should be taken", "2": "tea is to be taken", "3": "it's time for tea to be taken", "4": "tea should be taken now"}	4
+193	6	When I looked round the door, the baby ......... quietly.	{"1": "is sleeping", "2": "slept", "3": "was sleeping", "4": "were sleeping"}	3
+194	6	......... a party next Friday. We've sent out the invitations.	{"1": "We had", "2": "We have", "3": "We'll have", "4": "We are having"}	4
+195	6	By 2020, I..... Bachelor's in science.	{"1": "complete", "2": "am completing", "3": "will complete", "4": "will have completed"}	4
+196	6	Julia was out of breath because .........	{"1": "she had been running", "2": "She did run", "3": "she's been running", "4": "she's run"}	1
+197	6	This house is ...of the two.	{"1": "the best", "2": "the better that", "3": "the better", "4": "better"}	3
+198	6	At this time tomorrow....... Over the Pacific Ocean.	{"1": "we flying", "2": "we'll fly", "3": "we'll be flying", "4": "we to fly"}	3
+199	7	What is the brain of a computer?	{"1": "RAM", "2": "CPU", "3": "Hard Disk", "4": "Monitor"}	2
+112	2	Who discovered electron?	{"1": "Thomson", "2": "Goldstein", "3": "Rutherford", "4": "Chadwick"}	1
+113	2	Which of the following is called red planet?	{"1": "Venus", "2": "Mercury", "3": "Mars", "4": "Jupiter"}	3
+114	2	The waste material present in an ore is called:	{"1": "Flux", "2": "Alloy", "3": "Gangue", "4": "Slag"}	3
+115	2	Vapour density of a gas is 22. Its molecular weight will be:	{"1": "33", "2": "22", "3": "44", "4": "11"}	3
+116	2	If 30g of Mg and 30g of O2 are reacted, then the residual mixture contains:	{"1": "40g MgO + 20g O2", "2": "45g MgO + 15g O2", "3": "50g MgO + 10g O2", "4": "60g MgO only"}	3
+117	2	Which of the following set of quantum number is not possible?	{"1": "n = 2, l = 1, m = 0, s = +1/2", "2": "n = 2, l = 2, m = +1, s = -1/2", "3": "n = 2, l = 1, m = -1, s = +1/2", "4": "n = 2, l = 1, m = 0, s = -1/2"}	2
+118	2	Radioactivity was discovered by:	{"1": "Henry Becquerel", "2": "Rutherford", "3": "J.J Thompson", "4": "Madam Curie"}	1
+119	2	Which of the following expression at pressure represents Charles' law?	{"1": "V α 1/T", "2": "V α 1/T²", "3": "V α T", "4": "V = d"}	3
+120	2	Solid CO2 is an example of:	{"1": "Ionic crystal", "2": "Covalent crystal", "3": "Metallic crystal", "4": "Molecular crystal"}	4
+121	2	Which bond has maximum M.P. and B.P?	{"1": "Ionic", "2": "Covalent", "3": "CO-ordinate covalent", "4": "Hydrogen bond"}	1
+122	2	The atomic no. of an element is 38. In which block does it lie?	{"1": "s-block", "2": "p-block", "3": "d-block", "4": "f-block"}	1
+123	2	During fermentation of glucose the enzyme used is:	{"1": "Zymase", "2": "Lipase", "3": "Invertase", "4": "Amylase"}	1
+124	2	What is the empirical formula of a hydrocarbon containing 75% carbon?	{"1": "C2H4", "2": "CH4", "3": "C3H9", "4": "C2H6"}	2
+125	2	Example of amphoteric oxide is:	{"1": "SO2", "2": "Na2O", "3": "ZnO", "4": "NO"}	3
+126	2	Colour pigments can be separated by:	{"1": "Filtration", "2": "Distillation", "3": "Chromatography", "4": "Sublimation"}	3
+127	2	Which one is manufactured from sea weeds?	{"1": "F2", "2": "I2", "3": "Cl2", "4": "Br2"}	2
+128	2	The gas used in welding of iron or steel is:	{"1": "Methane", "2": "Ethane", "3": "Ethylene", "4": "Acetylene"}	4
+200	10	Which planet is known as the Red Planet?	{"1": "Earth", "2": "Mars", "3": "Jupiter", "4": "Venus"}	2
+201	10	Who wrote the national anthem of India?	{"1": "Rabindranath Tagore", "2": "Mahatma Gandhi", "3": "Jawaharlal Nehru", "4": "Subhash Chandra Bose"}	1
+202	10	What is the capital city of Nepal?	{"1": "Pokhara", "2": "Kathmandu", "3": "Lalitpur", "4": "Bhaktapur"}	2
+203	10	Which gas is essential for us to breathe?	{"1": "Carbon Dioxide", "2": "Hydrogen", "3": "Oxygen", "4": "Nitrogen"}	3
+204	10	Who was the first man to walk on the Moon?	{"1": "Neil Armstrong", "2": "Yuri Gagarin", "3": "Buzz Aldrin", "4": "Michael Collins"}	1
+205	10	What is the largest mammal in the world?	{"1": "Elephant", "2": "Blue Whale", "3": "Giraffe", "4": "Hippopotamus"}	2
+206	10	In which continent is the Sahara Desert located?	{"1": "Asia", "2": "Africa", "3": "Australia", "4": "South America"}	2
+207	10	Who is the current Secretary-General of the United Nations (as of 2024)?	{"1": "Ban Ki-moon", "2": "Antonio Guterres", "3": "Kofi Annan", "4": "Tedros Adhanom"}	2
+208	10	Which country is known as the Land of the Rising Sun?	{"1": "China", "2": "Nepal", "3": "Japan", "4": "Thailand"}	3
+209	10	What is the smallest prime number?	{"1": "0", "2": "1", "3": "2", "4": "3"}	3
+210	10	Which organ purifies our blood?	{"1": "Lungs", "2": "Heart", "3": "Kidney", "4": "Liver"}	3
+211	10	What is the boiling point of water in Celsius?	{"1": "100", "2": "0", "3": "50", "4": "120"}	1
+212	10	Which festival is known as the festival of lights?	{"1": "Holi", "2": "Diwali", "3": "Eid", "4": "Christmas"}	2
+213	10	Who discovered gravity?	{"1": "Einstein", "2": "Galileo", "3": "Newton", "4": "Faraday"}	3
+214	10	How many continents are there?	{"1": "5", "2": "6", "3": "7", "4": "8"}	3
+215	10	Which bird is known for its mimicry of human speech?	{"1": "Crow", "2": "Sparrow", "3": "Parrot", "4": "Peacock"}	3
+216	10	Which metal is liquid at room temperature?	{"1": "Iron", "2": "Mercury", "3": "Gold", "4": "Silver"}	2
+217	10	What color do you get when you mix red and blue?	{"1": "Green", "2": "Purple", "3": "Brown", "4": "Pink"}	2
+218	10	Which vitamin is known as the sunshine vitamin?	{"1": "Vitamin A", "2": "Vitamin C", "3": "Vitamin D", "4": "Vitamin B"}	3
+219	10	Which is the largest ocean in the world?	{"1": "Atlantic Ocean", "2": "Indian Ocean", "3": "Arctic Ocean", "4": "Pacific Ocean"}	4
+\.
+
+
+--
+-- Data for Name: mock_tests; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.mock_tests (id, stream_id, title, time_limit) FROM stdin;
+1	1	Digital Logic	10
+2	1	C Programming	10
+3	1	Mathematics I	10
+4	2	Computer Science	75
+5	2	Biology	75
+\.
+
+
+--
+-- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.notifications (id, user_id, message, is_read, created_at) FROM stdin;
+12	3	You have been surpassed by Bijay Codes in Digital Logic test.	f	2025-05-10 09:53:30.251+00
+15	10	You have been surpassed by Bijay Codes in Digital Logic test.	f	2025-05-10 09:53:30.252+00
+13	14	You have been surpassed by Bijay Codes in Digital Logic test.	f	2025-05-10 09:53:30.251+00
+17	18	You have been surpassed by Bijay Codes in Digital Logic test.	f	2025-05-10 09:53:30.252+00
+19	18	You have been surpassed by Pabitra Khadka in Digital Logic test.	f	2025-05-10 09:55:10.95+00
+26	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+10	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 09:51:52.218+00
+21	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+22	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+14	20	You have been surpassed by Bijay Codes in Digital Logic test.	f	2025-05-10 09:53:30.251+00
+16	23	You have been surpassed by Bijay Codes in Digital Logic test.	f	2025-05-10 09:53:30.252+00
+18	23	You have been surpassed by Pabitra Khadka in Digital Logic test.	f	2025-05-10 09:55:10.95+00
+23	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+25	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+24	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+28	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+27	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+31	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+30	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+29	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+32	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+33	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+34	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+35	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+36	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+37	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+38	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+39	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+40	19	You have been surpassed by Bijay Codes in Digital Logic test.	t	2025-05-10 10:17:53.483783+00
+\.
+
+
+--
+-- Data for Name: reviews; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.reviews (id, user_id, mock_test_id, review, rating, created_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: sections; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.sections (id, name, question_count, marks_per_question, negative_marking) FROM stdin;
+1	Main	10	1	0
+2	Chemistry	20	1	0
+3	Biology	20	1	0
+4	Physics	20	1	0
+5	Mathematics	20	1	0
+6	English	10	1	0
+7	Computer Science	20	1	0
+8	main	10	1	0
+9	main	10	1	0
+10	Genaral Knowledge	10	1	0
+\.
+
+
+--
+-- Data for Name: streams; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.streams (id, name) FROM stdin;
+1	BCA
+2	+2 Entrance
+\.
+
+
+--
+-- Data for Name: test_section_links; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.test_section_links (mock_test_id, section_id, test_id) FROM stdin;
+1	1	\N
+2	8	\N
+3	9	\N
+4	2	\N
+4	4	\N
+4	5	\N
+4	6	\N
+4	7	\N
+4	10	\N
+5	2	\N
+5	3	\N
+5	10	\N
+\.
+
+
+--
+-- Data for Name: user_scores; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.user_scores (id, user_id, mock_test_id, score, elapsed_time, created_at, unanswered_questions) FROM stdin;
+4005	6	3	8	395	2025-05-04 08:29:15.337+00	\N
+4202	6	2	10	576	2025-05-06 18:48:40.089+00	\N
+4046	6	1	8	335	2025-05-04 20:42:51.982+00	\N
+4063	6	3	7	396	2025-05-07 21:52:44.726+00	\N
+4085	6	2	9	386	2025-05-07 15:49:08.782+00	\N
+3732	7	5	7	535	2025-05-06 04:13:48.846+00	\N
+3752	7	3	8	398	2025-05-04 21:29:48.623+00	\N
+3763	7	3	7	290	2025-05-03 13:08:59.152+00	\N
+3777	7	3	8	252	2025-05-09 16:47:04.763+00	\N
+3803	7	2	10	559	2025-05-09 21:40:19.159+00	\N
+3808	7	5	9	311	2025-05-05 09:24:36.522+00	\N
+3883	7	3	10	248	2025-05-05 08:19:44.751+00	\N
+3887	7	3	9	282	2025-05-06 19:31:56.89+00	\N
+3895	7	2	9	394	2025-05-08 18:26:36.268+00	\N
+3910	7	3	9	507	2025-05-06 20:38:43.354+00	\N
+3911	7	3	9	595	2025-05-09 09:04:21.366+00	\N
+4152	7	3	8	209	2025-05-07 01:52:04.073+00	\N
+4182	7	2	9	371	2025-05-04 00:52:33.226+00	\N
+3924	7	5	8	455	2025-05-09 10:24:39.791+00	\N
+3949	7	2	10	406	2025-05-06 19:23:12.372+00	\N
+3965	7	1	8	475	2025-05-03 12:25:20.665+00	\N
+3967	7	1	10	308	2025-05-06 04:38:04.047+00	\N
+4041	7	2	9	526	2025-05-08 00:31:17.422+00	\N
+4055	7	2	9	242	2025-05-09 10:15:06.737+00	\N
+4075	7	1	9	486	2025-05-07 01:23:23.895+00	\N
+4086	7	3	8	284	2025-05-08 15:29:44.343+00	\N
+4109	7	4	9	247	2025-05-09 10:34:43.406+00	\N
+3769	8	1	9	563	2025-05-06 04:57:03.523+00	\N
+3773	8	2	10	367	2025-05-03 16:32:02.537+00	\N
+3780	8	2	7	571	2025-05-05 22:19:32.602+00	\N
+3791	8	3	7	569	2025-05-10 03:26:15.356+00	\N
+3807	8	4	7	330	2025-05-05 05:44:04.113+00	\N
+4149	8	3	8	228	2025-05-03 23:04:02.601+00	\N
+3833	8	1	10	541	2025-05-10 05:11:15.221+00	\N
+3856	8	2	8	417	2025-05-08 21:46:58.611+00	\N
+3865	8	5	9	439	2025-05-03 20:44:29.699+00	\N
+3912	8	4	7	438	2025-05-07 12:52:40.314+00	\N
+4178	8	3	10	556	2025-05-09 03:23:31.484+00	\N
+4179	8	5	10	227	2025-05-04 02:27:24.64+00	\N
+3944	8	1	7	336	2025-05-07 06:41:06.747+00	\N
+4193	8	1	8	319	2025-05-05 05:49:43.764+00	\N
+4208	8	4	7	555	2025-05-09 22:15:14.407+00	\N
+4054	8	2	7	212	2025-05-03 19:53:49.322+00	\N
+4096	8	2	9	371	2025-05-04 05:29:31.486+00	\N
+3731	9	1	9	384	2025-05-07 15:49:29.348+00	\N
+3747	9	3	9	594	2025-05-04 04:32:07.161+00	\N
+3820	9	4	8	435	2025-05-05 04:26:59.052+00	\N
+3868	9	1	10	548	2025-05-03 22:46:53.463+00	\N
+3893	9	3	10	215	2025-05-07 14:57:30.854+00	\N
+3901	9	1	9	571	2025-05-03 15:39:56.182+00	\N
+3906	9	5	7	554	2025-05-04 04:38:47.442+00	\N
+4166	9	3	9	523	2025-05-07 14:23:49.664+00	\N
+3931	9	4	8	459	2025-05-06 05:37:10.022+00	\N
+4012	9	1	9	280	2025-05-08 11:43:36.705+00	\N
+4019	9	5	7	334	2025-05-07 15:23:48.95+00	\N
+4050	9	5	7	299	2025-05-07 06:20:01.677+00	\N
+4053	9	2	8	217	2025-05-04 15:12:35.67+00	\N
+3750	10	3	8	494	2025-05-08 01:06:10.618+00	\N
+4115	10	5	8	215	2025-05-08 10:49:11.924+00	\N
+4138	10	4	9	518	2025-05-05 11:30:03.392+00	\N
+3851	10	2	8	368	2025-05-06 21:18:23.304+00	\N
+4155	10	5	10	307	2025-05-07 18:36:09.088+00	\N
+3915	10	2	9	275	2025-05-03 16:58:11.942+00	\N
+3969	10	3	9	339	2025-05-05 03:00:15.725+00	\N
+3971	10	3	10	524	2025-05-04 21:25:04.204+00	\N
+4204	10	3	10	321	2025-05-08 09:28:31.507+00	\N
+4032	10	5	7	397	2025-05-05 12:29:01.352+00	\N
+4044	10	1	9	487	2025-05-07 18:00:49.67+00	\N
+4065	10	5	10	578	2025-05-07 12:28:05.751+00	\N
+4070	10	2	7	492	2025-05-06 00:31:30.177+00	\N
+4077	10	3	7	256	2025-05-09 11:01:16.103+00	\N
+4080	10	5	10	495	2025-05-03 10:55:59.583+00	\N
+4083	10	1	7	415	2025-05-06 13:57:09.739+00	\N
+3717	11	2	10	339	2025-05-07 16:20:26.085+00	\N
+3761	11	2	10	519	2025-05-07 15:09:06.075+00	\N
+4144	11	1	9	313	2025-05-07 03:34:22.099+00	\N
+4148	11	1	9	226	2025-05-06 20:25:01.753+00	\N
+3854	11	1	8	515	2025-05-06 19:42:41.787+00	\N
+4165	11	1	7	362	2025-05-06 07:30:36.143+00	\N
+4183	11	3	7	518	2025-05-10 02:42:14.909+00	\N
+4185	11	1	7	529	2025-05-05 22:55:41.097+00	\N
+3918	11	5	7	478	2025-05-07 04:07:51.158+00	\N
+3929	11	5	7	396	2025-05-04 18:18:33.365+00	\N
+3941	11	1	7	551	2025-05-07 15:27:18.064+00	\N
+3968	11	2	7	241	2025-05-08 08:52:15.902+00	\N
+3987	11	4	7	425	2025-05-04 00:44:43.53+00	\N
+4194	11	2	8	483	2025-05-05 04:54:34.355+00	\N
+4027	11	4	7	396	2025-05-08 05:27:53.019+00	\N
+4060	11	3	10	309	2025-05-07 20:10:00.298+00	\N
+3735	12	2	9	319	2025-05-10 00:06:18.11+00	\N
+3785	12	5	9	370	2025-05-03 16:30:38.456+00	\N
+3793	12	1	8	584	2025-05-06 01:11:18.89+00	\N
+3801	12	4	9	490	2025-05-07 08:30:38.22+00	\N
+4135	12	4	10	492	2025-05-10 06:31:44.156+00	\N
+3827	12	2	7	580	2025-05-03 20:18:05.78+00	\N
+3889	12	3	8	295	2025-05-10 01:55:54.226+00	\N
+4156	12	2	9	488	2025-05-04 00:49:07.895+00	\N
+4160	12	2	9	410	2025-05-05 23:23:57.427+00	\N
+4170	12	1	10	307	2025-05-07 15:56:53.124+00	\N
+4181	12	4	9	318	2025-05-10 09:26:36.042+00	\N
+3932	12	5	9	207	2025-05-05 19:14:42.628+00	\N
+3936	12	5	9	279	2025-05-05 14:25:06.915+00	\N
+3983	12	1	10	383	2025-05-04 01:44:55.783+00	\N
+4001	12	1	9	368	2025-05-04 10:43:58.332+00	\N
+4003	12	2	9	380	2025-05-07 22:00:49.692+00	\N
+4199	12	5	8	575	2025-05-06 22:49:21.36+00	\N
+4203	12	2	8	434	2025-05-08 20:18:46.393+00	\N
+4213	12	2	8	256	2025-05-04 12:53:49.135+00	\N
+4069	12	5	10	219	2025-05-05 03:40:33.529+00	\N
+3794	13	5	10	430	2025-05-07 17:20:47.02+00	\N
+4117	13	1	10	485	2025-05-06 16:05:01.652+00	\N
+3842	13	2	7	533	2025-05-03 11:34:03.562+00	\N
+3874	13	1	7	537	2025-05-04 06:51:28.507+00	\N
+3879	13	3	7	400	2025-05-04 00:18:08.322+00	\N
+3886	13	1	10	203	2025-05-07 22:22:36.968+00	\N
+3904	13	2	10	541	2025-05-07 02:30:25.506+00	\N
+4168	13	2	8	219	2025-05-08 08:58:54.687+00	\N
+3923	13	3	10	577	2025-05-10 02:37:38.372+00	\N
+3961	13	1	10	589	2025-05-10 08:27:40.431+00	\N
+3994	13	3	7	268	2025-05-09 01:51:36.374+00	\N
+4000	13	5	8	509	2025-05-04 03:00:39.225+00	\N
+4010	13	1	9	420	2025-05-04 17:58:42.437+00	\N
+4197	13	5	10	481	2025-05-07 13:48:33.543+00	\N
+4212	13	1	10	545	2025-05-09 09:48:01.753+00	\N
+4037	13	5	8	452	2025-05-08 19:24:22.966+00	\N
+4051	13	4	7	469	2025-05-07 00:23:12.149+00	\N
+4106	13	1	10	303	2025-05-09 05:49:32.168+00	\N
+3714	14	4	10	554	2025-05-07 13:18:44.598+00	\N
+3740	14	5	10	529	2025-05-04 16:35:29.747+00	\N
+4125	14	3	7	583	2025-05-09 09:47:31.48+00	\N
+4131	14	1	8	343	2025-05-07 19:11:29.479+00	\N
+3835	14	4	10	329	2025-05-06 21:44:40.481+00	\N
+3864	14	2	10	323	2025-05-06 23:17:50.673+00	\N
+3897	14	4	10	509	2025-05-06 23:14:37.586+00	\N
+4151	14	2	9	273	2025-05-04 08:44:38.929+00	\N
+4221	19	1	0	4	2025-05-10 15:56:39.579+00	\N
+4222	1	3	10	549	2025-05-08 13:09:29.752+00	\N
+4223	1	5	8	553	2025-05-09 19:09:47.366+00	\N
+4224	1	3	9	265	2025-05-06 03:09:36.941+00	\N
+4225	1	3	8	213	2025-05-09 12:24:24.631+00	\N
+4226	1	2	7	516	2025-05-08 23:08:42.493+00	\N
+4227	1	2	7	323	2025-05-10 19:29:42.313+00	\N
+4228	1	2	10	442	2025-05-06 05:44:40.576+00	\N
+4229	1	4	10	226	2025-05-06 08:38:43.258+00	\N
+4230	1	1	7	389	2025-05-04 22:29:15.945+00	\N
+4231	1	5	7	320	2025-05-09 23:02:16.283+00	\N
+4232	1	4	7	330	2025-05-07 10:02:01.648+00	\N
+4233	1	5	7	441	2025-05-07 05:42:09.269+00	\N
+4234	1	4	7	381	2025-05-08 16:53:21.723+00	\N
+4235	1	5	10	253	2025-05-09 11:13:39.227+00	\N
+4236	1	3	10	478	2025-05-06 19:50:15.17+00	\N
+4237	1	1	7	493	2025-05-08 02:31:22.68+00	\N
+4238	1	3	9	523	2025-05-06 02:46:38.438+00	\N
+4239	1	4	9	497	2025-05-06 15:32:53.931+00	\N
+4240	1	1	10	282	2025-05-06 14:25:12.024+00	\N
+4241	1	1	9	323	2025-05-06 04:05:34.657+00	\N
+4242	1	5	8	440	2025-05-07 04:15:58.002+00	\N
+4243	1	4	7	543	2025-05-04 18:22:19.823+00	\N
+4244	1	1	7	545	2025-05-11 05:09:18.462+00	\N
+4245	1	3	9	531	2025-05-09 05:07:06.742+00	\N
+4246	1	3	9	567	2025-05-05 20:56:11.855+00	\N
+4247	1	5	7	403	2025-05-05 14:24:34.525+00	\N
+4248	1	5	9	308	2025-05-11 02:43:16.055+00	\N
+4249	1	1	10	323	2025-05-07 12:19:26.518+00	\N
+4250	1	5	10	322	2025-05-07 21:34:30.777+00	\N
+4251	1	1	10	540	2025-05-10 15:41:20.528+00	\N
+4252	1	2	7	400	2025-05-05 09:31:17.653+00	\N
+4253	1	3	9	537	2025-05-07 00:44:18.952+00	\N
+4254	1	3	8	487	2025-05-10 11:13:26.32+00	\N
+4255	1	5	8	253	2025-05-08 19:07:02.221+00	\N
+4256	1	2	10	415	2025-05-07 03:39:54.207+00	\N
+4257	1	3	10	385	2025-05-09 07:52:16.815+00	\N
+4258	1	5	9	268	2025-05-10 07:27:41.774+00	\N
+4259	1	4	10	514	2025-05-05 22:08:25.592+00	\N
+4260	1	2	9	463	2025-05-07 20:31:27.054+00	\N
+4261	1	1	7	408	2025-05-10 04:10:03.656+00	\N
+4262	1	5	8	331	2025-05-09 20:24:35.887+00	\N
+4263	1	1	9	595	2025-05-05 20:34:07.242+00	\N
+4264	1	3	9	496	2025-05-04 23:44:57.17+00	\N
+4265	1	1	9	489	2025-05-10 03:47:32.438+00	\N
+4266	1	5	9	587	2025-05-06 10:48:57.584+00	\N
+4267	1	1	7	275	2025-05-07 11:56:57.115+00	\N
+4268	1	4	8	301	2025-05-11 10:05:13.21+00	\N
+4269	1	1	7	541	2025-05-05 06:24:45.676+00	\N
+4270	1	4	7	350	2025-05-06 08:38:05.653+00	\N
+4271	1	4	8	370	2025-05-11 16:35:28.494+00	\N
+3733	1	2	9	265	2025-05-08 02:27:44.18+00	\N
+3738	1	5	8	333	2025-05-07 00:03:57.421+00	\N
+3755	1	4	7	495	2025-05-06 07:23:24.438+00	\N
+4139	1	1	7	287	2025-05-05 02:12:24.245+00	\N
+4141	1	1	8	245	2025-05-08 18:03:06.912+00	\N
+3748	2	5	10	237	2025-05-05 23:09:28.921+00	\N
+3797	2	3	7	441	2025-05-07 18:45:15.525+00	\N
+3799	2	2	7	537	2025-05-10 01:05:50.499+00	\N
+3806	2	1	7	201	2025-05-08 17:29:52.271+00	\N
+4118	2	4	7	515	2025-05-05 12:32:52.049+00	\N
+3751	3	4	9	492	2025-05-04 00:33:06.116+00	\N
+3760	3	2	9	277	2025-05-09 14:07:24.853+00	\N
+3786	3	5	8	477	2025-05-09 19:55:58.415+00	\N
+3742	4	4	7	535	2025-05-08 21:09:11.806+00	\N
+3743	4	1	10	391	2025-05-09 10:38:33.033+00	\N
+3772	4	4	9	501	2025-05-04 07:11:12.123+00	\N
+3779	4	4	10	576	2025-05-05 01:21:19.241+00	\N
+3784	4	1	7	260	2025-05-06 08:43:04.647+00	\N
+3734	5	1	7	581	2025-05-07 02:00:39.156+00	\N
+3771	5	1	10	208	2025-05-09 23:41:12.26+00	\N
+4129	5	2	7	400	2025-05-04 16:58:30.066+00	\N
+3715	6	2	9	387	2025-05-08 16:22:38.062+00	\N
+3723	6	3	7	352	2025-05-05 07:59:25.126+00	\N
+3724	6	2	10	303	2025-05-05 06:49:17.589+00	\N
+4272	1	2	8	537	2025-05-07 10:11:28.277+00	\N
+4273	1	2	9	509	2025-05-08 03:42:44.398+00	\N
+4274	1	3	7	255	2025-05-08 03:01:39.178+00	\N
+4275	1	4	9	301	2025-05-11 08:54:20.762+00	\N
+4276	1	1	9	519	2025-05-07 22:18:31.207+00	\N
+4277	1	4	9	299	2025-05-09 01:37:22.554+00	\N
+4278	1	3	8	423	2025-05-06 17:31:22.015+00	\N
+4279	1	2	8	370	2025-05-06 17:55:57.843+00	\N
+4280	1	1	8	556	2025-05-11 02:01:02.496+00	\N
+4281	1	4	10	483	2025-05-10 06:47:02.627+00	\N
+4282	1	3	7	529	2025-05-07 08:11:08.355+00	\N
+4283	1	2	8	318	2025-05-06 10:11:15.099+00	\N
+4284	1	2	9	546	2025-05-11 00:14:19.457+00	\N
+4285	1	1	7	271	2025-05-10 04:24:18.055+00	\N
+4286	1	4	7	479	2025-05-11 12:32:44.051+00	\N
+4287	1	2	7	568	2025-05-05 02:17:51.067+00	\N
+4288	1	3	10	464	2025-05-08 08:07:50.867+00	\N
+4289	1	4	9	455	2025-05-05 05:59:40.108+00	\N
+4290	1	5	9	467	2025-05-04 23:27:46.648+00	\N
+4291	1	1	10	499	2025-05-05 13:12:48.949+00	\N
+4292	1	2	7	413	2025-05-09 16:08:30.132+00	\N
+4293	1	5	8	231	2025-05-10 09:33:48.02+00	\N
+4294	1	2	9	248	2025-05-11 08:06:55.608+00	\N
+4295	1	4	9	416	2025-05-09 18:31:43.52+00	\N
+4296	1	5	7	583	2025-05-10 19:42:10.456+00	\N
+4297	1	4	8	487	2025-05-07 22:18:03.008+00	\N
+4298	1	3	8	231	2025-05-08 19:04:28.345+00	\N
+4299	1	3	8	297	2025-05-05 18:59:55.856+00	\N
+4300	1	3	10	561	2025-05-10 09:17:48.035+00	\N
+4301	1	3	7	516	2025-05-08 01:53:52.159+00	\N
+4302	1	3	9	323	2025-05-11 09:48:06.335+00	\N
+4303	1	4	8	446	2025-05-08 08:35:45.573+00	\N
+4304	1	2	8	508	2025-05-07 09:09:47.421+00	\N
+4305	1	5	7	333	2025-05-09 08:13:10.811+00	\N
+4306	1	2	7	382	2025-05-08 16:02:58.938+00	\N
+4307	1	5	9	352	2025-05-08 00:00:14.311+00	\N
+4308	1	2	7	491	2025-05-11 13:24:08.139+00	\N
+4309	1	5	7	274	2025-05-10 14:41:30.164+00	\N
+4310	1	5	7	399	2025-05-07 21:09:51.459+00	\N
+4311	1	3	8	421	2025-05-05 18:00:54.979+00	\N
+4312	1	2	10	509	2025-05-11 12:55:16.669+00	\N
+4313	1	1	9	525	2025-05-06 21:03:47.129+00	\N
+4314	1	5	7	592	2025-05-05 21:43:38.581+00	\N
+4315	1	3	8	231	2025-05-09 03:46:36.349+00	\N
+4316	1	5	9	588	2025-05-10 01:59:08.263+00	\N
+4317	1	2	10	365	2025-05-05 22:22:38.863+00	\N
+4318	1	4	8	245	2025-05-05 16:52:47.158+00	\N
+4319	1	5	7	497	2025-05-11 15:02:57.934+00	\N
+4320	1	3	10	322	2025-05-10 21:59:46.853+00	\N
+4321	1	4	8	458	2025-05-08 13:28:43.952+00	\N
+3884	1	1	10	461	2025-05-10 05:08:02.077+00	\N
+4158	1	1	10	372	2025-05-06 17:25:45.972+00	\N
+3824	2	1	9	487	2025-05-04 14:08:11.824+00	\N
+3838	2	4	10	248	2025-05-06 08:07:09.721+00	\N
+3839	2	1	10	438	2025-05-07 19:49:32.213+00	\N
+3843	2	5	8	578	2025-05-08 00:05:47.185+00	\N
+3867	2	1	10	527	2025-05-05 16:56:49.265+00	\N
+3871	2	3	7	335	2025-05-04 23:21:32.349+00	\N
+3872	2	4	9	333	2025-05-10 01:28:01.673+00	\N
+3877	2	5	9	301	2025-05-06 00:21:42.781+00	\N
+4169	2	5	8	287	2025-05-07 08:21:48.313+00	\N
+4176	2	3	9	585	2025-05-06 17:13:55.741+00	\N
+3832	3	2	10	391	2025-05-04 16:28:42.732+00	\N
+3937	1	2	9	455	2025-05-10 01:47:54.934+00	\N
+3956	1	3	7	460	2025-05-04 02:11:55.744+00	\N
+4007	1	1	8	263	2025-05-07 15:52:26.731+00	\N
+4190	1	3	9	382	2025-05-07 00:29:39.741+00	\N
+3926	2	1	9	302	2025-05-09 00:21:22.953+00	\N
+3935	2	3	8	228	2025-05-06 04:08:06.908+00	\N
+3945	2	2	10	350	2025-05-10 04:14:48.093+00	\N
+3948	2	3	7	529	2025-05-09 12:07:03.157+00	\N
+3964	2	1	10	472	2025-05-04 10:39:13.699+00	\N
+3985	2	1	10	410	2025-05-03 11:39:39.05+00	\N
+3954	3	2	10	541	2025-05-07 05:51:16.384+00	\N
+4201	3	1	10	245	2025-05-03 22:00:55.346+00	\N
+4196	4	4	8	581	2025-05-07 03:14:27.668+00	\N
+4205	4	5	10	272	2025-05-05 08:36:07.964+00	\N
+3951	5	1	10	315	2025-05-05 12:40:38.33+00	\N
+3966	5	5	7	467	2025-05-08 04:31:27.121+00	\N
+3972	5	2	9	392	2025-05-08 19:32:25.069+00	\N
+3996	5	3	7	549	2025-05-08 08:15:36.297+00	\N
+4187	5	2	8	476	2025-05-03 19:35:44.367+00	\N
+3959	14	3	9	485	2025-05-04 02:43:25.033+00	\N
+4207	14	1	10	230	2025-05-10 02:18:28.207+00	\N
+3730	15	1	9	350	2025-05-08 06:22:37.179+00	\N
+3765	15	2	10	598	2025-05-10 04:08:55.949+00	\N
+3792	15	3	7	389	2025-05-04 10:12:00.067+00	\N
+3831	15	5	9	587	2025-05-08 11:07:00.637+00	\N
+3834	15	5	8	433	2025-05-04 05:26:19.83+00	\N
+3846	15	1	7	301	2025-05-09 23:34:39.608+00	\N
+3890	15	1	10	387	2025-05-03 12:49:13.477+00	\N
+3900	15	4	8	505	2025-05-09 06:25:25.382+00	\N
+3909	15	4	8	247	2025-05-08 19:59:02.88+00	\N
+4161	15	5	8	552	2025-05-08 15:59:21.026+00	\N
+3930	15	5	10	550	2025-05-09 08:57:03.427+00	\N
+3984	15	1	8	392	2025-05-04 03:57:08.81+00	\N
+3991	15	1	8	434	2025-05-10 08:57:57.758+00	\N
+4200	15	5	9	320	2025-05-08 00:06:36.109+00	\N
+4029	15	5	9	592	2025-05-06 13:20:33.694+00	\N
+4035	15	1	9	527	2025-05-07 11:38:38.105+00	\N
+4040	15	4	10	483	2025-05-05 00:05:30.114+00	\N
+4071	15	5	9	434	2025-05-07 13:04:51.09+00	\N
+4084	15	3	7	452	2025-05-08 19:44:37.079+00	\N
+4093	15	4	10	445	2025-05-05 01:08:02.006+00	\N
+4095	15	2	7	359	2025-05-05 20:39:46.407+00	\N
+3753	16	4	9	351	2025-05-08 19:46:17.238+00	\N
+3788	16	5	9	281	2025-05-09 15:13:51.727+00	\N
+3813	16	2	8	435	2025-05-05 22:16:35.327+00	\N
+3815	16	1	9	437	2025-05-09 05:38:22.903+00	\N
+3818	16	1	8	297	2025-05-08 11:02:21.333+00	\N
+3830	16	3	8	261	2025-05-04 14:05:39.429+00	\N
+3861	16	1	9	229	2025-05-06 23:57:36.967+00	\N
+3917	16	4	9	320	2025-05-06 01:04:31.421+00	\N
+3938	16	1	9	524	2025-05-05 11:34:17.765+00	\N
+4189	16	2	10	510	2025-05-08 17:37:51.607+00	\N
+4015	16	4	8	263	2025-05-05 06:42:47.966+00	\N
+4030	16	3	9	526	2025-05-09 09:02:44.623+00	\N
+4031	16	5	8	326	2025-05-06 21:39:53.494+00	\N
+4052	16	4	7	354	2025-05-05 16:02:49+00	\N
+4082	16	3	10	320	2025-05-07 11:42:16.474+00	\N
+4094	16	3	8	591	2025-05-08 12:02:34.422+00	\N
+4098	16	3	10	489	2025-05-10 05:22:29.155+00	\N
+3721	17	3	7	253	2025-05-07 13:11:37.347+00	\N
+3726	17	3	8	336	2025-05-05 17:25:06.504+00	\N
+3757	17	1	8	383	2025-05-09 16:39:31.611+00	\N
+3775	17	1	9	364	2025-05-09 12:23:19.544+00	\N
+4119	17	1	10	500	2025-05-09 16:57:56.324+00	\N
+4122	17	5	9	428	2025-05-04 04:17:40.356+00	\N
+4134	17	1	9	247	2025-05-10 05:49:44.807+00	\N
+4145	17	2	10	584	2025-05-08 06:57:12.395+00	\N
+3845	17	5	10	502	2025-05-08 02:13:41.675+00	\N
+3859	17	1	10	334	2025-05-06 04:21:11.773+00	\N
+4159	17	2	9	248	2025-05-07 00:25:50.256+00	\N
+3913	17	3	8	472	2025-05-04 22:26:36.314+00	\N
+3933	17	4	8	407	2025-05-03 14:32:41.626+00	\N
+3953	17	2	8	544	2025-05-04 04:18:20.308+00	\N
+3957	17	2	9	402	2025-05-08 18:31:56.632+00	\N
+3963	17	4	8	213	2025-05-08 08:35:54.386+00	\N
+4021	17	1	7	394	2025-05-06 11:12:36.459+00	\N
+4078	17	4	9	575	2025-05-08 19:31:39.969+00	\N
+3712	18	2	10	461	2025-05-07 16:06:24.484+00	\N
+3739	18	2	8	344	2025-05-05 14:01:16.259+00	\N
+3744	18	4	8	336	2025-05-09 05:01:08.479+00	\N
+3768	18	5	9	509	2025-05-06 23:55:01.787+00	\N
+3778	18	5	7	472	2025-05-04 01:46:41.741+00	\N
+3789	18	5	7	596	2025-05-09 22:38:55.73+00	\N
+3809	18	3	10	396	2025-05-05 06:05:52.413+00	\N
+3816	18	3	10	287	2025-05-07 04:30:36.507+00	\N
+3847	18	2	9	211	2025-05-05 12:22:51.976+00	\N
+3870	18	5	7	452	2025-05-10 07:36:22.487+00	\N
+3876	18	2	10	407	2025-05-09 01:28:45.498+00	\N
+3888	18	3	10	405	2025-05-05 20:08:53.327+00	\N
+4163	18	1	7	495	2025-05-08 19:04:17.282+00	\N
+4167	18	3	10	328	2025-05-10 07:32:03.594+00	\N
+3976	18	3	10	231	2025-05-04 20:38:39.215+00	\N
+3990	18	1	7	242	2025-05-05 12:10:06.603+00	\N
+3993	18	5	7	550	2025-05-06 22:04:00.734+00	\N
+4033	18	4	8	281	2025-05-04 01:09:17.139+00	\N
+4072	18	2	9	333	2025-05-06 18:18:16.608+00	\N
+3741	19	1	7	559	2025-05-08 17:28:23.514+00	\N
+3781	19	5	7	307	2025-05-08 16:43:50.153+00	\N
+3790	19	4	10	523	2025-05-08 13:04:04.597+00	\N
+3795	19	4	9	474	2025-05-06 20:31:55.135+00	\N
+3826	19	2	8	570	2025-05-06 10:24:11.607+00	\N
+3858	19	5	8	282	2025-05-10 02:51:24.643+00	\N
+4171	19	3	8	341	2025-05-08 21:12:18.303+00	\N
+3920	19	3	9	290	2025-05-09 20:27:21.422+00	\N
+3955	19	4	7	302	2025-05-08 04:39:44.279+00	\N
+3995	19	2	7	589	2025-05-10 02:31:11.958+00	\N
+4008	19	4	7	429	2025-05-09 04:40:00.391+00	\N
+4016	19	3	8	281	2025-05-09 22:52:47.964+00	\N
+4097	19	3	7	266	2025-05-08 05:14:12.04+00	\N
+4220	19	1	9	3	2025-05-10 09:55:10.932+00	\N
+3770	20	2	7	460	2025-05-03 12:16:11.822+00	\N
+3787	20	3	8	423	2025-05-04 07:42:46.265+00	\N
+4120	20	5	10	203	2025-05-08 20:14:32.54+00	\N
+4130	20	1	8	577	2025-05-05 05:45:07.86+00	\N
+4132	20	4	7	251	2025-05-07 11:12:02.114+00	\N
+4172	20	2	7	402	2025-05-10 06:45:31.261+00	\N
+3916	20	2	10	202	2025-05-04 15:35:18.213+00	\N
+3979	20	2	7	279	2025-05-05 20:01:18.867+00	\N
+3992	20	1	10	529	2025-05-05 22:10:37.924+00	\N
+4011	20	4	7	535	2025-05-07 16:38:05.772+00	\N
+4211	20	3	7	284	2025-05-08 08:02:51.492+00	\N
+4020	20	2	7	435	2025-05-08 18:35:07.764+00	\N
+4068	20	2	9	548	2025-05-07 21:03:56.288+00	\N
+4076	20	2	10	461	2025-05-08 15:47:47.557+00	\N
+4081	20	5	8	547	2025-05-04 22:43:33.857+00	\N
+4104	20	3	10	580	2025-05-06 07:16:49.404+00	\N
+3759	21	4	8	522	2025-05-08 14:20:54.977+00	\N
+3767	21	5	7	231	2025-05-06 13:11:00.522+00	\N
+4116	21	4	9	410	2025-05-05 16:24:57.113+00	\N
+3882	21	1	10	251	2025-05-09 21:48:42.838+00	\N
+3894	21	3	8	422	2025-05-09 15:33:56.842+00	\N
+3903	21	2	10	428	2025-05-09 22:10:24.511+00	\N
+3927	21	5	7	505	2025-05-06 20:05:20.161+00	\N
+3934	21	5	10	273	2025-05-07 13:19:34.294+00	\N
+3974	21	5	8	562	2025-05-03 23:24:25.382+00	\N
+4006	21	3	10	246	2025-05-06 23:04:55.35+00	\N
+4009	21	5	9	357	2025-05-03 09:24:04.578+00	\N
+4206	21	1	10	343	2025-05-06 15:38:20.5+00	\N
+3719	22	3	7	341	2025-05-07 04:17:12.731+00	\N
+3762	22	4	9	352	2025-05-07 20:42:05.343+00	\N
+3802	22	3	7	590	2025-05-06 13:46:34.443+00	\N
+4123	22	3	7	397	2025-05-05 12:41:53.716+00	\N
+3848	22	1	7	327	2025-05-06 23:56:01.831+00	\N
+3853	22	5	7	459	2025-05-05 09:40:44.426+00	\N
+3908	22	5	10	314	2025-05-03 23:33:40.61+00	\N
+4174	22	1	10	442	2025-05-05 19:43:49.396+00	\N
+4184	22	5	7	357	2025-05-04 20:31:16.953+00	\N
+3919	22	2	9	569	2025-05-05 04:28:36.968+00	\N
+3925	22	3	9	261	2025-05-05 23:23:56.22+00	\N
+3960	22	2	8	251	2025-05-06 14:05:43.584+00	\N
+3977	22	1	9	453	2025-05-05 06:38:58.073+00	\N
+4004	22	5	9	332	2025-05-05 21:07:58.567+00	\N
+4057	1	2	10	585	2025-05-04 04:23:46.603+00	\N
+4066	1	3	8	311	2025-05-06 02:38:15.302+00	\N
+4026	2	1	7	495	2025-05-10 01:49:01.236+00	\N
+4111	2	2	7	446	2025-05-08 15:55:58.416+00	\N
+4112	2	4	10	540	2025-05-08 09:11:12.71+00	\N
+3844	3	5	9	500	2025-05-08 01:42:39.48+00	\N
+3852	3	2	7	416	2025-05-08 23:41:08.886+00	\N
+3855	3	5	10	226	2025-05-04 07:52:37.12+00	\N
+3857	3	3	7	562	2025-05-08 22:00:10.855+00	\N
+4023	3	2	10	536	2025-05-09 06:01:03.543+00	\N
+4043	3	5	10	374	2025-05-08 10:39:14.668+00	\N
+4067	3	2	10	565	2025-05-03 17:46:20.009+00	\N
+4088	3	3	8	561	2025-05-04 04:50:00.144+00	\N
+4107	3	1	8	404	2025-05-06 12:17:00.003+00	\N
+3819	4	4	7	215	2025-05-05 08:55:45.859+00	\N
+3828	4	5	10	448	2025-05-03 16:51:30.206+00	\N
+3885	4	4	9	252	2025-05-08 02:41:41.689+00	\N
+4177	4	3	10	361	2025-05-09 14:23:14.966+00	\N
+4036	4	3	8	567	2025-05-07 04:29:37.487+00	\N
+4042	4	1	10	259	2025-05-04 10:57:55.177+00	\N
+4045	4	5	10	418	2025-05-08 07:38:42.762+00	\N
+4049	4	1	7	254	2025-05-04 11:37:09.116+00	\N
+4102	4	1	8	417	2025-05-05 22:22:18.735+00	\N
+4103	4	1	7	488	2025-05-07 05:59:08.457+00	\N
+3817	5	4	8	278	2025-05-10 08:39:51.972+00	\N
+3822	5	2	9	595	2025-05-08 01:40:13.812+00	\N
+3829	5	4	8	223	2025-05-04 02:32:15.689+00	\N
+3850	5	4	9	437	2025-05-03 22:38:37.457+00	\N
+3905	5	1	7	420	2025-05-07 18:57:27.29+00	\N
+4191	5	5	9	548	2025-05-08 06:28:07.871+00	\N
+4198	5	3	7	571	2025-05-08 21:05:05.615+00	\N
+4105	5	2	10	261	2025-05-05 18:26:36.56+00	\N
+4110	5	2	9	468	2025-05-08 18:26:30.491+00	\N
+3727	6	1	7	367	2025-05-06 17:45:46.898+00	\N
+3754	6	3	10	314	2025-05-08 07:53:18.306+00	\N
+3774	6	4	10	487	2025-05-04 05:59:29.341+00	\N
+4128	6	1	8	546	2025-05-09 10:52:44.474+00	\N
+4140	6	5	7	431	2025-05-09 10:50:23.846+00	\N
+3814	6	3	9	256	2025-05-07 19:59:32.781+00	\N
+3821	6	1	9	515	2025-05-04 12:01:11.664+00	\N
+3823	6	1	8	415	2025-05-08 22:56:12.876+00	\N
+3869	6	4	9	430	2025-05-09 13:44:01.317+00	\N
+3891	6	3	8	334	2025-05-06 13:07:06.504+00	\N
+3907	6	5	7	334	2025-05-09 02:24:12.158+00	\N
+4175	6	3	8	587	2025-05-08 23:34:31.848+00	\N
+3922	6	4	10	521	2025-05-06 12:36:21.081+00	\N
+3947	6	3	8	242	2025-05-05 13:51:55.175+00	\N
+3952	6	4	10	362	2025-05-09 22:23:13.763+00	\N
+3973	6	3	7	494	2025-05-09 17:18:17.161+00	\N
+3988	6	1	10	535	2025-05-08 00:38:08.532+00	\N
+4214	22	3	8	224	2025-05-08 02:45:16.25+00	\N
+4048	22	3	7	203	2025-05-03 13:26:07.281+00	\N
+4058	22	3	10	510	2025-05-09 05:11:18.476+00	\N
+3766	23	4	9	424	2025-05-06 12:02:51.053+00	\N
+3811	23	5	9	238	2025-05-09 13:37:21.004+00	\N
+4137	23	2	7	227	2025-05-08 18:21:55.092+00	\N
+3837	23	3	8	557	2025-05-07 06:52:41.355+00	\N
+3878	23	5	9	501	2025-05-06 23:09:18.695+00	\N
+3892	23	3	8	243	2025-05-07 20:51:33.758+00	\N
+4153	23	3	8	266	2025-05-08 08:00:29.195+00	\N
+4154	23	1	7	349	2025-05-08 08:27:08.132+00	\N
+4157	23	4	9	329	2025-05-03 21:02:11.519+00	\N
+4162	23	2	9	554	2025-05-04 22:45:56.218+00	\N
+3940	23	4	10	436	2025-05-04 22:34:18.559+00	\N
+3943	23	5	9	287	2025-05-08 20:14:31.709+00	\N
+4002	23	3	7	355	2025-05-04 01:11:28.208+00	\N
+4209	23	3	9	376	2025-05-04 08:45:22.321+00	\N
+4018	23	2	9	483	2025-05-07 14:24:58.601+00	\N
+4028	23	3	10	226	2025-05-08 11:08:28.31+00	\N
+4056	23	5	7	360	2025-05-03 19:54:36.245+00	\N
+4061	23	4	10	217	2025-05-09 06:54:28.372+00	\N
+4062	23	1	8	473	2025-05-08 20:36:58.472+00	\N
+4079	23	3	7	532	2025-05-05 01:39:35.965+00	\N
+4092	23	2	7	219	2025-05-05 07:55:14.124+00	\N
+3725	24	4	7	418	2025-05-08 09:16:53.086+00	\N
+3798	24	4	10	259	2025-05-03 11:37:38.199+00	\N
+3805	24	2	10	460	2025-05-08 11:35:12.507+00	\N
+4150	24	1	8	297	2025-05-08 10:57:01.853+00	\N
+3836	24	4	9	234	2025-05-09 18:48:15.675+00	\N
+3860	24	1	9	328	2025-05-09 05:16:10.393+00	\N
+3873	24	2	7	565	2025-05-05 13:17:05.294+00	\N
+3898	24	1	10	262	2025-05-04 17:09:58.224+00	\N
+3921	24	2	8	564	2025-05-06 12:32:02.854+00	\N
+3950	24	2	9	305	2025-05-03 13:09:48.238+00	\N
+3962	24	4	8	342	2025-05-07 22:56:14.073+00	\N
+4192	24	2	7	287	2025-05-07 19:16:02.489+00	\N
+4074	24	4	8	393	2025-05-06 02:22:29.379+00	\N
+4099	24	1	7	363	2025-05-06 22:00:30.932+00	\N
+3728	25	4	9	379	2025-05-07 04:36:47.27+00	\N
+3745	25	5	9	279	2025-05-06 16:48:53.916+00	\N
+3776	25	4	10	340	2025-05-10 04:04:31.746+00	\N
+3783	25	2	9	226	2025-05-05 00:32:06.866+00	\N
+3800	25	2	10	410	2025-05-06 21:37:01.953+00	\N
+4142	25	5	8	286	2025-05-07 01:00:34.809+00	\N
+3841	25	4	7	267	2025-05-05 18:30:20.433+00	\N
+3880	25	4	10	494	2025-05-08 09:16:15.942+00	\N
+3896	25	3	8	357	2025-05-09 02:16:23.164+00	\N
+3928	25	5	10	312	2025-05-04 12:06:44.467+00	\N
+3939	25	1	9	202	2025-05-09 16:36:24.097+00	\N
+3946	25	1	8	558	2025-05-07 16:02:22.553+00	\N
+3982	25	4	10	514	2025-05-08 08:08:56.34+00	\N
+3986	25	2	10	250	2025-05-03 15:42:53.698+00	\N
+3999	25	1	7	248	2025-05-10 04:09:38.425+00	\N
+4186	25	3	8	348	2025-05-08 10:29:27.967+00	\N
+4195	25	5	10	589	2025-05-06 00:22:45.3+00	\N
+4024	25	1	8	318	2025-05-08 01:26:58.979+00	\N
+4025	25	3	8	392	2025-05-09 19:18:39.271+00	\N
+4034	25	3	9	355	2025-05-03 14:05:22.848+00	\N
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.users (id, name, email, password, number, avatar, verified, created_at, updated_at, oauth_provider, blob_name, bio) FROM stdin;
+1	Sita Koirala	sita.koirala@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	https://mocksewa.blob.core.windows.net/profile-pics/users/1747206520592-me.webp	t	2025-05-06 13:06:38.009659+00	2025-05-14 07:08:40.699+00	local	users/1747206520592-me.webp	\N
+2	Ram Acharya	ram.acharya@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+3	Gita Sharma	gita.sharma@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+4	Hari Thapa	hari.thapa@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+5	Anita Bhandari	anita.bhandari@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+6	Bikash Neupane	bikash.neupane@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+7	Sarita Rai	sarita.rai@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+8	Nabin Shrestha	nabin.shrestha@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+9	Rita Lama	rita.lama@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+10	Kishor Dahal	kishor.dahal@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+11	Mina Magar	mina.magar@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+12	Rajendra Poudel	rajendra.poudel@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+13	Sabita Karki	sabita.karki@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+14	Bimal KC	bimal.kc@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+15	Sujata Maharjan	sujata.maharjan@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+16	Ramesh Kunwar	ramesh.kunwar@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+17	Manju Bhattarai	manju.bhattarai@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+18	Dipendra Rana	dipendra.rana@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+20	Arjun Giri	arjun.giri@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+21	Binita Rijal	binita.rijal@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+22	Sandeep KC	sandeep.kc@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+23	Kalpana Bhusal	kalpana.bhusal@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+29	Bijay Rauniyar	rauniyarbijay0@gmail.com	\N	\N	\N	t	2025-05-12 13:28:03.645+00	2025-05-12 13:28:03.645+00	google	\N	\N
+24	Sunil Basnet	sunil.basnet@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+25	Pratiksha Shahi	pratiksha.shahi@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	\N	t	2025-05-06 13:06:38.009659+00	2025-05-06 13:06:38.009659+00	local	\N	\N
+31	Vance West	bibefimiz@hey.com	$2a$10$VZ9SqWJIiSanDov5UAFHQ.FiRHoJpxK2qIPYWGJ1OxnWnfvJxkqui	9860000000	bear	f	2025-05-16 20:03:08.824+00	2025-05-16 20:03:08.824+00	local	\N	\N
+69	Bijay Rauniyar	andreysandrey.10@gmail.com	$2a$10$0afjX69ZQSs32CEzlZe3C.nLee6MsCpcUjw877XJvwngAuJgSg8ge	9861842341	https://mocksewa.blob.core.windows.net/profile-pics/users/1747554580765-wallpaper.webp	t	2025-05-17 09:14:20.106+00	2025-05-18 08:41:50.925+00	local	users/1747554580765-wallpaper.webp	dsdsds
+19	Pabitra Khadka	pabitra.khadka@example.com	$2a$10$sNW67ojdyWR5V.G/WAWn2euwYyjbLatQqwpCvZhXHwPKx0wFZpMT2	\N	https://mocksewa.blob.core.windows.net/profile-pics/users/1747570690510-wallpaper.webp	t	2025-05-06 13:06:38.009659+00	2025-05-18 18:45:14.651+00	local	users/1747570690510-wallpaper.webp	Full-time student, part-time procrastinator 😅✏️\r\nLearning today, leading tomorrow 🎓🚀
+\.
+
+
+--
+-- Name: bookmarks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.bookmarks_id_seq', 23, true);
+
+
+--
+-- Name: discussions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.discussions_id_seq', 760, true);
+
+
+--
+-- Name: google_auth_tokens_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.google_auth_tokens_id_seq', 1, true);
+
+
+--
+-- Name: mcq_questions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.mcq_questions_id_seq', 219, true);
+
+
+--
+-- Name: mock_tests_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.mock_tests_id_seq', 1, false);
+
+
+--
+-- Name: notifications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.notifications_id_seq', 40, true);
+
+
+--
+-- Name: reviews_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.reviews_id_seq', 1, false);
+
+
+--
+-- Name: sections_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.sections_id_seq', 1, false);
+
+
+--
+-- Name: streams_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.streams_id_seq', 2, true);
+
+
+--
+-- Name: user_scores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.user_scores_id_seq', 4321, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 69, true);
+
+
+--
+-- Name: bookmarks bookmarks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.bookmarks
+    ADD CONSTRAINT bookmarks_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: discussions discussions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.discussions
+    ADD CONSTRAINT discussions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: google_auth_tokens google_auth_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.google_auth_tokens
+    ADD CONSTRAINT google_auth_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: mcq_questions mcq_questions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mcq_questions
+    ADD CONSTRAINT mcq_questions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: mock_tests mock_tests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mock_tests
+    ADD CONSTRAINT mock_tests_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: notifications notifications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notifications
+    ADD CONSTRAINT notifications_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: reviews reviews_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT reviews_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sections sections_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.sections
+    ADD CONSTRAINT sections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: streams streams_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.streams
+    ADD CONSTRAINT streams_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: test_section_links test_section_links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_section_links
+    ADD CONSTRAINT test_section_links_pkey PRIMARY KEY (mock_test_id, section_id);
+
+
+--
+-- Name: test_section_links test_section_links_section_id_test_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_section_links
+    ADD CONSTRAINT test_section_links_section_id_test_id_key UNIQUE (section_id, test_id);
+
+
+--
+-- Name: user_scores user_scores_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_scores
+    ADD CONSTRAINT user_scores_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bookmarks bookmarks_mock_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.bookmarks
+    ADD CONSTRAINT bookmarks_mock_test_id_fkey FOREIGN KEY (mock_test_id) REFERENCES public.mock_tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: bookmarks bookmarks_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.bookmarks
+    ADD CONSTRAINT bookmarks_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: discussions discussions_mock_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.discussions
+    ADD CONSTRAINT discussions_mock_test_id_fkey FOREIGN KEY (mock_test_id) REFERENCES public.mock_tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: discussions discussions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.discussions
+    ADD CONSTRAINT discussions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: mcq_questions mcq_questions_section_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mcq_questions
+    ADD CONSTRAINT mcq_questions_section_id_fkey FOREIGN KEY (section_id) REFERENCES public.sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: mock_tests mock_tests_stream_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.mock_tests
+    ADD CONSTRAINT mock_tests_stream_id_fkey FOREIGN KEY (stream_id) REFERENCES public.streams(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: notifications notifications_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.notifications
+    ADD CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: reviews reviews_mock_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT reviews_mock_test_id_fkey FOREIGN KEY (mock_test_id) REFERENCES public.mock_tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: reviews reviews_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: test_section_links test_section_links_mock_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_section_links
+    ADD CONSTRAINT test_section_links_mock_test_id_fkey FOREIGN KEY (mock_test_id) REFERENCES public.mock_tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: test_section_links test_section_links_section_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_section_links
+    ADD CONSTRAINT test_section_links_section_id_fkey FOREIGN KEY (section_id) REFERENCES public.sections(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: test_section_links test_section_links_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.test_section_links
+    ADD CONSTRAINT test_section_links_test_id_fkey FOREIGN KEY (test_id) REFERENCES public.mock_tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_scores user_scores_mock_test_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_scores
+    ADD CONSTRAINT user_scores_mock_test_id_fkey FOREIGN KEY (mock_test_id) REFERENCES public.mock_tests(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_scores user_scores_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_scores
+    ADD CONSTRAINT user_scores_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
