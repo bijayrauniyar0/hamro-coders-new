@@ -155,6 +155,10 @@ export const getMockTestDetails = async (req: Request, res: Response) => {
     const sections = await streamsService.getTestsMetaDataAccordingToSection(
       mock_test_id,
     );
+    const streams = await Stream.findOne({
+      where: { id: sections.stream_id },
+      attributes: ['name'],
+    });
     let bookmark = false;
     if (req.user) {
       const bookmarks = await Bookmark.findOne({
@@ -165,7 +169,7 @@ export const getMockTestDetails = async (req: Request, res: Response) => {
       });
       bookmark = !!bookmarks;
     }
-    res.status(200).json({ bookmark, ...sections });
+    res.status(200).json({ bookmark, ...sections, stream_name: streams?.name });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
   }
