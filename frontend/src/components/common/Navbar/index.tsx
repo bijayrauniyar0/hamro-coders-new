@@ -19,7 +19,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [width, setWidth] = useState(window.innerWidth);
   useAuth();
-  const isAuthenticated = useAuthStore();
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   const closeBurgerMenu = () => {
     setBurgerMenuOpen(false);

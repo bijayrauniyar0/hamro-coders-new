@@ -36,6 +36,6 @@ export default defineConfig({
   server: {
     open: false,
     host: '0.0.0.0',
-    port: 3030,
+    port: 3033,
   },
 });

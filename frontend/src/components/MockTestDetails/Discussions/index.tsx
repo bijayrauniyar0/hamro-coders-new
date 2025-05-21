@@ -19,19 +19,14 @@ import { apiURL } from '@Services/index';
 import MessageInputBox from './MessageInputBox';
 import MessageList from './MessageList';
 
+const socket = io(apiURL, { withCredentials: true });
+
 const Discussions = () => {
   const [searchParams] = useSearchParams();
   const mock_test_id = searchParams.get('test_id');
   const [newMessages, setNewMessages] = useState<ChatMessage[]>([]);
   const userProfile = useAuthStore(state => state.userProfile);
   const joinRoom = useRef(false);
-  const socketRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (!socketRef.current) {
-      socketRef.current = io(apiURL, { withCredentials: true });
-    }
-  }, []);
 
   const { data: userInChatList, isLoading: userInChatListLoading } = useQuery<
     AxiosResponse<ChatMessageUserType[]>,
@@ -74,17 +69,17 @@ const Discussions = () => {
 
   useEffect(() => {
     if (!joinRoom.current && mock_test_id) {
-      socketRef.current.emit('joinRoom', mock_test_id);
+      socket.emit('joinRoom', mock_test_id);
       joinRoom.current = true;
     }
 
-    socketRef.current.on('receiveMessage', handleReceiveMessage);
-    socketRef.current.on('messageError', handleMessageError);
-    socketRef.current.on('messageDelivered', handleMessageDelivered);
+    socket.on('receiveMessage', handleReceiveMessage);
+    socket.on('messageError', handleMessageError);
+    socket.on('messageDelivered', handleMessageDelivered);
 
-    return () => {
-      socketRef.current.off('receiveMessage', handleReceiveMessage);
-    };
+    // return () => {
+    //   socket.off('receiveMessage', handleReceiveMessage);
+    // };
   }, [
     handleMessageDelivered,
     handleMessageError,
@@ -99,7 +94,7 @@ const Discussions = () => {
       message,
       messageId,
     };
-    socketRef.current.emit('sendMessage', messagePayload);
+    socket.emit('sendMessage', messagePayload);
 
     setNewMessages(prev => [
       ...prev,

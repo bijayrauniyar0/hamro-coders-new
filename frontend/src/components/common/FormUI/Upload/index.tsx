@@ -69,7 +69,6 @@ export default function FileUpload({
 
   const handleFileUpload = (event: FileEvent) => {
     const { files } = event.target;
-    // console.log('files');
     const fileSize = files[0].size / 1024 ** 2;
     if (maxSize && fileSize > maxSize) {
       toast.warning(`File size should not exceed ${maxSize}MB`);

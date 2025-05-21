@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import * as React from 'react';
+import { Eye, EyeClosed } from 'lucide-react';
 
-import Icon from '@Components/common/Icon';
 import { cn } from '@Utils/index';
 
 export interface IInputProps
@@ -20,11 +20,18 @@ const PasswordInput = React.forwardRef<HTMLInputElement, IInputProps>(
           className={cn(`input body-sm`, className)}
           {...rest}
         />
-        <Icon
-          name={showPassword ? 'visibility' : 'visibility_off'}
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-2 top-2/4 -translate-y-2/4 text-xl"
-        />
+
+        {showPassword ? (
+          <Eye
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-2/4 h-5 w-5 -translate-y-2/4"
+          />
+        ) : (
+          <EyeClosed
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-2/4 h-5 w-5 -translate-y-2/4"
+          />
+        )}
       </div>
     );
   },

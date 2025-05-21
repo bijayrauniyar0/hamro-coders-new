@@ -21,20 +21,20 @@ services:
     networks:
       - app-network # Ensure the backend is on the app-network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3030:3030" # Exposes the frontend
-    volumes:
-      - ./frontend:/app
-    environment:
-      - NODE_ENV=development
-    networks:
-      - app-network # Ensure the frontend is on the app-network
-    depends_on:
-      - backend
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3033:3033" # Exposes the frontend
+  #   volumes:
+  #     - ./frontend:/app
+  #   environment:
+  #     - NODE_ENV=development
+  #   networks:
+  #     - app-network # Ensure the frontend is on the app-network
+  #   depends_on:
+  #     - backend
   db:
     image: postgres:15
     container_name: hamrocoders-sql-db
