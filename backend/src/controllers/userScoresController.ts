@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import UserScores from '../models/userScoresModels';
 import User from '../models/userModels';
 import { Op } from 'sequelize';
-import { getStartDate } from '../utils/index';
 import Notification from '../models/notificationModel';
 import {
   AggregatedScore,
@@ -165,10 +164,11 @@ export const getLeaderboard = async (
   req: Request<unknown, unknown, unknown, LeaderboardQuery>,
   res: Response,
 ) => {
-  const { filter_by, mock_test_id, search } = req.query;
+  const { mock_test_id, search } = req.query;
   const leaderboardService = new LeaderboardService();
 
-  const startDate = getStartDate(filter_by);
+  // const startDate = getStartDate(filter_by);
+  const startDate = 'all_time';
 
   const twelveHoursAgo = new Date();
   twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
