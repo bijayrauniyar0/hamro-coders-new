@@ -39,9 +39,8 @@ export const getMCQs = async (req: Request, res: Response) => {
       return;
     }
     const streamsService = new StreamsService();
-    const sections = await streamsService.getTestsMetaDataAccordingToSection(
-      test_id,
-    );
+    const { sections } =
+      await streamsService.getTestsMetaDataAccordingToSection(test_id);
     const mcqService = new MCQsService();
     const mcq_questions = await Promise.all([
       ...sections.map(async section => {

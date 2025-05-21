@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   getAllMockTests,
+  getMockTestDetails,
   getMockTestsListByStream,
   getStreams,
 } from '../controllers/streamController';
@@ -15,6 +16,6 @@ streamRouter.get(
   getMockTestsListByStream,
 );
 streamRouter.get('/mock-tests/', getAllMockTests);
-// streamRouter.get('/tests/meta-data/:test_id/', getTestsMetaData);
+streamRouter.get('/mock-tests/meta-data/:mock_test_id/', maybeAuthenticate, getMockTestDetails);
 
 export default streamRouter;

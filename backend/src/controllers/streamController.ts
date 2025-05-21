@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import UserScores from '../models/userScoresModels';
 import MockTest from '../models/mockTestModel';
 import Bookmark from '../models/bookmarksModel';
+import Section from '../models/sectionModel';
 
 export class StreamsService {
   async getStreams() {
@@ -62,7 +63,9 @@ export class StreamsService {
       throw new Error(error as string);
     }
   }
-  async getTestsMetaDataAccordingToSection(test_id: number | string) {
+  async getTestsMetaDataAccordingToSection(
+    test_id: number | string,
+  ): Promise<{ sections: Section[] } & Record<string, any>> {
     try {
       const tests = await Test.findByPk(test_id);
       if (!tests) {
@@ -72,7 +75,7 @@ export class StreamsService {
         joinTableAttributes: [],
         raw: true,
       });
-      return sections;
+      return { ...tests.toJSON(), sections };
     } catch {
       throw new Error('Internal server error');
     }
@@ -138,5 +141,32 @@ export const getAllMockTests = async (req: Request, res: Response) => {
     res.status(200).json(mockTests);
   } catch (error) {
     res.status(500).send({ message: 'Internal Server Error', error });
+  }
+};
+
+export const getMockTestDetails = async (req: Request, res: Response) => {
+  const { mock_test_id } = req.params;
+  try {
+    if (!mock_test_id) {
+      res.status(400).json({ message: 'test_id is required' });
+      return;
+    }
+    const streamsService = new StreamsService();
+    const sections = await streamsService.getTestsMetaDataAccordingToSection(
+      mock_test_id,
+    );
+    let bookmark = false;
+    if (req.user) {
+      const bookmarks = await Bookmark.findOne({
+        where: {
+          user_id: req.user.id,
+          mock_test_id: +mock_test_id,
+        },
+      });
+      bookmark = !!bookmarks;
+    }
+    res.status(200).json({ bookmark, ...sections });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };
