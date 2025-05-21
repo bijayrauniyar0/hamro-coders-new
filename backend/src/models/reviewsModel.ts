@@ -1,15 +1,14 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/database';
+import User from './userModels';
+import MockTest from './mockTestModel';
 
 class Review extends Model {
   public id!: number;
-  public full_name!: string;
-  public email!: string;
   public review!: string;
-  public exam_type!: string;
   public rating!: number;
-  public profile_photo?: string;
-  public anonymous!: boolean;
+  public User!: User;
+  public MockTest!: MockTest;
 }
 
 Review.init(
@@ -19,24 +18,17 @@ Review.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    full_name: {
-      type: DataTypes.STRING,
+    user_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    email: {
-      type: DataTypes.STRING,
+    mock_test_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      validate: {
-        isEmail: true,
-      },
     },
     review: {
       type: DataTypes.TEXT,
       allowNull: false,
-    },
-    exam_type: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     rating: {
       type: DataTypes.FLOAT,
@@ -46,15 +38,6 @@ Review.init(
         max: 5,
       },
     },
-    anonymous: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    profile_photo: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
   },
   {
     tableName: 'reviews',
@@ -63,5 +46,30 @@ Review.init(
     updatedAt: false,
   },
 );
+Review.belongsTo(User, {
+  foreignKey: 'user_id',
+  targetKey: 'id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+Review.belongsTo(MockTest, {
+  foreignKey: 'mock_test_id',
+  targetKey: 'id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+// Define associations
+User.hasMany(Review, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
+MockTest.hasMany(Review, {
+  foreignKey: 'mock_test_id',
+  sourceKey: 'id',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+});
 
 export default Review;
