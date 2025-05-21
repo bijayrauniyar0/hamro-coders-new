@@ -70,3 +70,23 @@ export const toggleBookmark = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error', error });
   }
 };
+
+export const getBookmarkByMockTestId = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user.id;
+    const { mock_test_id } = req.params;
+    if (!mock_test_id) {
+      res.status(400).json({ message: 'Bookmark ID is required' });
+      return;
+    }
+    const bookmark = await Bookmark.findOne({
+      where: {
+        mock_test_id,
+        user_id: userId,
+      },
+    });
+    res.status(200).json({ is_bookmarked: !!bookmark });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
