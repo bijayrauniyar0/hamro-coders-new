@@ -1,12 +1,24 @@
 export const optionsLabel = ['A', 'B', 'C', 'D'];
 
-export const modesDescription: { [key: string]: string } = {
-  practice:
-    'No pressure, just practice! In this mode, you can take all the time you need to answer questions. Perfect for sharpening your skills and learning at your own pace.',
-  rapid:
-    'In this mode, you’ll need to think fast! You have just 10 seconds to answer each question. Test your speed and accuracy as you race against the clock!',
-  ranked:
-    'Challenge yourself with 120 seconds in total for each question. Every correct answer earns you 1 point, but be careful—each wrong answer will cost you -0.5 points. Can you rise to the top and make your mark on the leaderboard?',
+type ModeDescriptionParams = {
+  modes: string;
+  timeLimit: number;
+  negativeMarking: number;
+  marksPerQuestion: number;
+};
+
+export const getModesDescription = ({
+  modes,
+  timeLimit,
+  negativeMarking,
+  marksPerQuestion,
+}: ModeDescriptionParams) => {
+  const modesData = {
+    practice:
+      'No pressure, just practice! In this mode, you can take all the time you need to answer questions. Perfect for sharpening your skills and learning at your own pace.',
+    ranked: `Challenge yourself with ${timeLimit} minutes in total for each question. Every correct answer earns you ${marksPerQuestion} point, but be careful—each wrong answer will cost you -${negativeMarking} points. Can you rise to the top and make your mark on the leaderboard?`,
+  };
+  return modesData[modes as keyof typeof modesData] || '';
 };
 
 export const endStats = [

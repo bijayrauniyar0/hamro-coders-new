@@ -19,7 +19,7 @@ import { getPercentageColor } from '@Utils/index';
 import isEmpty from '@Utils/isEmpty';
 import {
   endStats,
-  modesDescription,
+  getModesDescription,
   optionsLabel,
 } from '@Constants/QuestionsBox';
 import {
@@ -273,7 +273,12 @@ const MCQBox = () => {
                   ) : (
                     <FlexColumn className="items-center gap-4 pt-8">
                       <p className="text-center">
-                        {modesDescription[selectedMode || 'practice']}
+                        {getModesDescription({
+                          modes: selectedMode || '',
+                          timeLimit: metaData?.time_limit,
+                          negativeMarking: metaData.negative_marking,
+                          marksPerQuestion: metaData?.marks_per_question || 1,
+                        })}
                       </p>
                       <p className="text-center text-base font-medium">
                         Game starting in{' '}
@@ -285,7 +290,7 @@ const MCQBox = () => {
               ) : (
                 <>
                   {modeToShow === 'questions' ? (
-                    <FlexColumn className="w-full gap-5 items-end">
+                    <FlexColumn className="w-full items-end gap-5">
                       <div className="w-full">
                         {questions.map((questionData, index) => {
                           if (index !== questionCount) return null;
