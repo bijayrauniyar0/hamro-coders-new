@@ -31,8 +31,6 @@ export async function seedUserScores(count: number = 100) {
   const getRandomInt = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
 
-  const getRandomMode = () => (Math.random() > 0.5 ? 'practice' : 'ranked');
-
   const records = Array.from({ length: count }).map(() => {
     const user_id = getRandomInt(1, 4);
     return {
@@ -40,7 +38,6 @@ export async function seedUserScores(count: number = 100) {
       score: getRandomInt(6, 10),
       created_at: getRandomDate(),
       elapsed_time: getRandomInt(200, 600),
-      mode: getRandomMode(),
       subject_id: getRandomInt(1, 5),
     };
   });
@@ -56,15 +53,11 @@ export class UserStatsService {
   }
   async getUserScores({
     startDate,
-    mode,
     otherFilterOptions,
   }: UserScoresArgsType): Promise<UserScores[]> {
     const whereClause: any = {
       user_id: this.user_id,
     };
-    if (mode !== 'all') {
-      whereClause.mode = mode;
-    }
     if (startDate !== 'all_time') {
       whereClause.created_at = {
         [Op.gte]: startDate,
@@ -86,7 +79,6 @@ export class UserStatsService {
   async getRecentSessions(dataLimit: number = 5): Promise<IRecentSessions[]> {
     const userScores = await this.getUserScores({
       startDate: 'all_time',
-      mode: 'all',
       otherFilterOptions: {
         limit: dataLimit,
         raw: false,
@@ -127,7 +119,6 @@ export class UserStatsService {
     const startDate = getStartDateByTimePeriod(time_period);
     const allScoresData = await this.getUserScores({
       startDate,
-      mode: 'ranked',
     });
 
     const total = allScoresData.length;
@@ -159,35 +150,31 @@ export class UserStatsService {
           subject: Subject.title,
           date: score.created_at,
           elapsed_time: formatToMinSec(score.elapsed_time),
-          title: `${score.mode} #${score.id}`,
+          title: `#${score.id}`,
           accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
           rank_change: 'N/A',
         };
 
-        if (score.mode !== 'practice') {
-          const userRank = await leaderboardService.getRankedUsers({
-            startDate,
-            endDate: new Date(
-              new Date(score.created_at).getTime() - 24 * 60 * 60 * 1000,
-            ),
-          });
+        const userRank = await leaderboardService.getRankedUsers({
+          startDate,
+          endDate: new Date(
+            new Date(score.created_at).getTime() - 24 * 60 * 60 * 1000,
+          ),
+        });
 
-          const userScoreDetail = userRank.find(
-            (user: any) => user.id === this.user_id,
-          );
+        const userScoreDetail = userRank.find(
+          (user: any) => user.id === this.user_id,
+        );
 
-          const updatedResponse = {
-            ...response,
-            rank_change:
-              (userScoreDetail?.rank ?? 0) -
-              Number(userScoresStack[index - 1]?.rank_change ?? 0),
-          };
+        const updatedResponse = {
+          ...response,
+          rank_change:
+            (userScoreDetail?.rank ?? 0) -
+            Number(userScoresStack[index - 1]?.rank_change ?? 0),
+        };
 
-          userScoresStack.push(updatedResponse);
-          return updatedResponse;
-        }
-
-        return response;
+        userScoresStack.push(updatedResponse);
+        return updatedResponse;
       }),
     );
 
@@ -204,14 +191,13 @@ export const getUserStats = async (
   req: Request<unknown, unknown, unknown, IGetUserStatsParamType>,
   res: Response,
 ) => {
-  const { mode, time_period } = req.query;
+  const { time_period } = req.query;
   const { user } = req;
   const leaderboardService = new LeaderboardService();
   const userStatsService = new UserStatsService(user.id);
   try {
     const scores = await userStatsService.getUserScores({
       startDate: getStartDateByTimePeriod(time_period),
-      mode,
     });
     const userRanks = await leaderboardService.getRankedUsers({
       startDate: getStartDateByTimePeriod(time_period),

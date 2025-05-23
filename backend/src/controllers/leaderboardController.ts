@@ -39,9 +39,7 @@ export class LeaderboardService {
     startDate,
     endDate = new Date(),
   }: ScoreFilter): Promise<UserScores[]> {
-    const whereClause: any = {
-      mode: 'ranked',
-    };
+    const whereClause: any = {};
 
     if (subjectIds && subjectIds.length > 0) {
       whereClause.subject_id = subjectIds;
@@ -202,7 +200,7 @@ const compareAndNotify = async (
 
 export const createScoreEntry = async (req: Request, res: Response) => {
   try {
-    const { subject_id, score, mode, elapsed_time } = req.body;
+    const { subject_id, score, elapsed_time } = req.body;
     const user = req.user;
     const leaderboardService = new LeaderboardService();
     const oldRanks = await leaderboardService.getRankedUsersByDate({
@@ -213,7 +211,6 @@ export const createScoreEntry = async (req: Request, res: Response) => {
       user_id: user.id,
       score,
       subject_id,
-      mode,
       elapsed_time,
     });
 

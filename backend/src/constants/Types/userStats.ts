@@ -6,12 +6,10 @@ import { SequelizeAttributes } from '.';
 
 export type UserScoresArgsType = {
   startDate: ScoreFilter['startDate'];
-  mode: 'ranked' | 'practice' | 'all';
   otherFilterOptions?: Partial<SequelizeAttributes>;
 };
 
 export interface IGetUserStatsParamType extends ParsedQs {
-  mode: UserScoresArgsType['mode'];
   time_period: 'last_1_month' | 'last_7_days' | 'all_time';
   sort_by?: keyof IPerformanceDetails;
   sort_order?: 'asc' | 'desc';

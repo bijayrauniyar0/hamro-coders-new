@@ -10,7 +10,6 @@ class UserScores extends Model {
   public score!: number;
   public subject_id!: string;
   public subject!: { title: string; id: number };
-  public mode!: 'practice' | 'ranked';
   public elapsed_time!: number;
   public readonly created_at!: Date;
 }
@@ -30,11 +29,6 @@ UserScores.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    mode: {
-      type: DataTypes.ENUM('practice', 'ranked'),
-      allowNull: false,
-      defaultValue: 'practice',
-    },
     score: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -53,7 +47,6 @@ UserScores.init(
     updatedAt: false,
   },
 );
-
 
 UserScores.belongsTo(Subject, {
   foreignKey: 'subject_id',
