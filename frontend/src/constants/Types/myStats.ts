@@ -16,7 +16,6 @@ export interface SessionsBoxProps {
   score: number;
   // accuracy: string;
   elapsed_time: number;
-  mode: string;
   created_at: string;
 }
 
@@ -30,7 +29,6 @@ export interface IPerformanceTrendProps {
 }
 
 export interface IFilters {
-  modeFilter: string;
   timePeriodFilter: string;
 }
 

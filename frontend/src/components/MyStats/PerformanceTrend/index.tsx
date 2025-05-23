@@ -106,7 +106,7 @@ export default function PerformanceTrend() {
 
   return (
     <FlexColumn className="gap-4">
-      <FlexRow className="items-center justify-between max-md:gap-2">
+      <FlexRow className="items-center flex-wrap justify-between max-md:gap-2">
         <p className="text-base font-medium leading-4 tracking-tight text-matt-100 md:text-lg">
           Performance Trend
         </p>

@@ -20,8 +20,8 @@ import {
 } from 'date-fns';
 
 export async function seedUserScores(count: number = 100) {
-  const startDate = new Date('2025-01-01');
-  const endDate = new Date('2025-04-26');
+  const startDate = new Date('2025-04-01');
+  const endDate = new Date('2025-05-23');
 
   const getRandomDate = () => {
     const diff = endDate.getTime() - startDate.getTime();
@@ -32,7 +32,7 @@ export async function seedUserScores(count: number = 100) {
     Math.floor(Math.random() * (max - min + 1)) + min;
 
   const records = Array.from({ length: count }).map(() => {
-    const user_id = getRandomInt(1, 4);
+    const user_id = getRandomInt(1, 1);
     return {
       user_id: user_id,
       score: getRandomInt(6, 10),
@@ -88,11 +88,10 @@ export class UserStatsService {
       const { Subject, ...scoreData } = score.get();
       return {
         ...scoreData,
-        date: scoreData.created_at,
-        elapsed_time: formatToMinSec(scoreData.elapsed_time),
-        title: `${Subject.title}`,
+        date: scoreData?.created_at,
+        elapsed_time: formatToMinSec(scoreData?.elapsed_time),
         // accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
-        subject: Subject.title,
+        subject: Subject?.title,
       };
     });
     return scores;
@@ -147,8 +146,8 @@ export class UserStatsService {
         const { Subject, ...score } = scoreModel.get();
         const response: IPerformanceDetails = {
           ...score,
-          subject: Subject.title,
-          date: score.created_at,
+          subject: Subject?.title,
+          date: score?.created_at,
           elapsed_time: formatToMinSec(score.elapsed_time),
           title: `#${score.id}`,
           accuracy: `${((score.score / 10) * 100).toFixed(2)} %`,
@@ -161,7 +160,6 @@ export class UserStatsService {
             new Date(score.created_at).getTime() - 24 * 60 * 60 * 1000,
           ),
         });
-
         const userScoreDetail = userRank.find(
           (user: any) => user.id === this.user_id,
         );
@@ -177,7 +175,6 @@ export class UserStatsService {
         return updatedResponse;
       }),
     );
-
     return {
       results: performanceDetails,
       total,
@@ -249,7 +246,7 @@ export const getPerformanceDetails = async (
   const pageNum = parseInt(page as string, 10) || 1;
   const pageSize = parseInt(page_size as string, 10) || 15;
 
-  // await seedUserScores(300);
+  // await seedUserScores(200);
   const userStatsService = new UserStatsService(user.id);
   try {
     const performanceDetails = await userStatsService.getUserPerformanceDetails(
