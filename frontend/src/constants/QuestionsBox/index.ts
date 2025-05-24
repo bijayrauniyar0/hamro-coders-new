@@ -9,14 +9,11 @@ type ModeDescriptionParams = {
 
 export const getModesDescription = ({
   modes,
-  timeLimit,
-  negativeMarking,
-  marksPerQuestion,
 }: ModeDescriptionParams) => {
   const modesData = {
     practice:
       'No pressure, just practice! In this mode, you can take all the time you need to answer questions. Perfect for sharpening your skills and learning at your own pace.',
-    ranked: `Challenge yourself with ${timeLimit} minutes in total for each question. Every correct answer earns you ${marksPerQuestion} point, but be careful—each wrong answer will cost you -${negativeMarking} points. Can you rise to the top and make your mark on the leaderboard?`,
+    ranked: ``,
   };
   return modesData[modes as keyof typeof modesData] || '';
 };

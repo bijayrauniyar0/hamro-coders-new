@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import BindContentContainer from '@Components/common/BindContentContainer';
@@ -19,7 +18,6 @@ import { getPercentageColor } from '@Utils/index';
 import isEmpty from '@Utils/isEmpty';
 import {
   endStats,
-  getModesDescription,
   optionsLabel,
 } from '@Constants/QuestionsBox';
 import {
@@ -70,7 +68,6 @@ const MCQBox = () => {
   >('questions');
 
   const [searchParams] = useSearchParams();
-  const selectedMode = searchParams.get('mode');
   const subject_id = searchParams.get('subject_id');
   const { course_id } = useParams();
   const navigate = useNavigate();
@@ -96,7 +93,18 @@ const MCQBox = () => {
         subject_id: metaData.subject_id,
         subject_name: metaData.subject_name,
       };
+      startCountdown(5);
+      const timeoutId = setTimeout(
+        () => {
+          setQuestionCount(0);
+          setModeToShow('answers');
+        },
+        metaData?.time_limit * 60 * 1000 || 5000,
+      );
+
+      return () => clearInterval(timeoutId);
     }
+    return () => {};
   }, [metaDataFetched]);
 
   const { data: questions, isLoading: questionsIsLoading } = useQuery({
@@ -149,7 +157,6 @@ const MCQBox = () => {
     const payload = {
       subject_id,
       score: results.right,
-      mode: selectedMode,
       elapsed_time: Math.floor(
         (new Date().getTime() - startTimeRef.current.getTime()) / 1000,
       ),
@@ -192,29 +199,6 @@ const MCQBox = () => {
   const disableBeforeUnload = () => {
     window.removeEventListener('beforeunload', handleBeforeUnload.current);
   };
-
-  useEffect(() => {
-    if (!selectedMode) {
-      toast.error('Please select a mode to continue');
-      setTimeout(() => {
-        navigate(`/courses/${course_id}`);
-      }, 500);
-      return () => {};
-    }
-    startCountdown(5);
-    if (selectedMode === 'practice') return () => {};
-    if (selectedMode === 'ranked') {
-      setTimeout(() => {
-        setQuestionCount(0);
-        setModeToShow('answers');
-      }, 600000);
-    }
-
-    const timeoutId = setTimeout(() => {
-      // console.log("object");
-    }, 3000);
-    return () => clearInterval(timeoutId);
-  }, [selectedMode]);
 
   useEffect(() => {
     if (!questions) return;
@@ -273,12 +257,7 @@ const MCQBox = () => {
                   ) : (
                     <FlexColumn className="items-center gap-4 pt-8">
                       <p className="text-center">
-                        {getModesDescription({
-                          modes: selectedMode || '',
-                          timeLimit: metaData?.time_limit,
-                          negativeMarking: metaData.negative_marking,
-                          marksPerQuestion: metaData?.marks_per_question || 1,
-                        })}
+                        {`Challenge yourself with ${metaData?.time_limit} minutes in total for each question. Every correct answer earns you ${metaData.negative_marking} point, but be careful—each wrong answer will cost you -${metaData?.marks_per_question || 1} points. Can you rise to the top and make your mark on the leaderboard?`}
                       </p>
                       <p className="text-center text-base font-medium">
                         Game starting in{' '}
@@ -378,31 +357,18 @@ const MCQBox = () => {
                           );
                         })}
                       </div>
-                      <FlexRow className="gap-4">
-                        {selectedMode === 'practice' && (
-                          <Button
-                            variant="secondary"
-                            onClick={() => {
-                              setQuestionCount(questionCount - 1);
-                            }}
-                            disabled={questionCount === 0}
-                          >
-                            PREV
-                          </Button>
-                        )}
-                        <Button
-                          onClick={() => {
-                            handleNextSkipClick('next');
-                            if (questionCount === questions.length) {
-                              setGameOver(true);
-                              setModeToShow('results');
-                            }
-                          }}
-                          disabled={selectedOption[questionCount] === undefined}
-                        >
-                          NEXT
-                        </Button>
-                      </FlexRow>
+                      <Button
+                        onClick={() => {
+                          handleNextSkipClick('next');
+                          if (questionCount === questions.length) {
+                            setGameOver(true);
+                            setModeToShow('results');
+                          }
+                        }}
+                        disabled={selectedOption[questionCount] === undefined}
+                      >
+                        NEXT
+                      </Button>
                     </FlexColumn>
                   ) : modeToShow === 'answers' && answers ? (
                     <>
