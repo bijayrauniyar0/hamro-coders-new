@@ -8,7 +8,6 @@ import { navbarData } from '@Constants/navbarData';
 
 import Icon from '../Icon';
 
-import Notification from './Notification';
 
 const Navbar = () => {
   const [burgerMenuOpen, setBurgerMenuOpen] = useState(false);
@@ -66,7 +65,6 @@ const Navbar = () => {
           </div>
         )}
         <FlexRow className="flex items-center gap-3 max-sm:gap-2">
-          <Notification />
           <AccountMenu />
           {width <= 768 && (
             <Icon
