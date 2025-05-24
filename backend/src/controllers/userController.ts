@@ -4,7 +4,6 @@ import User from '../models/userModels';
 import bcrypt from 'bcryptjs';
 import { generateToken, verifyToken } from '../utils/jwtUtils';
 import { sendVerificationEmail } from '../utils/mailer';
-import path from 'path';
 
 class UserService {
   email: string;
@@ -197,22 +196,18 @@ export const verifyEmail = async (
     }
     const decoded = verifyToken(token);
     if (typeof decoded !== 'object' || !decoded) {
-      res.sendFile(
-        path.join(__dirname, '../../public/verificationFailed.html'),
-      );
+      res.redirect(`http://localhost:3030/verification-failed`);
       return;
     }
     const { email } = decoded;
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      res.sendFile(
-        path.join(__dirname, '../../public/verificationFailed.html'),
-      );
+      res.redirect(`http://localhost:3030/verification-failed`);
       return;
     }
     user.verified = true;
     await user.save();
-    res.sendFile(path.join(__dirname, '../../public/verificationSuccess.html'));
+    res.redirect(`http://localhost:3030/login`);
   } catch (error) {
     res.status(500).json({ message: 'Error verifying email', error });
   }

@@ -18,7 +18,7 @@ function App() {
   const dispatch = useTypedDispatch();
   const navigate = useNavigate();
 
-  const routesWithoutNavbar = ['/login', '/signup','/verify-email'];
+  const routesWithoutNavbar = ['/login', '/signup','/verify-email','/verification-failed'];
   const showNavbar = !routesWithoutNavbar.some(route =>
     pathname.includes(route),
   );

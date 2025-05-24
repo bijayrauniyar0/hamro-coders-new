@@ -5,7 +5,7 @@ import { capitalizeFirstLetter } from '@Utils/capitalizeFirstLetter';
 import { SessionsBoxProps } from '@Constants/Types/myStats';
 
 const SessionsBox = ({
-  title,
+  subject,
   score,
   elapsed_time,
   created_at,
@@ -27,8 +27,8 @@ const SessionsBox = ({
     <div className="flex w-full max-md:gap-6 border-b border-b-gray-200 px-4 py-4 max-md:flex-col md:items-center md:justify-between">
       {/* <FlexRow className="items-center justify-between"> */}
       <FlexRow className="max-md:w-full items-center justify-between">
-        <p className="md:w-[8rem] text-ellipsis text-sm md:text-md font-medium leading-5">
-          {capitalizeFirstLetter(title)}
+        <p className="md:w-[12rem] text-ellipsis text-sm md:text-md font-medium">
+          {capitalizeFirstLetter(subject)}
         </p>
         <p className="text-sm font-medium md:hidden">
           {created_at ? format(new Date(created_at), 'MMMM dd, yyyy') : ''}

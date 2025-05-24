@@ -1,5 +1,6 @@
 // import ModesPage from '@Views/Modes';
 import AuthenticationComponent from '@Components/UserAuthentication';
+import VerificationFailed from '@Components/UserAuthentication/VerificationFailed';
 import CoursesPage from '@Views/Courses';
 import DashboardPage from '@Views/Dashboard';
 import LeaderboardPage from '@Views/LeaderboardPage';
@@ -24,25 +25,33 @@ const appRoutes: IRoute[] = [
     component: AuthenticationComponent,
   },
   {
+    name: 'Verification Failed',
+    path: '/verification-failed',
+    component: VerificationFailed,
+  },
+
+  {
     name: 'Courses',
     path: '/courses/*',
     component: CoursesPage,
-    authenticated: true,
   },
   {
     name: 'Leaderboard',
     path: '/leaderboard',
     component: LeaderboardPage,
+    authenticated: true,
   },
   {
     name: 'Analytics',
     path: '/analytics',
     component: MyStatsPage,
+    authenticated: true,
   },
   {
     name: 'Verify Email',
     path: '/verify-email',
     component: AuthenticationComponent,
+    authenticated: true,
   },
 ];
 

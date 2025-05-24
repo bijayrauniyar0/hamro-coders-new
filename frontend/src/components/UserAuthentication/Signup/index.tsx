@@ -196,9 +196,9 @@ export default function Signup() {
                 {...register('confirmPassword')}
               />
               <Icon
-                name={showPassword ? 'visibility' : 'visibility_off'}
+                name={showConfirmPassword ? 'visibility' : 'visibility_off'}
                 className="text-black-600 absolute right-2 top-[2.3rem] cursor-pointer"
-                onClick={() => setShowConfirmPassword(!showPassword)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               />
 
               <ErrorMessage message={errors.confirmPassword?.message} />

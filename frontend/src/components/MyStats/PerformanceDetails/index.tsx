@@ -38,7 +38,7 @@ const performanceTableColumns = [
       return (
         <div className="flex w-[2rem] items-center justify-center py-2">
           <p className={`text-sm font-semibold ${rank_change_color}`}>
-            {row?.original?.rank_change}
+            {row?.original?.rank_change || '-'}
           </p>
           {rowData.mode === 'ranked' && (
             <Icon

@@ -17,6 +17,7 @@ export interface SessionsBoxProps {
   // accuracy: string;
   elapsed_time: number;
   created_at: string;
+  subject: string;
 }
 
 export interface PerformanceDetailsProps

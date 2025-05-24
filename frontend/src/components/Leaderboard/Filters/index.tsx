@@ -40,7 +40,11 @@ const Filters = () => {
       }));
     },
   });
-  const { data: subjectsList, isLoading: subjectsListIsLoading } = useQuery({
+  const {
+    data: subjectsList,
+    isLoading: subjectsListIsLoading,
+    isSuccess: subjectsListIsSuccess,
+  } = useQuery({
     queryKey: ['subjects', course_id],
     queryFn: () => getSubjectsByCourse(course_id),
     select: ({ data }) => {
@@ -59,6 +63,12 @@ const Filters = () => {
       dispatch(setFilters({ course_id: coursesList[0].value }));
     }
   }, [coursesListIsSuccess]);
+
+  useEffect(() => {
+    if (subjectsListIsSuccess && !isEmpty(subjectsList)) {
+      dispatch(setFilters({ subject_id: [subjectsList?.[0]?.id] }));
+    }
+  }, [subjectsList, subjectsListIsSuccess]);
 
   return (
     <motion.div
@@ -131,40 +141,11 @@ const Filters = () => {
                   className="reset-button group flex cursor-pointer items-center gap-2 rounded-md px-2 py-4 duration-100"
                   key={subject.id}
                   onClick={() => {
-                    if (subject_id.includes(subject.id)) {
-                      dispatch(
-                        setFilters({
-                          subject_id: subject_id.filter(
-                            id => id !== subject.id,
-                          ),
-                        }),
-                      );
-                    } else {
-                      dispatch(
-                        setFilters({ subject_id: [...subject_id, subject.id] }),
-                      );
-                    }
+                    dispatch(setFilters({ subject_id: [subject.id] }));
                   }}
                 >
                   <Checkbox
                     className="filter-checkbox"
-                    onChange={e => {
-                      if (e.target.checked) {
-                        dispatch(
-                          setFilters({
-                            subject_id: [...subject_id, subject.id],
-                          }),
-                        );
-                      } else {
-                        dispatch(
-                          setFilters({
-                            subject_id: subject_id.filter(
-                              id => id !== subject.id,
-                            ),
-                          }),
-                        );
-                      }
-                    }}
                     checked={subject_id.includes(subject.id)}
                   />
                   <p className="text-sm">{subject.title}</p>

@@ -301,59 +301,6 @@ const MCQBox = () => {
                               }}
                               key={questionData.id}
                             />
-                            // <FlexColumn className="gap-5" key={questionData.id}>
-                            //   <p className="text-md font-medium leading-5 md:text-lg">
-                            //     {questionData.question}
-                            //   </p>
-                            //   <div className="grid select-none grid-cols-1 gap-4 md:grid-cols-2">
-                            //     {questionData.options.map(
-                            //       ({ id, value }, subIndex) => {
-                            //         const isOptionSelected =
-                            //           selectedOption[questionCount]?.id === id;
-                            //         return (
-                            //           <button
-                            //             className={`flex cursor-pointer items-center justify-start gap-4 rounded-lg border bg-white p-2 shadow-sm transition-all duration-200 ease-in-out hover:border-primary-400 md:p-4 ${isOptionSelected ? 'border-primary-400' : 'border-gray-200'}`}
-                            //             key={subIndex}
-                            //             onClick={() => {
-                            //               setSelectedOption(
-                            //                 (
-                            //                   prevData: Record<string, any>[],
-                            //                 ) => {
-                            //                   // Check if the option is already selected
-                            //                   if (
-                            //                     prevData[questionCount]?.id ===
-                            //                     id
-                            //                   ) {
-                            //                     // If selected, deselect it (remove it from the array)
-                            //                     return prevData.filter(
-                            //                       (_, index) =>
-                            //                         index !== questionCount,
-                            //                     );
-                            //                   } else {
-                            //                     // If not selected, add it to the array at the specific index
-                            //                     const updatedData = [
-                            //                       ...prevData,
-                            //                     ];
-                            //                     updatedData[questionCount] = {
-                            //                       question_id: questionData.id,
-                            //                       id,
-                            //                     };
-                            //                     return updatedData;
-                            //                   }
-                            //                 },
-                            //               );
-                            //             }}
-                            //           >
-                            //             <MCQButton
-                            //               label={optionsLabel[subIndex]}
-                            //               value={value}
-                            //             />
-                            //           </button>
-                            //         );
-                            //       },
-                            //     )}
-                            //   </div>
-                            // </FlexColumn>
                           );
                         })}
                       </div>
@@ -463,7 +410,7 @@ const MCQBox = () => {
                             ))}
                           </FlexColumn>
                         </FlexColumn>
-                        <FlexColumn className="w-full gap-4 rounded-lg bg-purple-50 px-2 py-4 md:px-6 md:py-6 md:pt-4">
+                        {/* <FlexColumn className="w-full gap-4 rounded-lg bg-purple-50 px-2 py-4 md:px-6 md:py-6 md:pt-4">
                           <FlexRow className="items-center gap-2">
                             <Icon
                               name="deployed_code"
@@ -484,7 +431,7 @@ const MCQBox = () => {
                               </p>
                             </FlexRow>
                           </FlexColumn>
-                        </FlexColumn>
+                        </FlexColumn> */}
                         {timeOut !== 0 && gameOver && (
                           <FlexColumn className="items-center">
                             <p className="text-center text-base font-medium leading-3">
