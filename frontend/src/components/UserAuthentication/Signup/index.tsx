@@ -14,9 +14,11 @@ import InputLabel from '@Components/common/FormUI/InputLabel';
 import IconButton from '@Components/common/IconButton';
 import { FlexColumn, FlexRow } from '@Components/common/Layouts';
 import { Button } from '@Components/radix/Button';
+import isEmpty from '@Utils/isEmpty';
 import { setUserProfile } from '@Store/actions/common';
 import { useTypedDispatch } from '@Store/hooks';
-import { createNewUser } from '@Services/common';
+import useDebouncedInput from '@Hooks/useDebouncedInput';
+import { checkIfEmailExists, createNewUser } from '@Services/common';
 import {
   signupSchemaStepOne,
   signupSchemaStepTwo,
@@ -43,6 +45,22 @@ export default function Signup() {
   const [formStep, setFormStep] = useState(1);
   const [isTermsChecked, setIsTermsChecked] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    setError,
+    setValue,
+    clearErrors,
+    formState: { isSubmitting, errors },
+  } = useForm({
+    defaultValues: initialState,
+    resolver: zodResolver(
+      formStep === 1 ? signupSchemaStepOne : signupSchemaStepTwo,
+    ),
+  });
+
   const { mutate, isPending } = useMutation<any, any, any, unknown>({
     mutationFn: (payload: Record<string, any>) => createNewUser(payload),
     onSuccess: () => {
@@ -59,17 +77,24 @@ export default function Signup() {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { isSubmitting, errors },
-  } = useForm({
-    defaultValues: initialState,
-    resolver: zodResolver(
-      formStep === 1 ? signupSchemaStepOne : signupSchemaStepTwo,
-    ),
+  const { mutate: checkEmail, isPending: emailIsChecking } = useMutation({
+    mutationFn: (payload: Record<string, any>) => checkIfEmailExists(payload),
+    onSuccess: (data: any) => {
+      if (data?.data?.exists) {
+        setError('email', {
+          type: 'custom',
+          message: 'Email already exists',
+        });
+      } else {
+        clearErrors('email');
+      }
+    },
+  });
+  const email = watch('email');
+  const [inputValue, handleDebouncedChange, setInputValue] = useDebouncedInput({
+    init: email,
+    onChange: e => setValue('email', e.target.value),
+    ms: 700,
   });
 
   const onSubmit = () => {
@@ -92,6 +117,14 @@ export default function Signup() {
       window.removeEventListener('beforeunload', listener);
     };
   }, []);
+  useEffect(() => {
+    setInputValue(email);
+  }, [setInputValue, email]);
+  useEffect(() => {
+    if (email.includes('@') && email.includes('.')) {
+      checkEmail({ email });
+    }
+  }, [email, checkEmail]);
 
   function getContentAccordingToStep() {
     switch (formStep) {
@@ -114,7 +147,8 @@ export default function Signup() {
                 id="email"
                 type="email"
                 placeholder="Enter Email (e.g. bijay@example.com)"
-                {...register('email')}
+                onChange={handleDebouncedChange}
+                value={inputValue}
               />
               <ErrorMessage message={errors.email?.message} />
             </FormControl>
@@ -216,7 +250,9 @@ export default function Signup() {
                   disabled={
                     (formStep === 2 && !isTermsChecked) ||
                     isSubmitting ||
-                    isPending
+                    isPending ||
+                    !isEmpty(errors) ||
+                    emailIsChecking
                   }
                   isLoading={isSubmitting || isPending}
                 >

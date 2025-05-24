@@ -25,6 +25,10 @@ export const updateUser = (payload: Partial<User>) => {
   });
 };
 
+export const checkIfEmailExists = (payload: Record<string, any>) => {
+  return api.post('/api/user/check-email-exists/', { ...payload });
+};
+
 export const changePassword = (payload: IChangePasswordPayload) => {
   return authenticated(api).patch('/api/user/change-password/', {
     ...payload,

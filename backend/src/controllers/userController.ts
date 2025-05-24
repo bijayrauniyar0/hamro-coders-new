@@ -143,7 +143,7 @@ export const loginController = async (
       res.status(404).json({ message: 'User not found.' });
       return;
     }
-    if(!user.verified){
+    if (!user.verified) {
       res.status(401).json({
         message: 'User not verified. Please check your email for verification.',
         verified: false,
@@ -246,5 +246,26 @@ export const resendVerificationEmail = async (
     res
       .status(500)
       .json({ message: 'Error sending verification email', error });
+  }
+};
+
+export const checkIfEmailExists = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      res.status(400).json({ message: 'Email is required' });
+      return;
+    }
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      res.status(200).json({ exists: true });
+    } else {
+      res.status(200).json({ exists: false });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error });
   }
 };

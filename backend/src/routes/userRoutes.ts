@@ -9,6 +9,7 @@ import {
   checkLogin,
   getUserProfile,
   verifyEmail,
+  checkIfEmailExists,
 } from '../controllers/userController';
 import { authenticate } from '../middlewares/authenticate';
 
@@ -24,5 +25,5 @@ userRouter.patch('/change-password/', authenticate, updateUser);
 userRouter.delete('/:id/', authenticate, deleteUser);
 // @ts-ignore
 userRouter.get('/verify-email', verifyEmail);
-
+userRouter.post('/check-email-exists', checkIfEmailExists);
 export default userRouter;
